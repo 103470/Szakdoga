@@ -6,11 +6,26 @@
     background-color: #ffa500;
 }
 
+.theme-orange-btn:hover{
+    background-color: #ffa500;
+    opacity: 0.8;
+}
+
 .theme-green-btn{
     background-color: #27A745;
+}
+
+.theme-green-btn:hover{
+    background-color: #27A745;
+    opacity: 0.8;
 }
 
 .theme-footer{
     background-color: #3b5998;
 }
+
+body {
+    font-family: 'Lato', sans-serif;
+}
+
 

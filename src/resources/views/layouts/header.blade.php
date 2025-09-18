@@ -6,6 +6,7 @@
     <title>Kezdőlap</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link href="{{asset ('assets/css/style.css') }}" rel="stylesheet">
   </head>
   <body>
@@ -17,8 +18,10 @@
     </button>
     <div>
         <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button class="btn btn-light text-secondary" type="submit">Search</button>
+            <div class="input-group">
+                <input class="form-control" style="width:350px" type="search" placeholder="Kezdj el gépelni" aria-label="Search"/>
+                <button class="btn btn-light text-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
       </form>
     </div>
     <div class="mx-2">
@@ -28,3 +31,38 @@
     </div>
   </div>
 </nav>
+
+<!-- Kategória Nav -->
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+      <ul class="navbar-nav">
+        <li>
+            <a class="nav-link active" href="#">Autótípus kereső</a>
+        </li>
+        <!-- Termékcsoport dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link active" href="#" id="termekcsoportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Termékcsoport<i class="fa-solid fa-bars"></i>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="termekcsoportDropdown">
+            <li><a class="dropdown-item" href="/termekcsoport/akkumulatorok">Akkumulátorok</a></li>
+            <li><a class="dropdown-item" href="/termekcsoport/olajszurok">Olajszűrők</a></li>
+            <li><a class="dropdown-item" href="/termekcsoport/futomu">Futómű alkatrészek</a></li>
+            <li><a class="dropdown-item" href="/termekcsoport/fenyszoro">Fényszórók</a></li>
+          </ul>
+        </li>
+        <li>
+            <a class="nav-link active" href="#">Olaj kereső</a> 
+        </li>
+        <li>
+            <a class="nav-link active" href="#">Akkumulátor</a>
+        </li>
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
