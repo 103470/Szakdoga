@@ -56,6 +56,14 @@
             font-size: 1em;
             transition: border-color 0.2s;
         }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 0.75em;
+            border: 1px solid #c9c9c9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.2s;
+        }
         input[type="email"]:focus, input[type="password"]:focus {
             border-color: #4f46e5;
             outline: none;
