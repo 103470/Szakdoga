@@ -28,4 +28,155 @@ body {
     font-family: 'Lato', sans-serif;
 }
 
+.brand-card, 
+.brand-card h6, 
+.brand-card a, 
+.brand-card a h6 {
+    font-family: 'Lato', sans-serif !important;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+
+
+.brand-card {
+    flex: 0 0 16.66%;
+    padding: 0.5rem;
+}
+
+.brand-logo {
+    height: 80px;
+}
+
+.brand-logo img {
+    max-height: 70px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.carousel .carousel-control-prev,
+.carousel .carousel-control-next {
+    width: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10; 
+}
+
+.carousel .carousel-control-prev {
+    left: -50px !important;
+}
+
+.carousel .carousel-control-next {
+    right: -50px !important;
+}
+
+.carousel .carousel-control-prev-icon,
+.carousel .carousel-control-next-icon {
+    display: none; 
+}
+
+.carousel .carousel-control-prev span,
+.carousel .carousel-control-next span {
+    font-size: 2rem;
+    color: #3b5998; 
+    position: relative;
+    z-index: 10;
+}
+
+
+.carousel-item {
+    min-height: 120px; 
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .brand-card {
+        flex: 0 0 33.33%;
+    }
+}
+
+@media (max-width: 576px) {
+    .brand-card {
+        flex: 0 0 50%;
+    }
+}
+
+.container h2.mb-4 { 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lato', sans-serif;
+    margin-bottom: 30px;
+    text-align: center; 
+}
+     
+.container h2.mb-4::before, 
+.container h2.mb-4::after { 
+    content: ''; 
+    top: 50%; 
+    height: 1px; 
+    background-color: #3b5998; 
+    transform: translateY(-50%); 
+    flex: 1;
+    margin: 0 10px;
+} 
+.container h2.mb-4::before { 
+    left: 0; 
+} 
+.container h2.mb-4::after { 
+    right: 0; 
+}
+
+#categoryCarousel .carousel-control-prev,
+#categoryCarousel .carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5%;
+    z-index: 50;
+}
+
+#categoryCarousel .carousel-control-prev-icon,
+#categoryCarousel .carousel-control-next-icon {
+    display: none;
+}
+
+#categoryCarousel .carousel-control-prev span,
+#categoryCarousel .carousel-control-next span {
+    font-size: 2rem;
+    color: #3b5998;
+    position: relative;
+    z-index: 50;
+}
+
+#categoryCarousel .carousel-item {
+    min-height: 200px;
+    position: relative;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
