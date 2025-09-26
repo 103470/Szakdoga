@@ -48,4 +48,67 @@
     </div>
 </div>
 
+<div class="container my-5">
+    <h2 class="text-center mb-4">Kevésbé gyakori gyártmányok</h2>
+
+    <div id="rareBrandCarousel" class="carousel slide" data-bs-ride="carousel">
+        
+        <div class="carousel-indicators">
+            @foreach($rareBrands->chunk(30) as $chunkIndex => $chunk)
+                <button type="button" 
+                        data-bs-target="#rareBrandCarousel" 
+                        data-bs-slide-to="{{ $chunkIndex }}" 
+                        class="{{ $chunkIndex == 0 ? 'active' : '' }}" 
+                        aria-current="{{ $chunkIndex == 0 ? 'true' : 'false' }}" 
+                        aria-label="Slide {{ $chunkIndex + 1 }}"></button>
+            @endforeach
+        </div>
+
+        
+        <div class="carousel-inner">
+            @foreach($rareBrands->chunk(30) as $chunkIndex => $chunk)
+                <div class="carousel-item {{ $chunkIndex == 0 ? 'active' : '' }}">
+                    <div class="table-responsive">
+                        <table class="table table-borderless text-center mb-0">
+                            <tbody>
+                                @php
+                                    $rows = 5;
+                                    $cols = 6;
+                                    $chunkArray = $chunk->values(); 
+                                @endphp
+                                @for($r = 0; $r < $rows; $r++)
+                                    <tr>
+                                        @for($c = 0; $c < $cols; $c++)
+                                            @php
+                                                $index = $r + $c * $rows;
+                                            @endphp
+                                            <td>
+                                                @if(isset($chunkArray[$index]))
+                                                    <a href="{{ route('ritkatipus', $chunkArray[$index]->slug) }}" class="text-decoration-none text-dark">
+                                                        {{ $chunkArray[$index]->name }}
+                                                    </a>
+                                                @endif
+                                            </td>
+                                        @endfor
+                                    </tr>
+                                @endfor
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        
+        <button class="carousel-control-prev" type="button" data-bs-target="#rareBrandCarousel" data-bs-slide="prev">
+            <span class="fa-solid fa-chevron-left fa-2x"></span>
+            <span class="visually-hidden">Előző</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#rareBrandCarousel" data-bs-slide="next">
+            <span class="fa-solid fa-chevron-right fa-2x"></span>   
+            <span class="visually-hidden">Következő</span>
+        </button>
+    </div>
+</div>
+
 @endsection

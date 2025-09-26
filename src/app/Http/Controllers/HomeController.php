@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Brand;
+use App\Models\RareBrand;
+use App\Models\Category;
 
 class HomeController extends Controller
 {
@@ -12,5 +14,9 @@ class HomeController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
+        $rareBrands = RareBrand::select('slug', 'name')
+            ->orderBy('name', 'asc')
+            ->get();
+        return view('home', compact('brands', 'rareBrands', 'categories'));
     }
 }
