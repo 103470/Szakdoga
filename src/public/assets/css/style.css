@@ -127,32 +127,6 @@ body {
     right: 0; 
 }
 
-#categoryCarousel .carousel-control-prev,
-#categoryCarousel .carousel-control-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 5%;
-    z-index: 50;
-}
-
-#categoryCarousel .carousel-control-prev-icon,
-#categoryCarousel .carousel-control-next-icon {
-    display: none;
-}
-
-#categoryCarousel .carousel-control-prev span,
-#categoryCarousel .carousel-control-next span {
-    font-size: 2rem;
-    color: #3b5998;
-    position: relative;
-    z-index: 50;
-}
-
-#categoryCarousel .carousel-item {
-    min-height: 200px;
-    position: relative;
-}
 
 
 

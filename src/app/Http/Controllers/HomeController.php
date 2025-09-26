@@ -17,6 +17,11 @@ class HomeController extends Controller
         $rareBrands = RareBrand::select('slug', 'name')
             ->orderBy('name', 'asc')
             ->get();
+
+        $categories = Category::select('slug', 'name', 'icon') 
+            ->orderBy('name', 'asc')
+            ->get();
+
         return view('home', compact('brands', 'rareBrands', 'categories'));
     }
 }
