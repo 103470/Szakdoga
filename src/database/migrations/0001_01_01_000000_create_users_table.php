@@ -13,10 +13,40 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+
+            // Te formod mezői
+            $table->string('lastname');    // vezetéknév
+            $table->string('firstname');   // keresztnév
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('account_type'); // personal / business
+            $table->string('phone_country_code');
+            $table->string('phone_number');
+
+            // Számlázási cím
+            $table->string('billing_country');
+            $table->string('billing_zip');
+            $table->string('billing_city');
+            $table->string('billing_street_name');
+            $table->string('billing_street_type');
+            $table->string('billing_house_number');
+            $table->string('billing_building')->nullable();
+            $table->string('billing_floor')->nullable();
+            $table->string('billing_door')->nullable();
+
+            // Szállítási cím
+            $table->string('shipping_country');
+            $table->string('shipping_zip');
+            $table->string('shipping_city');
+            $table->string('shipping_street_name');
+            $table->string('shipping_street_type');
+            $table->string('shipping_house_number');
+            $table->string('shipping_building')->nullable();
+            $table->string('shipping_floor')->nullable();
+            $table->string('shipping_door')->nullable();
+
+            // Extra mezők a Laravel auth miatt
             $table->rememberToken();
             $table->timestamps();
         });

@@ -9,15 +9,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// LOGIN
 Route::get('login', function () {
     return view('login');
 })->name('login');
+Route::post('login', LoginController::class)->name('login.attempt');
 
+// REGISTER
 Route::get('register', function () {
     return view('register');
 })->name('register');
+Route::post('register', [RegisterController::class, 'store'])->name('register');
 
-Route::post('login', LoginController::class)->name('login.attempt');
-Route::post('register', [RegisterController::class, 'store'])->name('register.store');
+// SOCIAL LOGIN
 Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('social.redirect');
 Route::get('login/{provider}/callback', [SocialController::class, 'callback']);
