@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+
     use HasFactory, Notifiable;
 
     /**
@@ -43,6 +43,8 @@ class User extends Authenticatable
     'shipping_building',
     'shipping_floor',
     'shipping_door',
+    'profile_image',
+    'is_admin',
 ];
 
     /**
@@ -60,11 +62,10 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+    'email_verified_at' => 'datetime',
+    'password' => 'hashed',
+    'is_admin' => 'boolean',
+    ];
+
 }
