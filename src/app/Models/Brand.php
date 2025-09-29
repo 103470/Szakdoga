@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Models\Brands\Type;
 
 class Brand extends Model
 {
@@ -29,4 +30,10 @@ class Brand extends Model
             }
         });
     }
+
+    public function types()
+    {
+        return $this->hasMany(Type::class);
+    }
+
 }

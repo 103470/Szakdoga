@@ -21,7 +21,7 @@
                     <div class="d-flex flex-wrap justify-content-start">
                         @foreach($chunk as $brand)
                             <div class="brand-card">
-                                <a href="{{ route('tipus', $brand->slug) }}">
+                                <a href="{{ route('marka', $brand->slug) }}">
                                     <div class="card text-center p-2 h-100">
                                         <div class="d-flex justify-content-center align-items-center brand-logo">
                                             <img src="{{ asset('storage/'.$brand->logo) }}" 
@@ -84,7 +84,7 @@
                                             @endphp
                                             <td>
                                                 @if(isset($chunkArray[$index]))
-                                                    <a href="{{ route('tipus', $chunkArray[$index]->slug) }}" class="text-decoration-none text-dark">
+                                                    <a href="{{ route('marka', $chunkArray[$index]->slug) }}" class="text-decoration-none text-dark">
                                                         {{ $chunkArray[$index]->name }}
                                                     </a>
                                                 @endif

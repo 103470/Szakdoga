@@ -5,6 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BrandController;
 use App\Models\Brand;
 use App\Models\RareBrand;
+use App\Models\Brands\Type;
+use App\Models\Brands\Vintage;
+use App\Models\Brands\BrandModel;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,6 +27,15 @@ Route::get('/tipus/{slug}', function($slug) {
     }
 
     abort(404);
+})->name('marka');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}', function($brandSlug, $typeSlug) {
+    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail(); 
+
+    $vintages = Vintage::where('type_id', $type->id)->get();
+
+    return view('brands.vintage', compact('brand', 'type', 'vintages'));
 })->name('tipus');
 
 
