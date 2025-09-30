@@ -39,6 +39,19 @@ Route::get('/tipus/{brandSlug}/{typeSlug}', function($brandSlug, $typeSlug) {
 })->name('tipus');
 
 
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}', function($brandSlug, $typeSlug, $vintageSlug) {
+    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail(); 
+
+    $vintage = Vintage::where('type_id', $type->id)
+                      ->where('slug', $vintageSlug)
+                      ->firstOrFail();
+
+    $models = BrandModel::forVintage($vintage)->get();
+    $groupedModels = BrandModel::groupedByFuel($models);
+
+    return view('brands.model', compact('brand', 'type', 'vintage', 'models', 'groupedModels'));
+})->name('model');
 Route::get('/termekcsoport/{category:slug}', function (Category $category) {
     return "Ez a(z) {$category->name} termékcsoport oldala.";
 })->name('termekcsoport');
