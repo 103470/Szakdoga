@@ -18,7 +18,8 @@ class HomeController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-        $categories = Category::select('slug', 'name', 'icon') 
+        $categories = Category::select('slug', 'name', 'icon')
+            ->where('requires_model', false) 
             ->orderBy('name', 'asc')
             ->get();
 

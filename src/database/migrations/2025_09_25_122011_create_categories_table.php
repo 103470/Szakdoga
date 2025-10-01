@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->string('icon')->nullable();
+            $table->boolean('requires_model')->default(true);
             $table->timestamps(); 
             $table->softDeletes(); 
             $table->unsignedBigInteger('updated_by')->nullable();

@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BrandController;
 use App\Models\Brand;
 use App\Models\RareBrand;
+use App\Models\Category;
 use App\Models\Brands\Type;
 use App\Models\Brands\Vintage;
 use App\Models\Brands\BrandModel;
@@ -65,7 +66,9 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function($
                        ->where('type_id', $type->id)
                        ->firstOrFail();
 
-    $categories = $model->categories ?? collect(); 
+    $categories = Category::where('requires_model', true)
+                          ->orderBy('name')
+                          ->get();
 
     return view('brands.categories', compact('brand', 'type', 'vintage', 'model', 'categories'));
 })->name('categories');

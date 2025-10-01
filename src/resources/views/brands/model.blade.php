@@ -8,9 +8,7 @@
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">B+M Autóalkatrész</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('marka', $brand->slug) }}">{{ $brand->name }}</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('tipus', ['brandSlug' => $brand->slug, 'typeSlug' => $type->slug]) }}">{{ $type->name }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    {{ $vintage->name }} {{ $vintage->frame }} {{ $vintage->vintage_range }}
-                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ $vintage->frame }}</li>
             </ol>
         </nav>
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
@@ -22,7 +20,7 @@
         </div>
         <div>
             <h2 class="border-start border-4 theme-blue-border ps-3 mb-1">
-                {{ $brand->name }} {{ $type->name }} {{ $vintage->vintage_range }}
+                {{ $brand->name }} {{ $type->name }} ({{ $vintage->frame }}) {{ $vintage->vintage_range }}
             </h2>
             <div class="mt-1">
                 <small class="text-muted">Kérjük válassza ki gépjárműve pontos modelljét!</small>
@@ -51,7 +49,7 @@
                                 <td colspan="5" class="text-start"><strong>{{ $fuel }}</strong></td>
                             </tr>
                             @foreach($models as $model)
-                            <tr onclick="window.location='{{ url('tipus', [$brand->slug, $type->slug, $vintage->slug, $model->slug]) }}';" style="cursor:pointer;">
+                            <tr onclick="window.location='{{ route('kategoria', [$brand->slug, $type->slug, $vintage->slug, $model->slug]) }}';" style="cursor:pointer;">
                                 <td>{{ $model->name }}</td>
                                 <td>{{ $model->year_range }}</td>
                                 <td>{{ $model->ccm_formatted }}</td>
