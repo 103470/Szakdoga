@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\UserDashboardController;
 use App\Http\Middleware\AdminOnlyMiddleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,14 @@ Route::middleware(['auth', AdminOnlyMiddleware::class])->prefix('admin')->group(
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::resource('users', AdminUserController::class, ['as' => 'admin']);
 
+});
+
+
+
+// USER DASHBOARD
+Route::middleware(['auth'])->prefix('user')->group(function () {
+    Route::get('/', [App\Http\Controllers\UserDashboardController::class, 'index'])
+         ->name('user.dashboard');
 });
 
 
