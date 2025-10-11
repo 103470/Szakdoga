@@ -11,6 +11,7 @@ use App\Models\Brands\Vintage;
 use App\Models\Brands\BrandModel;
 use App\Models\SubCategory;
 use App\Models\ProductCategory;
+use App\Models\Product;
 
 Route::get('/', function () {
     return view('welcome');
@@ -97,7 +98,77 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlu
     return view('brands.products', compact('brand', 'type', 'vintage', 'model', 'category', 'products'));
 })->name('alkategoria');
 
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}', function(
+    $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug
+) {
+    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
+    $vintage = Vintage::where('type_id', $type->id)->where('slug', $vintageSlug)->firstOrFail();
+    $model = BrandModel::where('slug', $modelSlug)->where('type_id', $type->id)->firstOrFail();
+    $category = Category::where('slug', $categorySlug)->firstOrFail();
 
+    $subcategory = SubCategory::where('slug', $subcategorySlug)
+        ->where('category_id', $category->kategory_id)
+        ->firstOrFail();
+
+    $productCategories = $subcategory->productCategories()->get();
+
+    if ($productCategories->isNotEmpty()) {
+        return view('brands.productcategories', compact('brand', 'type', 'vintage', 'model', 'category', 'subcategory', 'productCategories'));
+    }
+
+    $products = Product::where('subcategory_id', $subcategory->subcategory_id)->get(); 
+
+    return view('brands.products', compact('brand', 'type', 'vintage', 'model', 'category', 'subcategory', 'products'));
+})->name('termekkategoria');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}/{productCategorySlug}', function(
+    $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug
+) {
+    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
+    $vintage = Vintage::where('type_id', $type->id)->where('slug', $vintageSlug)->firstOrFail();
+    $model = BrandModel::where('slug', $modelSlug)->where('type_id', $type->id)->firstOrFail();
+    $category = Category::where('slug', $categorySlug)->firstOrFail();
+
+    $subcategory = SubCategory::where('slug', $subcategorySlug)
+        ->where('category_id', $category->kategory_id)
+        ->firstOrFail();
+
+    $uniqueId = $model->unique_code;
+
+    if ($productCategorySlug === 'osszes_termek') {
+        $products = Product::whereHas('oemNumbers.partVehicles', function ($query) use ($uniqueId) {
+                $query->where('unique_code', $uniqueId);
+            })
+            ->where('subcategory_id', $subcategory->subcategory_id)
+            ->get();
+        $productCategory = null;
+    } else {
+        $productCategory = ProductCategory::where('slug', $productCategorySlug)
+            ->where('subcategory_id', $subcategory->subcategory_id)
+            ->first();
+
+        $products = $productCategory
+            ? Product::whereHas('oemNumbers.partVehicles', function ($query) use ($uniqueId) {
+                    $query->where('unique_code', $uniqueId);
+                })
+                ->where('product_category_id', $productCategory->product_category_id)
+                ->get()
+            : collect();
+    }
+
+    return view('brands.products', compact(
+        'brand', 'type', 'vintage', 'model', 'category', 'subcategory', 'productCategory', 'products'
+    ));
+})->name('termekek');
+
+
+
+
+Route::get('/termek/{product:slug}', function(Product $product) {
+    return view('products.show', compact('product'));
+})->name('termek.leiras');
 
 Route::get('/termekcsoport/{category:slug}', function (Category $category) {
     return "Ez a(z) {$category->name} termékcsoport oldala.";
