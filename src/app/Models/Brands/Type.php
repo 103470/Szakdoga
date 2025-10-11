@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Models\Brand;
+use App\Models\Brands\Type;
 
 class Type extends Model
 {
@@ -36,4 +37,10 @@ class Type extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function vintages()
+    {
+        return $this->hasMany(Vintage::class, 'type_id');
+    }
+
 }
