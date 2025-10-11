@@ -20,13 +20,15 @@ return new class extends Migration
             $table->string('slug')->unique()->nullable();          
             $table->string('ccm')->nullable();
             $table->string('kw_hp')->nullable();  
-            $table->string('engine_type')->nullable(); 
+            $table->string('engine_type')->nullable();
+            $table->foreignId('fuel_type_id')->nullable()->constrained('fuel_types')->onDelete('set null');
 
             $table->unsignedSmallInteger('year_from');
             $table->unsignedTinyInteger('month_from')->default(1);
             $table->unsignedSmallInteger('year_to');
             $table->unsignedTinyInteger('month_to')->default(12);
             $table->string('frame')->nullable();
+            $table->foreign('frame')->references('frame')->on('brand_vintages')->onDelete('set null');
 
             $table->timestamps();
             $table->softDeletes();
