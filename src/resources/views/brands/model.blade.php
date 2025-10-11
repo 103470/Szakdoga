@@ -50,7 +50,7 @@
                             </tr>
                             @foreach($models as $model)
                             <tr onclick="window.location='{{ route('kategoria', [$brand->slug, $type->slug, $vintage->slug, $model->slug]) }}';" style="cursor:pointer;">
-                                <td>{{ $model->name }}</td>
+                                <td>{{ $model->fullName }}</td>
                                 <td>{{ $model->year_range }}</td>
                                 <td>{{ $model->ccm_formatted }}</td>
                                 <td>{{ $model->kw_le_formatted }}</td>

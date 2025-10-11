@@ -9,6 +9,8 @@ use App\Models\Category;
 use App\Models\Brands\Type;
 use App\Models\Brands\Vintage;
 use App\Models\Brands\BrandModel;
+use App\Models\SubCategory;
+use App\Models\ProductCategory;
 
 Route::get('/', function () {
     return view('welcome');
@@ -71,9 +73,37 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function($
                           ->get();
 
     return view('brands.categories', compact('brand', 'type', 'vintage', 'model', 'categories'));
-})->name('categories');
+})->name('kategoria');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', function(
+    $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug
+) {
+    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
+    $vintage = Vintage::where('type_id', $type->id)->where('slug', $vintageSlug)->firstOrFail();
+    $model = BrandModel::where('slug', $modelSlug)->where('type_id', $type->id)->firstOrFail();
+    $category = Category::where('slug', $categorySlug)->firstOrFail();
+
+    $subcategories = $category->subcategories ?? collect();
+
+    if ($subcategories->isNotEmpty()) {
+        return view('brands.subcategories', compact('brand', 'type', 'vintage', 'model', 'category', 'subcategories'));
+    }
+    $subcategoryIds = SubCategory::where('category_id', $category->kategory_id)
+        ->pluck('subcategory_id');
+
+    $products = Product::whereIn('subcategory_id', $subcategoryIds)->get();
+
+    return view('brands.products', compact('brand', 'type', 'vintage', 'model', 'category', 'products'));
+})->name('alkategoria');
+
 
 
 Route::get('/termekcsoport/{category:slug}', function (Category $category) {
     return "Ez a(z) {$category->name} termékcsoport oldala.";
 })->name('termekcsoport');
+
+
+
+
+
