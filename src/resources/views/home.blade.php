@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('content')
-<div class="container my-4">
+<div class="container my-5">
     <h2 class="mb-4 text-center">Válassz márkát</h2>
 
     <div id="brandCarousel" class="carousel slide" data-bs-ride="carousel">

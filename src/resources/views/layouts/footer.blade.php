@@ -1,5 +1,5 @@
 <footer class="footer theme-footer text-light py-3">
-  <div class="container text-center">
+  <div class="footer-container text-center">
     <p class="mb-1">© {{ date('Y') }} B+M Webáruház Minden jog fenntartva.</p>
     <p class="mb-0">
       <a href="/aszf" class="text-light">ÁSZF</a> |

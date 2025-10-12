@@ -26,7 +26,20 @@
 
 body {
     font-family: 'Lato', sans-serif;
+    background-color: #ebebeb;
 }
+
+.body-container {
+    max-width: 1200px;           
+    margin-left: auto;
+    margin-right: auto;           
+    padding: 40px;               
+    background-color: #fff;       
+    box-shadow: 0 2px 20px rgba(0,0,0,0.15); 
+    border-radius: 0;            
+}
+
+
 
 .brand-card, 
 .brand-card h6, 
@@ -83,6 +96,17 @@ body {
     z-index: 10;
 }
 
+.carousel-indicators {
+    bottom: -40px; 
+}
+
+.carousel-indicators button {
+    background-color: rgba(59, 89, 152, 0.4); 
+}
+
+.carousel-indicators .active {
+    background-color: #3b5998; 
+}
 
 .carousel-item {
     min-height: 120px; 
