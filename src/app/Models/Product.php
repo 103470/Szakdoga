@@ -9,6 +9,7 @@ use App\Models\SubCategory;
 use App\Models\ProductCategory;
 use App\Models\OemNumber;
 use App\Models\PartVehicle;
+use App\Models\Brands\BrandModel;
 
 class Product extends Model
 {
@@ -112,4 +113,16 @@ class Product extends Model
             }
         });
     }
+
+    public function brandModels()
+    {
+        return BrandModel::whereIn('unique_code', function($query) {
+            $query->select('unique_code')
+                ->from('part_vehicle')
+                ->join('oem_numbers', 'part_vehicle.oem_number_id', '=', 'oem_numbers.id')
+                ->where('oem_numbers.product_id', $this->id);
+        })->get();
+    }
+
+
 }

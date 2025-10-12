@@ -163,12 +163,11 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlu
     ));
 })->name('termekek');
 
-
-
-
 Route::get('/termek/{product:slug}', function(Product $product) {
-    return view('products.show', compact('product'));
+    $brandModels = $product->brandModels();
+    return view('brands.productdetails', compact('product', 'brandModels'));
 })->name('termek.leiras');
+
 
 Route::get('/termekcsoport/{category:slug}', function (Category $category) {
     return "Ez a(z) {$category->name} termékcsoport oldala.";

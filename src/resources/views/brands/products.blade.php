@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="container my-4">
+<div class="body-container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
@@ -24,7 +24,7 @@
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
     </div>
 
-    <h2 class="border-start border-4 theme-blue-border ps-3 mb-4">
+    <h2 class="mb-4">
         @if(isset($productCategory))
             {{ $subcategory->name }} – {{ $productCategory->name }} termékkínálatunkból
         @elseif(isset($subcategory))
@@ -51,7 +51,12 @@
                         {{-- Termékinformációk --}}
                         <div class="col-md-6">
                             <div class="card-body">
-                                <h5 class="fw-bold text-uppercase text-danger mb-1">{{ $product->name }}</h5>
+                                <h5 class="fw-bold text-uppercase text-danger mb-1">
+                                    <a href="{{ route('termek.leiras', ['product' => $product->slug]) }}" 
+                                        class="text-danger text-decoration-none">
+                                        {{ $product->name }}
+                                    </a>
+                                </h5>
                                 <p class="text-muted mb-1">Cikkszám: <strong>{{ $product->article_number }}</strong></p>
                                 <p class="mb-2">Gyártó: <strong>{{ $product->manufacturer ?? 'Ismeretlen' }}</strong></p>
                                 
