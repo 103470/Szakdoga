@@ -432,6 +432,32 @@ body {
     color: #000 !important;
 }
 
+.quantity-selector {
+    display: flex;
+    gap: 0;     
+    background-color: #3b5998;         
+}
+
+.quantity-selector .quantity-input {
+    text-align: center;
+    padding: 0;
+    margin: 0;           
+    height: 38px;
+    flex: 1;             
+    border-radius: 0;    
+}
+
+.quantity-selector .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 10px;
+    border-radius: 0;    
+}
+
+
+
 
 
 

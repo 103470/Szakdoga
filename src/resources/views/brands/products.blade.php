@@ -97,10 +97,10 @@
                                     @endif
                                 </p>
 
-                                <div class="input-group mb-2" style="max-width: 120px; float: right;">
-                                    <button class="btn btn-outline-secondary btn-sm">-</button>
-                                    <input type="number" class="form-control text-center" value="1" min="1">
-                                    <button class="btn btn-outline-secondary btn-sm">+</button>
+                               <div class="input-group quantity-selector mb-2" style="max-width: 120px; float: right;">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm quantity-decrease text-light">-</button>
+                                    <input type="number" class="form-control text-center quantity-input" value="1" min="1" readonly>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm quantity-increase text-light">+</button>
                                 </div>
 
                                 <button class="btn btn-warning w-100 fw-bold text-dark">Kosárba</button>
