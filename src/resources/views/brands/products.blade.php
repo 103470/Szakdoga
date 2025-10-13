@@ -63,17 +63,20 @@
                                 {{-- Értékelés (csillagok) --}}
                                 <div class="mb-2">
                                     @php
-                                        $rating = $product->rating ?? 0;
+                                        $rating = round($product->averageRating() ?? 0, 1); // átlagértékelés, pl. 3.5
                                     @endphp
                                     @for ($i = 1; $i <= 5; $i++)
-                                        @if($i <= $rating)
-                                            <i class="bi bi-star-fill text-warning"></i> {{-- sárga csillag --}}
+                                        @if ($i <= floor($rating))
+                                            <i class="fa-solid fa-star text-warning"></i> {{-- Teljes csillag --}}
+                                        @elseif ($i - $rating < 1)
+                                            <i class="fa-solid fa-star-half-stroke text-warning"></i> {{-- Fél csillag --}}
                                         @else
-                                            <i class="bi bi-star text-secondary"></i> {{-- szürke csillag --}}
+                                            <i class="fa-regular fa-star text-secondary"></i> {{-- Üres csillag --}}
                                         @endif
                                     @endfor
                                     <span class="small text-muted">({{ $rating }}/5)</span>
                                 </div>
+
 
                                 {{-- Rövid leírás --}}
                                 <p class="text-muted small" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
