@@ -84,6 +84,11 @@
                     Gyári számok
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <a href="#productReviews" class="nav-link">
+                    Vélemények ({{ $product->reviews->count() }})
+                </a>
+            </li>
         </ul>
 
         <div class="tab-content p-3 border border-top-0 rounded-bottom" id="productTabsContent">
@@ -144,7 +149,7 @@
     </div>
 
     {{-- Vélemények --}}
-    <div class="product-reviews mt-5">
+    <div id="productReviews" class="product-reviews mt-5">
         <h4 class="fw-bold mb-3">Vásárlói vélemények</h4>
 
         @if ($product->reviews && $product->reviews->count() > 0)
@@ -186,3 +191,4 @@
     </div>
 </div>
 @endsection
+
