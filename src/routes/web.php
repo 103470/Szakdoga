@@ -166,6 +166,7 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlu
 Route::get('/termek/{product:slug}', function(Product $product) {
     $brandModels = $product->brandModels();
     return view('brands.productdetails', compact('product', 'brandModels'));
+    $product = Product::with(['reviews.user'])->findOrFail($id);
 })->name('termek.leiras');
 
 

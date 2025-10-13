@@ -298,6 +298,145 @@ body {
     padding: 0.75rem;
 }
 
+.product-tabs {
+    border-bottom: 2px solid #3b5998 !important;
+}
+
+.product-tabs .nav-link {
+    border: 1px solid #3b5998;
+    color: #3b5998;
+    font-weight: 600;
+    border-bottom: none;
+    margin-right: 5px;
+    border-radius: 0;
+    background-color: #fff;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.product-tabs .nav-link.active {
+    background-color: #3b5998;
+    color: #fff !important;
+    border-color: #3b5998;
+}
+
+.tab-content {
+    border: 2px solid #3b5998;
+    border-top: none;
+    border-radius: 0;
+    background-color: #c2c5cc;
+    padding: 15px;
+}
+
+.product-specs {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #c2c5cc; 
+    color: black; 
+}
+
+.product-specs th,
+.product-specs td {
+    padding: 10px 12px;
+    text-align: left;
+    border: none;
+}
+
+.product-specs tr:nth-child(odd) {
+    background-color: #f1f3f6;
+}
+
+.product-specs tr:nth-child(even) {
+    background-color: #c2c5cc; 
+}
+
+.product-specs th {
+    width: 35%;
+    font-weight: 600;
+    color: black;
+}
+
+.product-specs td {
+    color: black;
+}
+
+.oem-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    color: black; 
+    border: none;
+}
+
+.oem-table td {
+    padding: 8px;
+    border: none; 
+    color: black; 
+}
+
+.oem-table tr td:nth-child(even) {
+    background-color: #c2c5cc;
+}
+
+.oem-table tr td:nth-child(odd) {
+    background-color: #f1f3f6;
+}
+
+.oem-table tr:nth-child(even) td:nth-child(even),
+.oem-table tr:nth-child(odd) td:nth-child(odd) {
+    background-color: #f1f3f6;
+}
+
+.oem-table tr:nth-child(even) td:nth-child(odd),
+.oem-table tr:nth-child(odd) td:nth-child(even) {
+    background-color: #c2c5cc;
+}
+
+.product-reviews {
+    color: #000;
+}
+
+.review-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.2s ease-in-out;
+    background-color: #f1f3f6;
+}
+
+.review-card:hover {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.review-user-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border: 2px solid #ccc;
+}
+
+.review-stars i {
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+.review-pros {
+    color: #28a745 !important;
+}
+
+.review-cons {
+    color: #dc3545 !important; 
+}
+
+.review-username {
+    color: #000 !important;
+}
+
+
+
+
+
+
 
 
 

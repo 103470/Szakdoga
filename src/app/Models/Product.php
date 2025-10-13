@@ -10,6 +10,7 @@ use App\Models\ProductCategory;
 use App\Models\OemNumber;
 use App\Models\PartVehicle;
 use App\Models\Brands\BrandModel;
+use App\Models\Review;
 
 class Product extends Model
 {
@@ -123,6 +124,17 @@ class Product extends Model
                 ->where('oem_numbers.product_id', $this->id);
         })->get();
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating');
+    }
+
 
 
 }

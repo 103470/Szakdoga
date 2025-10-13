@@ -19,14 +19,18 @@
         <div class="col-md-7">
             <p><strong>Cikkszám:</strong> {{ $product->article_number }}</p>
             <p><strong>Gyártó:</strong> {{ $product->manufacturer ?? 'Ismeretlen' }}</p>
+            @php
+                $rating = round($product->averageRating() ?? 0, 1);
+            @endphp
             <p>
                 <strong>Értékelés:</strong>
-                @php $rating = $product->rating ?? 0; @endphp
                 @for ($i = 1; $i <= 5; $i++)
-                    @if ($i <= $rating)
-                        <i class="bi bi-star-fill text-warning"></i>
+                    @if ($i <= floor($rating))
+                        <i class="fa-solid fa-star text-warning"></i>
+                    @elseif ($i - $rating < 1)
+                        <i class="fa-solid fa-star-half-stroke text-warning"></i>
                     @else
-                        <i class="bi bi-star text-secondary"></i>
+                        <i class="fa-regular fa-star text-secondary"></i>
                     @endif
                 @endfor
                 <span class="small text-muted">({{ $rating }}/5)</span>
@@ -66,9 +70,119 @@
             @endif
         </div>
     </div>
-    <div class="mt-4">
-        <h4 class="border-bottom pb-2">Leírás</h4>
-        <p>{{ $product->description ?? 'Nincs részletes leírás a termékhez.' }}</p>
+
+    {{-- ===== TAB RÉSZ ===== --}}
+    <div class="container my-4">
+        <ul class="nav product-tabs border-0" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab" aria-controls="desc" aria-selected="true">
+                    Leírás
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="oem-tab" data-bs-toggle="tab" data-bs-target="#oem" type="button" role="tab" aria-controls="oem" aria-selected="false">
+                    Gyári számok
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content p-3 border border-top-0 rounded-bottom" id="productTabsContent">
+            {{-- Leírás --}}
+            <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
+                @php
+                    $description = $product->description ?? '';
+                    preg_match_all('/([^:]+):\s*([^:]+)(?=\s+[A-ZÁÉÍÓÖŐÚÜŰ]|$)/u', $description, $matches, PREG_SET_ORDER);
+                @endphp
+
+                @if(!empty($matches))
+                    <table class="product-specs alt-rows align-middle text-start" style="color: black;">
+                        <tbody>
+                            @foreach($matches as $match)
+                                <tr>
+                                    <th>{{ trim($match[1]) }}:</th>
+                                    <td>{{ trim($match[2]) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p style="color: black;">{{ $description }}</p>
+                @endif
+            </div>
+
+            {{-- Gyári számok --}}
+            <div class="tab-pane fade" id="oem" role="tabpanel" aria-labelledby="oem-tab">
+                @if($product->oemNumbers->isEmpty())
+                    <p class="text-dark">Nincsenek gyári számok a termékhez.</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="oem-table table-sm mb-0">
+                            <tbody>
+                                @php
+                                    $cols = 4;
+                                    $rows = ceil($product->oemNumbers->count() / $cols);
+                                    $oemArray = $product->oemNumbers->values();
+                                @endphp
+                                @for($r = 0; $r < $rows; $r++)
+                                    <tr>
+                                        @for($c = 0; $c < $cols; $c++)
+                                            @php $index = $r + $c * $rows; @endphp
+                                            <td>
+                                                @if(isset($oemArray[$index]))
+                                                    {{ $oemArray[$index]->oem_number }}
+                                                @endif
+                                            </td>
+                                        @endfor
+                                    </tr>
+                                @endfor
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- Vélemények --}}
+    <div class="product-reviews mt-5">
+        <h4 class="fw-bold mb-3">Vásárlói vélemények</h4>
+
+        @if ($product->reviews && $product->reviews->count() > 0)
+            @foreach ($product->reviews as $review)
+                <div class="card mb-3 review-card p-3">
+                    <div class="d-flex align-items-center mb-2">
+                        {{-- Profilkép vagy default ikon --}}
+                        @if ($review->user && $review->user->profile_image)
+                            <img src="{{ asset('storage/' . $review->user->profile_image) }}" 
+                                alt="{{ $review->user->name }}" 
+                                class="me-3 review-user-img">
+                        @else
+                            <div class="me-3 d-flex justify-content-center align-items-center review-user-img bg-light text-secondary">
+                                <i class="fa-solid fa-user fa-lg"></i>
+                            </div>
+                        @endif
+
+                        {{-- Felhasználónév és csillagok --}}
+                        <div>
+                            <strong>{{ $review->user->name ?? 'Ismeretlen felhasználó' }}</strong><br>
+                            <div class="review-stars">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <i class="{{ $i <= $review->rating ? 'fas' : 'far' }} fa-star text-warning"></i>
+                                @endfor
+                                <span class="small text-muted ms-1">({{ $review->rating }}/5)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Vélemény tartalom --}}
+                    <p class="mb-1"><strong>Miért választotta a terméket:</strong> {{ $review->reason ?? '-' }}</p>
+                    <p class="review-pros mb-1"><strong>Előnyök:</strong> {{ $review->pros ?? '-' }}</p>
+                    <p class="review-cons mb-0"><strong>Hátrányok:</strong> {{ $review->cons ?? '-' }}</p>
+                </div>
+            @endforeach
+        @else
+            <p class="text-muted">Ehhez a termékhez még nem érkezett vélemény.</p>
+        @endif
     </div>
 </div>
 @endsection
