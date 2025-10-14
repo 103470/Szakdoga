@@ -99,7 +99,12 @@
 
                                <div class="input-group quantity-selector mb-2" style="max-width: 120px; float: right;">
                                     <button type="button" class="btn btn-outline-secondary btn-sm quantity-decrease text-light">-</button>
-                                    <input type="number" class="form-control text-center quantity-input" value="1" min="1" readonly>
+                                    <input type="number"
+                                        class="form-control text-center quantity-input"
+                                        value="1"
+                                        min="1"
+                                        max="{{ $product->stock }}"
+                                        readonly>
                                     <button type="button" class="btn btn-outline-secondary btn-sm quantity-increase text-light">+</button>
                                 </div>
 

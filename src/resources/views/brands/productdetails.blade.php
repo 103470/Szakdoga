@@ -43,10 +43,23 @@
                     Beszerezhető ({{ $product->delivery_time ?? '2-3 munkanap' }})
                 @endif
             </p>
-            <div class="d-flex align-items-center mb-3">
-                <input type="number" class="form-control me-2" value="1" min="1" style="max-width: 100px;">
-                <button class="btn btn-warning fw-bold text-dark">Kosárba</button>
+           <div class="d-flex align-items-center">
+                <div class="input-group quantity-selector me-2" style="width: 110px;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm quantity-decrease">−</button>
+                    <input type="number"
+                        class="form-control text-center quantity-input"
+                        value="1"
+                        min="1"
+                        max="{{ $product->stock }}"
+                        readonly>
+                    <button type="button" class="btn btn-outline-secondary btn-sm quantity-increase">+</button>
+                </div>
+
+                <button class="btn btn-warning fw-bold text-dark btn-md">Kosárba</button>
             </div>
+
+
+
             @if ($brandModels && $brandModels->isNotEmpty())
                 <div class="mt-3">
                     <label for="modelSelect" class="form-label fw-bold">
