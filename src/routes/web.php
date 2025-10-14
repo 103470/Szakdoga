@@ -176,8 +176,34 @@ Route::get('/termek/{product:slug}', function(Product $product) {
 
 
 Route::get('/termekcsoport/{category:slug}', function (Category $category) {
-    return "Ez a(z) {$category->name} termékcsoport oldala.";
+    $subcategories = $category->subcategories;
+    if ($subcategories->isNotEmpty()) {
+        return view('categories.subcategories', compact('category', 'subcategories'));
+    }
+
+    if ($category->requires_model) {
+        $models = BrandModel::all(); 
+        return view('categories.model', compact('category', 'models'));
+    }
+
+    $subcategoryIds = $category->subcategories()->pluck('subcategory_id');
+    $products = Product::whereIn('subcategory_id', $subcategoryIds)->get();
+
+    return view('brands.products', compact('category', 'products'));
 })->name('termekcsoport');
+
+Route::get('/termekcsoport/{category:slug}/{subcategory:slug}', function(Category $category, SubCategory $subcategory) {
+    $productCategories = $subcategory->productCategories()->get();
+
+    if ($productCategories->isNotEmpty()) {
+        return view('brands.productcategories', compact('category', 'subcategory', 'productCategories'));
+    }
+
+    $products = Product::where('subcategory_id', $subcategory->subcategory_id)->get();
+
+    return view('brands.products', compact('category', 'subcategory', 'products'));
+})->name('termekcsoport_subcategory');
+
 
 
 
