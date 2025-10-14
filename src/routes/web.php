@@ -85,7 +85,12 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlu
     $model = BrandModel::where('slug', $modelSlug)->where('type_id', $type->id)->firstOrFail();
     $category = Category::where('slug', $categorySlug)->firstOrFail();
 
-    $subcategories = $category->subcategories ?? collect();
+    $subcategories = SubCategory::where('category_id', $category->kategory_id)
+                                ->where(function ($query) use ($model) {
+                                    $query->where('fuel_type_id', $model->fuel_type_id)
+                                        ->orWhereNull('fuel_type_id');
+                                })
+                                ->get();
 
     if ($subcategories->isNotEmpty()) {
         return view('brands.subcategories', compact('brand', 'type', 'vintage', 'model', 'category', 'subcategories'));

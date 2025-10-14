@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Models\Category;
+use App\Models\FuelType;
 
 class SubCategory extends Model
 {
@@ -41,6 +42,12 @@ class SubCategory extends Model
     {
         return $this->hasMany(ProductCategory::class, 'subcategory_id');
     }
+
+    public function fuelType()
+    {
+        return $this->belongsTo(FuelType::class, 'fuel_type_id');
+    }
+
 
 
 
