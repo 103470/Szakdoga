@@ -63,3 +63,5 @@ Route::post('/logout', function () {
 
     return redirect('/login')->with('success', 'Sikeresen kijelentkeztél!');
 })->name('logout');
+
+

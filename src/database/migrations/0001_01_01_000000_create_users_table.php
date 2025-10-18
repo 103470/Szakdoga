@@ -50,6 +50,11 @@ return new class extends Migration
             // Extra mezők a Laravel auth miatt
             $table->rememberToken();
             $table->timestamps();
+
+            $table->string('provider')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->string('provider_token')->nullable();
+            $table->string('avatar')->nullable();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -75,6 +80,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
         $table->dropColumn('is_admin');
+        
         });
         
         Schema::dropIfExists('users');

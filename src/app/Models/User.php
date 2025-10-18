@@ -10,6 +10,9 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
 
+    
+
+
     use HasFactory, Notifiable;
 
     /**
@@ -45,6 +48,11 @@ class User extends Authenticatable
     'shipping_door',
     'profile_image',
     'is_admin',
+    'provider',
+    'provider_id',
+    'provider_token',
+    'avatar',
+
 ];
 
     /**
