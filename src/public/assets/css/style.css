@@ -470,6 +470,22 @@ body {
     margin-left: 6px; 
 }
 
+.theme-rare-brand {
+    background-color: transparent;  
+    border: 2px solid #3b5998;     
+}
+
+.theme-rare-brand .fw-bold {
+    color: #3b5998 !important;    
+}
+
+.theme-rare-brand:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transform: translateY(-3px);
+}
+
+
+
 
 
 
