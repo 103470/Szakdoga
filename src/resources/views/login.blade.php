@@ -17,7 +17,6 @@
         <div class="social-login">
             <div style="text-align:center; margin-bottom: 1em;">Or login with</div>
             <a href="{{ route('social.redirect', ['provider' => 'google']) }}" class="social-btn google">Google</a>
-            <a href="{{ route('social.redirect', ['provider' => 'apple']) }}" class="social-btn apple">Apple</a>
         </div>
         <div style="text-align:center; margin-top: 1.5em;">
             <span>Don't have an account?</span>

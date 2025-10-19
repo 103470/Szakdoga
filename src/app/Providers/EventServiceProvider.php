@@ -11,6 +11,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         SocialiteWasCalled::class => [
             AppleExtendSocialite::class.'@handle',
+
         ],
     ];
 
