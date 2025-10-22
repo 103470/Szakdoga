@@ -7,6 +7,8 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Middleware\AdminOnlyMiddleware;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,4 +66,22 @@ Route::post('/logout', function () {
     return redirect('/login')->with('success', 'Sikeresen kijelentkeztél!');
 })->name('logout');
 
+Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
+    ->middleware('guest')
+    ->name('password.request');
+
+// 🔹 Email küldése a jelszó-visszaállítás linkkel
+Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.email');
+
+// 🔹 Jelszó visszaállítás űrlap a kapott token alapján
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])
+    ->middleware('guest')
+    ->name('password.reset');
+
+// 🔹 Új jelszó mentése
+Route::post('/reset-password', [ResetPasswordController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.update');
 
