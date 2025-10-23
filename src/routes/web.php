@@ -245,10 +245,13 @@ Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlu
     $vintage = Vintage::where('slug', $vintageSlug)
                       ->where('type_id', $type->id)
                       ->firstOrFail();
-    $models = $vintage->models ?? collect();
 
-    return view('categories.model', compact('category', 'subcategory', 'brand', 'type', 'vintage', 'models'));
+    $models = BrandModel::forVintage($vintage)->get();
+    $groupedModels = BrandModel::groupedByFuel($models);
+
+    return view('categories.model', compact('category', 'subcategory', 'brand', 'type', 'vintage', 'models', 'groupedModels'));
 })->name('termekcsoport_model');
+
 
 
 
