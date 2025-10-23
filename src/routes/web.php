@@ -174,24 +174,16 @@ Route::get('/termek/{product:slug}', function(Product $product) {
     $product = Product::with(['reviews.user'])->findOrFail($id);
 })->name('termek.leiras');
 
-
 Route::get('/termekcsoport/{category:slug}', function (Category $category) {
     $subcategories = $category->subcategories;
-
     return view('categories.subcategories', compact('category', 'subcategories'));
 })->name('termekcsoport');
 
 Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{slug?}', function (Category $category, SubCategory $subcategory, $slug = null) {
 
     if ($slug === null) {
-        $productCategories = $subcategory->productCategories()->get();
-
-        if ($productCategories->isNotEmpty()) {
-            return view('categories.productcategories', compact('category', 'subcategory', 'productCategories'));
-        }
-
         if ($category->requires_model) {
-            $brands = Brand::all();
+            $brands = $category->brands; 
             $rareBrands = RareBrand::all();
             return view('categories.brands', compact('category', 'subcategory', 'brands', 'rareBrands'));
         }
@@ -202,18 +194,20 @@ Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{slug?}', function
 
     $brand = Brand::where('slug', $slug)->first();
     if ($brand) {
-        return view('categories.type', compact('category', 'subcategory', 'brand'));
+        $types = $brand->types; 
+        return view('categories.type', compact('category', 'subcategory', 'brand', 'types'));
     }
 
     $rareBrand = RareBrand::where('slug', $slug)->first();
     if ($rareBrand) {
-        return view('rarebrands.type', compact('category', 'subcategory', 'rareBrand'));
+        $types = $rareBrand->types ?? collect(); 
+        return view('rarebrands.type', compact('category', 'subcategory', 'rareBrand', 'types'));
     }
 
     $productCategory = ProductCategory::where('slug', $slug)->first();
     if ($productCategory) {
         if ($category->requires_model) {
-            $brands = Brand::all();
+            $brands = $category->brands;
             $rareBrands = RareBrand::all();
             return view('categories.brands', compact('category', 'subcategory', 'brands', 'rareBrands'));
         }
@@ -224,6 +218,39 @@ Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{slug?}', function
 
     abort(404);
 })->name('termekcsoport_dynamic');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}', function ($categorySlug, $subcategorySlug, $brandSlug, $typeSlug) {
+    $category = Category::where('slug', $categorySlug)->firstOrFail();
+    $subcategory = SubCategory::where('slug', $subcategorySlug)
+                              ->where('category_id', $category->kategory_id)
+                              ->firstOrFail();
+    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $type = Type::where('slug', $typeSlug)
+                ->where('brand_id', $brand->id)
+                ->firstOrFail();
+    $vintages = Vintage::where('type_id', $type->id)->get();
+
+    return view('categories.vintage', compact('category', 'subcategory', 'brand', 'type', 'vintages'));
+})->name('termekcsoport_vintage');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}', function ($categorySlug, $subcategorySlug, $brandSlug, $typeSlug, $vintageSlug) {
+    $category = Category::where('slug', $categorySlug)->firstOrFail();
+    $subcategory = SubCategory::where('slug', $subcategorySlug)
+                              ->where('category_id', $category->kategory_id)
+                              ->firstOrFail();
+    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $type = Type::where('slug', $typeSlug)
+                ->where('brand_id', $brand->id)
+                ->firstOrFail();
+    $vintage = Vintage::where('slug', $vintageSlug)
+                      ->where('type_id', $type->id)
+                      ->firstOrFail();
+    $models = $vintage->models ?? collect();
+
+    return view('categories.model', compact('category', 'subcategory', 'brand', 'type', 'vintage', 'models'));
+})->name('termekcsoport_model');
+
+
 
 
 
