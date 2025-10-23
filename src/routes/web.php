@@ -181,41 +181,49 @@ Route::get('/termekcsoport/{category:slug}', function (Category $category) {
     return view('categories.subcategories', compact('category', 'subcategories'));
 })->name('termekcsoport');
 
-Route::get('/termekcsoport/{category:slug}/{subcategory:slug}', function (Category $category, SubCategory $subcategory) {
-    $productCategories = $subcategory->productCategories()->get();
+Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{slug?}', function (Category $category, SubCategory $subcategory, $slug = null) {
 
-    if ($productCategories->isNotEmpty()) {
-        return view('categories.productcategories', compact('category', 'subcategory', 'productCategories'));
+    if ($slug === null) {
+        $productCategories = $subcategory->productCategories()->get();
+
+        if ($productCategories->isNotEmpty()) {
+            return view('categories.productcategories', compact('category', 'subcategory', 'productCategories'));
+        }
+
+        if ($category->requires_model) {
+            $brands = Brand::all();
+            $rareBrands = RareBrand::all();
+            return view('categories.brands', compact('category', 'subcategory', 'brands', 'rareBrands'));
+        }
+
+        $products = Product::where('subcategory_id', $subcategory->subcategory_id)->get();
+        return view('categories.products', compact('category', 'subcategory', 'products'));
     }
 
-    if ($category->requires_model) {
-        $brands = Brand::all();
-        $rareBrands = RareBrand::all();
-        return view('categories.brands', compact('category', 'subcategory', 'brands', 'rareBrands'));
+    $brand = Brand::where('slug', $slug)->first();
+    if ($brand) {
+        return view('categories.type', compact('category', 'subcategory', 'brand'));
     }
 
-    $products = Product::where('subcategory_id', $subcategory->subcategory_id)->get();
-    return view('categories.products', compact('category', 'subcategory', 'products'));
-
-})->name('termekcsoport_subcategory');
-
-Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategory:slug}', function (Category $category, SubCategory $subcategory, ProductCategory $productCategory) 
-{
-    if ($category->requires_model) {
-        $brands = Brand::all();
-        $rareBrands = RareBrand::all();
-        return view('categories.brands', compact('category', 'subcategory', 'brands', 'rareBrands'));
+    $rareBrand = RareBrand::where('slug', $slug)->first();
+    if ($rareBrand) {
+        return view('rarebrands.type', compact('category', 'subcategory', 'rareBrand'));
     }
 
-    $products = Product::where('product_category_id', $productCategory->id)->get();
-    return view('categories.products', compact('category', 'subcategory', 'productCategory', 'products'));
+    $productCategory = ProductCategory::where('slug', $slug)->first();
+    if ($productCategory) {
+        if ($category->requires_model) {
+            $brands = Brand::all();
+            $rareBrands = RareBrand::all();
+            return view('categories.brands', compact('category', 'subcategory', 'brands', 'rareBrands'));
+        }
 
-})->name('termekcsoport_productcategory');
+        $products = Product::where('product_category_id', $productCategory->id)->get();
+        return view('categories.products', compact('category', 'subcategory', 'productCategory', 'products'));
+    }
 
-
-Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{brand:slug}', function (Category $category, SubCategory $subcategory, Brand $brand) {
-    return view('categories.type', compact('category', 'subcategory', 'brand'));
-})->name('termekcsoport_brand');
+    abort(404);
+})->name('termekcsoport_dynamic');
 
 
 
