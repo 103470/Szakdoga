@@ -1,27 +1,29 @@
 <x-layout>
-    <div class="form-container">
-        <h2>Új jelszó megadása</h2>
-        <form method="POST" action="{{ route('password.update') }}">
-            @csrf
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2 class="auth-title">Új jelszó megadása</h2>
 
-            <input type="hidden" name="token" value="{{ $token }}">
-            <input type="hidden" name="email" value="{{ $email }}">
+            <form method="POST" action="{{ route('password.update') }}">
+                @csrf
+                <input type="hidden" name="token" value="{{ $token }}">
 
-            <div>
-                <label for="password">Új jelszó:</label>
-                <input type="password" name="password" id="password" required>
-            </div>
+                <div class="input-group">
+                    <label for="email">Email cím</label>
+                    <input type="email" name="email" id="email" required autofocus>
+                </div>
 
-            <div>
-                <label for="password_confirmation">Jelszó megerősítése:</label>
-                <input type="password" name="password_confirmation" id="password_confirmation" required>
-            </div>
+                <div class="input-group">
+                    <label for="password">Új jelszó</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
 
-            <button type="submit">Jelszó módosítása</button>
-        </form>
+                <div class="input-group">
+                    <label for="password_confirmation">Új jelszó megerősítése</label>
+                    <input type="password" name="password_confirmation" id="password_confirmation" required>
+                </div>
 
-        @error('email')
-            <p style="color: red;">{{ $message }}</p>
-        @enderror
+                <button type="submit" class="auth-btn">Jelszó mentése</button>
+            </form>
+        </div>
     </div>
 </x-layout>

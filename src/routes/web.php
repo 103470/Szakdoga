@@ -67,7 +67,7 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
-    ->middleware('guest')
+    
     ->name('password.request');
 
 // 🔹 Email küldése a jelszó-visszaállítás linkkel

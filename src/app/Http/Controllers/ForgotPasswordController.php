@@ -10,7 +10,7 @@ class ForgotPasswordController extends Controller
     // Elfelejtett jelszó oldal
     public function create()
     {
-        return view('auth.forgot-password');
+        return view('forgot-password');
     }
 
     // Email küldése a visszaállító linkkel

@@ -11,7 +11,7 @@ class ResetPasswordController extends Controller
     // Token alapú jelszó-visszaállítás űrlap
     public function create($token)
     {
-        return view('auth.reset-password', ['token' => $token]);
+        return view('reset-password', ['token' => $token]);
     }
 
     // Új jelszó mentése
