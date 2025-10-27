@@ -133,7 +133,7 @@
                     <div class="d-flex flex-wrap justify-content-start">
                         @foreach($chunk as $category)
                             <div class="brand-card">
-                                <a href="{{ route('termekcsoport', $category->slug) }}">
+                                <a href="{{ route('termekcsoport', ['category' => $category->slug]) }}">
                                     <div class="card text-center p-2 h-100">
                                         <div class="d-flex justify-content-center align-items-center brand-logo">
                                             <img src="{{ asset('storage/'.$category->icon) }}" 

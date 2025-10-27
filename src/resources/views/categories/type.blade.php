@@ -40,10 +40,11 @@
                 <div class="col-md-4 col-sm-6 col-12 mb-3">
                     <div class="card type-card mb-2 text-center shadow-sm">
                         <a href="{{ route('termekcsoport_vintage', [
-                            'category' => $category->slug,
-                            'subcategory' => $subcategory->slug,
-                            'brand' => $brand->slug,
-                            'type' => $type->slug
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'productCategorySlug' => optional($productCategory)->slug,
+                            'brandSlug' => $brand->slug,
+                            'typeSlug' => $type->slug
                         ]) }}" class="stretched-link"></a>
                         <div class="card-body d-flex align-items-center justify-content-center">
                             <div class="type-card-title fw-semibold">{{ $type->name }}</div>

@@ -25,9 +25,16 @@
     <h4 class="mb-3">Márkák</h4>
     <div class="row mb-5">
         @forelse($brands as $brand)
+            @php
+                $params = [$category->slug, $subcategory->slug];
+                if (isset($productCategory)) {
+                    $params[] = $productCategory->slug;
+                }
+                $params[] = $brand->slug;
+            @endphp
             <div class="col-md-3 col-sm-6 mb-3">
                 <div class="card brand-card text-center h-100">
-                    <a href="{{ route('termekcsoport_dynamic', [$category->slug, $subcategory->slug, $brand->slug]) }}" class="stretched-link"></a>
+                    <a href="{{ route('termekcsoport_dynamic', $params) }}" class="stretched-link"></a>
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         @if($brand->logo)
                             <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="img-fluid mb-2" style="max-height: 80px;">
@@ -44,9 +51,16 @@
     <h4 class="mb-3">Ritka márkák</h4>
     <div class="row">
         @forelse($rareBrands as $brand)
+            @php
+                $params = [$category->slug, $subcategory->slug];
+                if (isset($productCategory)) {
+                    $params[] = $productCategory->slug;
+                }
+                $params[] = $brand->slug;
+            @endphp
             <div class="col-md-3 col-sm-6 mb-3">
                 <div class="card brand-card type-card theme-rare-brand text-center h-100">
-                    <a href="{{ route('termekcsoport_dynamic', [$category->slug, $subcategory->slug, $brand->slug]) }}" class="stretched-link"></a>
+                    <a href="{{ route('termekcsoport_dynamic', $params) }}" class="stretched-link"></a>
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <div class="fw-bold" style="color: #3b5998;">{{ $brand->name }}</div>
                     </div>

@@ -37,4 +37,9 @@ class Category extends Model
     {
         return $this->hasMany(Subcategory::class, 'category_id');
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

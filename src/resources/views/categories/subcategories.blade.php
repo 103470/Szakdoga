@@ -26,7 +26,7 @@
     </p>
 
     @if($subcategories->isEmpty())
-        <p class="text-center">Nincs elérhető alkategória ehhez a kategóriához.</p>
+    <p class="text-center">Nincs elérhető alkategória ehhez a kategóriához.</p>
     @else
         <div class="row">
             @foreach($subcategories as $subcategory)
@@ -38,7 +38,6 @@
                                 'category' => $category->slug,
                                 'subcategory' => $subcategory->slug
                             ]) }}" class="stretched-link"></a>
-
                         </div>
                     </div>
                 </div>

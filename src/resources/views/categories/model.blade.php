@@ -8,7 +8,7 @@
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">B+M Autóalkatrész</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('termekcsoport', $category->slug) }}">{{ $category->name }}</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('termekcsoport_dynamic', [$category->slug, $subcategory->slug]) }}">{{ $subcategory->name }}</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('termekcsoport_vintage', [$category->slug, $subcategory->slug, $brand->slug, $type->slug]) }}">{{ $type->name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('termekcsoport_vintage', [$category->slug, $subcategory->slug, $productCategory->slug ?? null, $brand->slug, $type->slug ]) }}">{{ $type->name }}</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ $vintage->frame }}</li>
             </ol>
         </nav>
@@ -50,7 +50,16 @@
                                 <td colspan="5" class="text-start"><strong>{{ $fuel }}</strong></td>
                             </tr>
                             @foreach($models as $model)
-                                <tr onclick="window.location='{{ route('termekcsoport_dynamic', [$category->slug, $subcategory->slug, $model->slug]) }}';" style="cursor:pointer;">
+                                <tr onclick="window.location='{{ route('termekcsoport_products', [
+                                    'categorySlug' => $category->slug,
+                                    'subcategorySlug' => $subcategory->slug,
+                                    'productCategorySlug' => optional($productCategory)->slug,
+                                    'brandSlug' => $brand->slug,
+                                    'typeSlug' => $type->slug,
+                                    'vintageSlug' => $vintage->slug,
+                                    'modelSlug' => $model->slug
+                                ]) }}'" style="cursor:pointer;">
+                                
                                     <td>{{ $model->fullName }}</td>
                                     <td>{{ $model->year_range }}</td>
                                     <td>{{ $model->ccm_formatted }}</td>

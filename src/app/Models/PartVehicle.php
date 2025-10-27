@@ -15,7 +15,7 @@ class PartVehicle extends Model
 
     protected $fillable = [
         'oem_number_id',
-        'unique_id',
+        'unique_code',
     ];
 
     public function oemNumber()
@@ -25,6 +25,6 @@ class PartVehicle extends Model
 
     public function brandModel()
     {
-        return $this->belongsTo(BrandModel::class, 'unique_id', 'unique_id');
+        return $this->belongsTo(BrandModel::class, 'unique_code', 'unique_code');
     }
 }

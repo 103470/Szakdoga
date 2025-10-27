@@ -41,6 +41,7 @@
                     onclick="window.location='{{ route('termekcsoport_model', [
                         'categorySlug' => $category->slug,
                         'subcategorySlug' => $subcategory->slug,
+                        'productCategorySlug' => optional($productCategory)->slug,
                         'brandSlug' => $brand->slug,
                         'typeSlug' => $type->slug,
                         'vintageSlug' => $vintage->slug
