@@ -44,7 +44,7 @@
             <div class="login-right">
                 <div class="promo-text">
                     <h2>EREDETI / UTÁNGYÁRTOTT / TELJESÍTMÉNY ALKATRÉSZEK</h2>
-                    <h1>AUTÓALKATRÉSZEK EURÓPAI MÁRKÁKHOZ</h1>
+                    <h1>AUTÓALKATRÉSZEK MINDEN MÁRKÁKHOZ</h1>
                     <p>
                         Online katalógusunk több mint 190.000 prémium minőségű alkatrészt tartalmaz,
                         beleértve a BMW, Audi, Volkswagen, Mercedes és Porsche modelleket.
@@ -80,12 +80,10 @@
         }
 
         .promo-img {
-            position: absolute;
-            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(45%);
+            object-position: 80% 100%;
         }
 
         .promo-text {

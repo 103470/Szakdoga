@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,87 +15,111 @@
             display: flex;
             flex-direction: column;
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(120deg, #f4f4f4 0%, #e0e7ff 100%);
+            background: linear-gradient(120deg, #f0f0f0 0%, #d6d6d6 100%);
+            color: #222;
         }
-        header, footer {
-            background-color: #22223b;
-            color: #fff;
+
+        /* HEADER */
+        header {
+            background-color: #2b2b2b;
+            color: #eaeaea;
             text-align: center;
-            padding: 1.5em 0;
-            letter-spacing: 1px;
-            font-size: 1.2em;
+            padding: 1.2em 0;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
+
+        /* MAIN */
         main {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2em 1em;
         }
+
+        /* FORM CONTAINER */
         .form-container {
             background: #fff;
             padding: 2.5em 2em;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(34,34,59,0.12);
-            max-width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            max-width: 420px;
             width: 100%;
         }
+
         form div {
-            margin-bottom: 1.5em;
+            margin-bottom: 1.2em;
         }
+
         label {
             display: block;
-            margin-bottom: 0.5em;
+            margin-bottom: 0.4em;
             font-weight: 500;
-            color: #22223b;
+            color: #333;
         }
-        input[type="email"], input[type="password"] {
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 0.75em;
-            border: 1px solid #c9c9c9;
-            border-radius: 8px;
+            border: 1px solid #bdbdbd;
+            border-radius: 6px;
             font-size: 1em;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fafafa;
         }
-        input[type="text"], input[type="email"], input[type="password"] {
-            width: 100%;
-            padding: 0.75em;
-            border: 1px solid #c9c9c9;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.2s;
-        }
-        input[type="email"]:focus, input[type="password"]:focus {
-            border-color: #4f46e5;
+
+        input:focus {
+            border-color: #5a5a5a;
+            box-shadow: 0 0 4px rgba(0,0,0,0.1);
             outline: none;
         }
+
+        /* BUTTONS */
         button {
             width: 100%;
             padding: 0.75em;
-            background: linear-gradient(90deg, #4f46e5 0%, #22223b 100%);
+            background: linear-gradient(90deg, #3a3a3a 0%, #1f1f1f 100%);
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.3s ease, transform 0.1s ease;
         }
+
         button:hover {
-            background: linear-gradient(90deg, #22223b 0%, #4f46e5 100%);
+            background: linear-gradient(90deg, #505050 0%, #2c2c2c 100%);
+            transform: translateY(-2px);
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #2b2b2b;
+            color: #ccc;
+            text-align: center;
+            padding: 1em 0;
+            font-size: 0.9em;
+            border-top: 1px solid #444;
         }
     </style>
 </head>
 <body>
     <header>
-        <!-- Add your site header here -->
-        Login and Registration
+        Bejelentkezés és Regisztráció
     </header>
+
     <main>
         {{ $slot }}
     </main>
+
     <footer>
-        <!-- Add your site footer here -->
-        &copy; {{ date('Y') }} Bazsa. All rights reserved.
+        &copy; {{ date('Y') }} B + M Autóalkatrész Webshop. Minden jog fenntartva.
     </footer>
 </body>
 </html>

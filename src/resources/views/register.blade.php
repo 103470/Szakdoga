@@ -1,5 +1,7 @@
 <x-layout>
     <div class="form-container">
+        <h2 class="form-title">Regisztráció</h2>
+
         <form id="registerForm" method="POST" action="{{ route('register') }}">
             @csrf
 
@@ -32,7 +34,7 @@
                 <div class="form-group">
                     <label for="password">Jelszó:</label>
                     <input type="password" name="password" id="password" required>
-                    <small>A jelszónak legalább 5 karakter hosszúnak kell lennie, és tartalmaznia kell legalább 1 számot és 1 nagybetűt!</small>
+                    <small>A jelszónak legalább 5 karakter hosszúnak kell lennie, és tartalmaznia kell legalább 1 számot és 1 nagybetűt.</small>
                 </div>
                 <div class="form-group">
                     <label for="password_confirmation">Jelszó megerősítése:</label>
@@ -40,12 +42,14 @@
                 </div>
             </div>
 
-            {{-- Magánszemély / Jogi személy (radio) --}}
+            {{-- Regisztráció típusa --}}
             <div class="form-row">
                 <div class="form-group full-width">
                     <label>Regisztráció típusa:</label>
-                    <label><input type="radio" name="account_type" value="personal" required> Magánszemély</label>
-                    <label><input type="radio" name="account_type" value="business"> Jogi személy</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="account_type" value="personal" required> Magánszemély</label>
+                        <label><input type="radio" name="account_type" value="business"> Jogi személy</label>
+                    </div>
                 </div>
             </div>
 
@@ -59,216 +63,238 @@
                             <option value="+1">🇺🇸 +1</option>
                             <option value="+44">🇬🇧 +44</option>
                             <option value="+49">🇩🇪 +49</option>
-                            <!-- További országok -->
                         </select>
                         <input type="tel" name="phone_number" id="phone" pattern="[0-9]*" inputmode="numeric" placeholder="123456789" required>
                     </div>
                 </div>
             </div>
 
-            {{-- Számlázási és szállítási cím --}}
+            {{-- Címek --}}
             <div class="form-row address-row">
                 <fieldset class="address-fieldset">
                     <legend>Számlázási cím</legend>
-                    <select name="billing_country" required>
-                        <option value="">Ország</option>
-                        <option value="Hungary">Magyarország</option>
-                        <option value="USA">USA</option>
-                        <option value="UK">UK</option>
-                        <option value="Germany">Németország</option>
-                        <!-- További országok -->
-                    </select>
-                    <input type="text" name="billing_zip" placeholder="Irányítószám" pattern="\d*" inputmode="numeric" required>
-                    <input type="text" name="billing_city" placeholder="Város" required>
-                    <input type="text" name="billing_street_name" placeholder="Közterület neve" required>
-                    <input type="text" name="billing_street_type" placeholder="Közterület jellege" required>
-                    <input type="text" name="billing_house_number" placeholder="Házszám" pattern="\d*" inputmode="numeric" required>
-                    <input type="text" name="billing_building" placeholder="Épület">
-                    <input type="text" name="billing_floor" placeholder="Emelet">
-                    <input type="text" name="billing_door" placeholder="Ajtó">
+                    <div class="address-fields">
+                        <select name="billing_country" required>
+                            <option value="">Ország</option>
+                            <option value="Hungary">Magyarország</option>
+                            <option value="USA">USA</option>
+                            <option value="UK">UK</option>
+                            <option value="Germany">Németország</option>
+                        </select>
+                        <input type="text" name="billing_zip" placeholder="Irányítószám" pattern="\d*" required>
+                        <input type="text" name="billing_city" placeholder="Város" required>
+                        <input type="text" name="billing_street_name" placeholder="Közterület neve" required>
+                        <input type="text" name="billing_street_type" placeholder="Közterület jellege" required>
+                        <input type="text" name="billing_house_number" placeholder="Házszám" pattern="\d*" required>
+                        <input type="text" name="billing_building" placeholder="Épület">
+                        <input type="text" name="billing_floor" placeholder="Emelet">
+                        <input type="text" name="billing_door" placeholder="Ajtó">
+                    </div>
                 </fieldset>
 
                 <fieldset class="address-fieldset">
                     <legend>Szállítási cím</legend>
-                    <select name="shipping_country" required>
-                        <option value="">Ország</option>
-                        <option value="Hungary">Magyarország</option>
-                        <option value="USA">USA</option>
-                        <option value="UK">UK</option>
-                        <option value="Germany">Németország</option>
-                        <!-- További országok -->
-                    </select>
-                    <input type="text" name="shipping_zip" placeholder="Irányítószám" pattern="\d*" inputmode="numeric" required>
-                    <input type="text" name="shipping_city" placeholder="Város" required>
-                    <input type="text" name="shipping_street_name" placeholder="Közterület neve" required>
-                    <input type="text" name="shipping_street_type" placeholder="Közterület jellege" required>
-                    <input type="text" name="shipping_house_number" placeholder="Házszám" pattern="\d*" inputmode="numeric" required>
-                    <input type="text" name="shipping_building" placeholder="Épület">
-                    <input type="text" name="shipping_floor" placeholder="Emelet">
-                    <input type="text" name="shipping_door" placeholder="Ajtó">
+                    <div class="address-fields">
+                        <select name="shipping_country" required>
+                            <option value="">Ország</option>
+                            <option value="Hungary">Magyarország</option>
+                            <option value="USA">USA</option>
+                            <option value="UK">UK</option>
+                            <option value="Germany">Németország</option>
+                        </select>
+                        <input type="text" name="shipping_zip" placeholder="Irányítószám" pattern="\d*" required>
+                        <input type="text" name="shipping_city" placeholder="Város" required>
+                        <input type="text" name="shipping_street_name" placeholder="Közterület neve" required>
+                        <input type="text" name="shipping_street_type" placeholder="Közterület jellege" required>
+                        <input type="text" name="shipping_house_number" placeholder="Házszám" pattern="\d*" required>
+                        <input type="text" name="shipping_building" placeholder="Épület">
+                        <input type="text" name="shipping_floor" placeholder="Emelet">
+                        <input type="text" name="shipping_door" placeholder="Ajtó">
+                    </div>
                 </fieldset>
             </div>
 
             {{-- Elfogadások --}}
             <div class="form-row checkbox-row vertical">
-                <label>
-                    <input type="checkbox" name="accept_tos" required>
-                    Elfogadom az <a href="#">Általános Szerződési Feltételeket</a>
-                </label>
-                <label>
-                    <input type="checkbox" name="accept_privacy" required>
-                    Elfogadom az <a href="#">Adatvédelmi Nyilatkozatot</a>
-                </label>
-                <label>
-                    <input type="checkbox" name="subscribe_newsletter">
-                    Feliratkozom a hírlevélre
-                </label>
+                <label><input type="checkbox" name="accept_tos" required> Elfogadom az <a href="#">ÁSZF-et</a></label>
+                <label><input type="checkbox" name="accept_privacy" required> Elfogadom az <a href="#">Adatvédelmi Nyilatkozatot</a></label>
+                <label><input type="checkbox" name="subscribe_newsletter"> Feliratkozom a hírlevélre</label>
             </div>
 
             <div class="form-row">
-                <button type="submit">Register</button>
+                <button type="submit">Regisztráció</button>
             </div>
         </form>
 
-        <div style="text-align:center; margin-top: 1.5em;">
-            <span>Already have an account?</span>
-            <a href="{{ route('login') }}" class="register-link">Login</a>
+        <div class="login-link">
+            Már van fiókod? <a href="{{ route('login') }}">Jelentkezz be</a>
         </div>
     </div>
 
     <style>
-.form-container {
-    max-width: 900px;
-    margin: auto;
-    padding: 1em;
-    font-family: sans-serif;
-}
+        body {
+            background: linear-gradient(145deg, #d8d8d8 0%, #f4f4f4 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
 
-/* Sorok és rugalmas elrendezés */
-.form-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em; /* távolság a mezők között */
-    margin-bottom: 1em;
-}
+        .form-container {
+            background: #ffffff;
+            padding: 3em 2.5em;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            max-width: 950px;
+            margin: 3em auto;
+        }
 
-.form-group {
-    flex: 1 1 45%; /* kb. 2 mező fér ki sorban */
-    display: flex;
-    flex-direction: column;
-    min-width: 180px;
-}
+        .form-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 1.8em;
+        }
 
-.full-width {
-    flex: 1 1 100%;
-    max-width: 600px;   /* <<< ne legyen túl széles */
-}
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5em;
+            margin-bottom: 1.5em;
+        }
 
-/* Cím mezők */
-.address-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2em;
-}
-.address-fieldset {
-    flex: 1 1 48%;
-    border: 1px solid #ccc;
-    padding: 0.8em;
-    border-radius: 8px;
-    min-width: 200px;
-}
+        .form-group {
+            flex: 1 1 45%;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* Checkbox sor */
-.checkbox-row.vertical label {
-    display: flex;
-    align-items: center;
-    gap: 0.5em; /* <<< checkbox közelebb kerül a szöveghez */
-    margin-bottom: 0.5em;
-}
+        .full-width { flex: 1 1 100%; }
 
-/* Telefon mező */
-.phone-container {
-    display: flex;
-    gap: 0.5em;
-}
-.phone-container select {
-    flex: 0 0 90px; /* fix szélesség az országkódnak */
-}
-.phone-container input {
-    flex: 1; /* maradék hely */
-}
+        label {
+            font-weight: 500;
+            color: #2c2c2c;
+            margin-bottom: 0.4em;
+        }
 
-/* Input és select mezők */
-input, select, textarea {
-    width: 100%;
-    padding: 0.5em;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 0.9em;
-    box-sizing: border-box;
-}
+        input, select {
+            padding: 0.9em;
+            border: 1px solid #c5c5c5;
+            border-radius: 8px;
+            background: #fafafa;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
 
-/* De a checkboxok és radio-k ne legyenek szélesek */
-input[type="checkbox"],
-input[type="radio"] {
-    width: auto;
-}
+        input:focus, select:focus {
+            border-color: #555;
+            box-shadow: 0 0 6px rgba(85, 85, 85, 0.3);
+            outline: none;
+        }
 
-/* Gombok */
-button {
-    padding: 0.65em 1.2em;
-    font-size: 0.95em;
-    border: none;
-    border-radius: 8px;
-    background: #007BFF;
-    color: #fff;
-    cursor: pointer;
-    transition: 0.2s;
-}
-button:hover {
-    background: #0056b3;
-}
+        small {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 0.3em;
+        }
 
-/* Reszponzív */
-@media(max-width:768px){
-    .form-row { flex-direction: column; }
-    .form-group { flex:1 1 100%; }
-    .address-row { flex-direction: column; }
-    .full-width { max-width: 100%; } /* mobilon nyúlhat teljes szélességre */
-}
+        .phone-container {
+            display: flex;
+            gap: 0.5em;
+        }
+
+        fieldset {
+            border: 1px solid #d0d0d0;
+            border-radius: 10px;
+            padding: 1.5em;
+            background: #f9f9f9;
+            flex: 1 1 45%;
+        }
+
+        legend {
+            padding: 0 0.8em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .address-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1em;
+        }
+
+        .checkbox-row.vertical label {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            margin-bottom: 0.6em;
+            font-size: 0.95em;
+        }
+
+        button {
+            width: 100%;
+            padding: 1em;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 600;
+            background: linear-gradient(90deg, #3a3a3a, #1f1f1f);
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.15s;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #1f1f1f, #3a3a3a);
+            transform: translateY(-2px);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.8em;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .login-link a {
+            color: #000;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media(max-width: 768px) {
+            .form-row { flex-direction: column; }
+            fieldset { flex: 1 1 100%; }
+        }
     </style>
 
+    {{-- VALIDÁLÁS --}}
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(e) {
-            let form = e.target;
-            let email = form.email.value;
-            let emailConfirm = form.email_confirmation.value;
-            let password = form.password.value;
-            let passwordConfirm = form.password_confirmation.value;
-            let passwordRegex = /^(?=.*[A-Z])(?=.*\d).{5,}$/;
+            const f = e.target;
+            const pw = f.password.value;
+            const pw2 = f.password_confirmation.value;
+            const em = f.email.value;
+            const em2 = f.email_confirmation.value;
+            const pwRegex = /^(?=.*[A-Z])(?=.*\d).{5,}$/;
 
-            if(email !== emailConfirm) {
+            if (em !== em2) {
                 alert('Az email címek nem egyeznek.');
-                e.preventDefault();
-                return;
+                e.preventDefault(); return;
             }
-
-            if(!passwordRegex.test(password)) {
-                alert('A jelszó nem felel meg a szabályoknak.');
-                e.preventDefault();
-                return;
+            if (!pwRegex.test(pw)) {
+                alert('A jelszó nem felel meg a követelményeknek.');
+                e.preventDefault(); return;
             }
-
-            if(password !== passwordConfirm) {
+            if (pw !== pw2) {
                 alert('A jelszó megerősítése nem egyezik.');
-                e.preventDefault();
-                return;
+                e.preventDefault(); return;
             }
-
-            if(!form.accept_tos.checked || !form.accept_privacy.checked) {
-                alert('El kell fogadni a feltételeket és az adatvédelmi nyilatkozatot.');
-                e.preventDefault();
-                return;
+            if (!f.accept_tos.checked || !f.accept_privacy.checked) {
+                alert('El kell fogadni az ÁSZF-et és az Adatvédelmi Nyilatkozatot.');
+                e.preventDefault(); return;
             }
         });
     </script>
