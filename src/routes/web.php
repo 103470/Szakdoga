@@ -35,12 +35,12 @@ Route::get('/test-middleware', function () {
 
 
 
-// SOCIAL LOGIN
+//SOCIAL LOGIN
 Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('social.redirect');
 Route::get('login/{provider}/callback', [SocialController::class, 'callback']);
 
 
-// ADMIN DASHBOARD
+//ADMIN DASHBOARD
 Route::middleware(['auth', AdminOnlyMiddleware::class])->prefix('admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::resource('users', AdminUserController::class, ['as' => 'admin']);
@@ -49,7 +49,7 @@ Route::middleware(['auth', AdminOnlyMiddleware::class])->prefix('admin')->group(
 
 
 
-// USER DASHBOARD
+//USER DASHBOARD
 Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::get('/', [App\Http\Controllers\UserDashboardController::class, 'index'])
          ->name('user.dashboard');
@@ -70,18 +70,21 @@ Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
     
     ->name('password.request');
 
-// 🔹 Email küldése a jelszó-visszaállítás linkkel
+//Email küldése a jelszó-visszaállítás linkkel
 Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('password.email');
 
-// 🔹 Jelszó visszaállítás űrlap a kapott token alapján
+//Jelszó visszaállítás űrlap a kapott token alapján
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])
     ->middleware('guest')
     ->name('password.reset');
 
-// 🔹 Új jelszó mentése
+//Új jelszó mentése
 Route::post('/reset-password', [ResetPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('password.update');
+
+Route::view('/aszf', 'aszf')->name('aszf');
+Route::view('/adatvedelem', 'adatvedelem')->name('adatvedelem');
 

@@ -23,4 +23,15 @@
             </div>
         </div>
     </div>
+
+    <style>
+.auth-footer a {
+    color: #555;
+    text-decoration: none;
+}
+.auth-footer a:hover {
+    color: #222;
+    text-decoration: underline;
+}
+</style>
 </x-layout>
