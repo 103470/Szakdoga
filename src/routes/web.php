@@ -27,7 +27,8 @@ Route::get('/tipus/{slug}', function($slug) {
 
     $rareBrand = RareBrand::where('slug', $slug)->first();
     if ($rareBrand) {
-        return view('rarebrands.type', compact('rareBrand'));
+        $types = \App\Models\RareBrands\Type::where('rare_brand_id', $rareBrand->id)->get();
+        return view('rarebrands.type', compact('rareBrand', 'types'));
     }
 
     abort(404);
