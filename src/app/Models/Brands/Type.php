@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Models\Brand;
-use App\Models\Brands\Type;
+use App\Models\Brands\Vintage;
 
 class Type extends Model
 {

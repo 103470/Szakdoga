@@ -24,4 +24,13 @@ class Type extends Model
     {
         return $this->belongsTo(RareBrand::class, 'rare_brand_id');
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($type) {
+            if (empty($type->slug)) {
+                $type->slug = Str::slug($type->name);
+            }
+        });
+    }
 }

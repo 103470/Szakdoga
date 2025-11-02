@@ -33,10 +33,10 @@
             @foreach($types as $type)
                 <div class="col-md-4 col-sm-6 col-12 mb-3">
                     <div class="card type-card mb-2 text-center shadow-sm">
-                        <a href="{{ route('rarebrand_type_select', [
+                        <a href="{{ route('tipus', [
                             'brandSlug' => $rareBrand->slug,
                             'typeSlug' => $type->slug
-                        ]) }}"></a>
+                        ]) }}" class="stretched-link"></a>
 
                         <div class="card-body d-flex align-items-center justify-content-center">
                             <div class="type-card-title fw-semibold">{{ $type->name }}</div>

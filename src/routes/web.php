@@ -35,12 +35,29 @@ Route::get('/tipus/{slug}', function($slug) {
 })->name('marka');
 
 Route::get('/tipus/{brandSlug}/{typeSlug}', function($brandSlug, $typeSlug) {
-    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
-    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail(); 
+    $brand = Brand::where('slug', $brandSlug)->first();
 
-    $vintages = Vintage::where('type_id', $type->id)->get();
+    if ($brand) {
+        $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
+        $vintages = Vintage::where('type_id', $type->id)->get();
 
-    return view('brands.vintage', compact('brand', 'type', 'vintages'));
+        return view('brands.vintage', compact('brand', 'type', 'vintages'));
+    }
+
+    $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+    $type = \App\Models\RareBrands\Type::where('rare_brand_id', $rareBrand->id)
+        ->where('slug', $typeSlug)
+        ->firstOrFail();
+
+    $hasVintage = \App\Models\RareBrands\Vintage::where('type_id', $type->id)->exists();
+
+    if ($hasVintage) {
+        $vintages = \App\Models\RareBrands\Vintage::where('type_id', $type->id)->get();
+        return view('rarebrands.vintage', compact('rareBrand', 'type', 'vintages'));
+    }
+
+    return view('rarebrands.model', compact('rareBrand', 'type'));
+
 })->name('tipus');
 
 
