@@ -4,11 +4,9 @@ namespace App\Models\RareBrands;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 use App\Models\RareBrands\Type;
-use App\Models\RareBrands\Vintage;
 use App\Models\FuelType;
-use App\Models\PartVehicle;
+use App\Models\RareBrands\Vintage;
 
 class RareBrandModel extends Model
 {
@@ -18,7 +16,9 @@ class RareBrandModel extends Model
 
     protected $fillable = [
         'type_id',
+        'unique_code',
         'name',
+        'slug',
         'ccm',
         'kw_hp',
         'engine_type',
@@ -29,23 +29,17 @@ class RareBrandModel extends Model
         'month_to',
         'frame',
         'updated_by',
-        'deleted_by'
+        'deleted_by',
     ];
-
-    public function getFullNameAttribute()
-    {
-        $fuel = $this->fuelType ? Str::title($this->fuelType->name) . ' ' : '';
-        return $fuel . $this->name;
-    }
 
     public function type()
     {
         return $this->belongsTo(Type::class, 'type_id');
     }
 
-    public function brand()
+    public function fuelType()
     {
-        return $this->type ? $this->type->brand() : null;
+        return $this->belongsTo(FuelType::class, 'fuel_type_id');
     }
 
     public function vintage()
@@ -53,71 +47,29 @@ class RareBrandModel extends Model
         return $this->belongsTo(Vintage::class, 'frame', 'frame');
     }
 
-    public function fuelType()
+    public function getFullNameAttribute()
     {
-        return $this->belongsTo(FuelType::class);
-    }
-
-    public function partVehicles()
-    {
-        return $this->hasMany(PartVehicle::class, 'unique_code', 'unique_code');
+        return "{$this->name}";
     }
 
     public function getYearRangeAttribute()
     {
-        return sprintf(
-            '%d/%02d - %d/%02d',
-            $this->year_from,
-            $this->month_from,
-            $this->year_to,
-            $this->month_to
-        );
+        return "{$this->year_from}.{$this->month_from} - {$this->year_to}.{$this->month_to}";
     }
 
     public function getCcmFormattedAttribute()
     {
-        return $this->ccm ? $this->ccm . ' ccm' : null;
+        return $this->ccm ? number_format($this->ccm, 0, '', ' ') : null;
     }
 
     public function getKwLeFormattedAttribute()
     {
-        if (!$this->kw_hp) return null;
-
-        $parts = explode('/', $this->kw_hp);
-        if (count($parts) === 2) {
-            return $parts[0] . ' kW / ' . $parts[1] . ' LE';
-        }
-
         return $this->kw_hp;
     }
 
-    public function belongsToVintage(Vintage $vintage): bool
+    public static function forVintage($vintage)
     {
-        $yearMatch = $this->year_from <= $vintage->year_to && $this->year_to >= $vintage->year_from;
-        $frameMatch = $vintage->frame ? $this->frame === $vintage->frame : true;
-
-        return $yearMatch && $frameMatch;
-    }
-
-    public function scopeForVintage($query, Vintage $vintage)
-    {
-        return $query->where('type_id', $vintage->type_id)
-                     ->where('year_from', '<=', $vintage->year_to)
-                     ->where('year_to', '>=', $vintage->year_from)
-                     ->when($vintage->frame, function ($q) use ($vintage) {
-                         $q->where('frame', $vintage->frame);
-                     });
-    }
-
-    public static function groupedByFuel($models)
-    {
-        $benzin = $models->filter(fn($m) => $m->fuelType && $m->fuelType->name === 'benzin')->sortBy('name');
-        $dizel  = $models->filter(fn($m) => $m->fuelType && $m->fuelType->name === 'dízel')->sortBy('name');
-
-        return [
-            'Benzin' => $benzin,
-            'Dízel'  => $dizel,
-        ];
+        return static::where('frame', $vintage->frame);
     }
 
     protected static function booted()
@@ -143,7 +95,7 @@ class RareBrandModel extends Model
                         $model->year_from . '_' .
                         $model->month_from . '_' .
                         $model->year_to . '_' .
-                        $model->month_to . '_' .
+                        $model->month_to . '_' .  
                         $fuelTypeName;
 
                 if ($model->ccm) {
@@ -159,12 +111,23 @@ class RareBrandModel extends Model
                 }
 
                 $hash = abs(crc32($input));
-                $model->unique_code = 1000 + ($hash % 9000000);
+                $model->unique_code = 1000 + ($hash % 9000000); 
             }
 
             if (empty($model->slug)) {
                 $model->slug = Str::slug((string) $model->unique_code);
             }
         });
+    }
+
+    public static function groupedByFuel($models)
+    {
+        $benzin = $models->filter(fn($m) => $m->fuelType && $m->fuelType->name === 'benzin')->sortBy('name');
+        $dizel  = $models->filter(fn($m) => $m->fuelType && $m->fuelType->name === 'dízel')->sortBy('name');
+
+        return [
+            'Benzin' => $benzin,
+            'Dízel'  => $dizel,
+        ];
     }
 }

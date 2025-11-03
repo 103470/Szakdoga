@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\OemNumber;
 use App\Models\Brands\BrandModel;
+use App\Models\RareBrands\RareBrandModel;
 
 class PartVehicle extends Model
 {
@@ -27,4 +28,10 @@ class PartVehicle extends Model
     {
         return $this->belongsTo(BrandModel::class, 'unique_code', 'unique_code');
     }
+
+    public function rareBrandModel()
+    {
+        return $this->belongsTo(RareBrandModel::class, 'unique_code', 'unique_code');
+    }
+
 }

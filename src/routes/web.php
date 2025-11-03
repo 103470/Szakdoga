@@ -12,6 +12,9 @@ use App\Models\Brands\BrandModel;
 use App\Models\SubCategory;
 use App\Models\ProductCategory;
 use App\Models\Product;
+use App\Models\RareBrands\Type as RareType;
+use App\Models\RareBrands\Vintage as RareVintage;
+use App\Models\RareBrands\RareBrandModel;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,7 +30,7 @@ Route::get('/tipus/{slug}', function($slug) {
 
     $rareBrand = RareBrand::where('slug', $slug)->first();
     if ($rareBrand) {
-        $types = \App\Models\RareBrands\Type::where('rare_brand_id', $rareBrand->id)->get();
+        $types = RareType::where('rare_brand_id', $rareBrand->id)->get();
         return view('rarebrands.type', compact('rareBrand', 'types'));
     }
 
@@ -45,14 +48,14 @@ Route::get('/tipus/{brandSlug}/{typeSlug}', function($brandSlug, $typeSlug) {
     }
 
     $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
-    $type = \App\Models\RareBrands\Type::where('rare_brand_id', $rareBrand->id)
+    $type = RareType::where('rare_brand_id', $rareBrand->id)
         ->where('slug', $typeSlug)
         ->firstOrFail();
 
-    $hasVintage = \App\Models\RareBrands\Vintage::where('type_id', $type->id)->exists();
+    $hasVintage = RareVintage::where('type_id', $type->id)->exists();
 
     if ($hasVintage) {
-        $vintages = \App\Models\RareBrands\Vintage::where('type_id', $type->id)->get();
+        $vintages = RareVintage::where('type_id', $type->id)->get();
         return view('rarebrands.vintage', compact('rareBrand', 'type', 'vintages'));
     }
 
@@ -62,17 +65,36 @@ Route::get('/tipus/{brandSlug}/{typeSlug}', function($brandSlug, $typeSlug) {
 
 
 Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}', function($brandSlug, $typeSlug, $vintageSlug) {
-    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
-    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail(); 
+    $brand = Brand::where('slug', $brandSlug)->first();
 
-    $vintage = Vintage::where('type_id', $type->id)
-                      ->where('slug', $vintageSlug)
-                      ->firstOrFail();
+    if ($brand) {
+        $type = $brand->types()->where('slug', $typeSlug)->firstOrFail(); 
 
-    $models = BrandModel::forVintage($vintage)->get();
-    $groupedModels = BrandModel::groupedByFuel($models);
+        $vintage = Vintage::where('type_id', $type->id)
+                          ->where('slug', $vintageSlug)
+                          ->firstOrFail();
 
-    return view('brands.model', compact('brand', 'type', 'vintage', 'models', 'groupedModels'));
+        $models = BrandModel::forVintage($vintage)->get();
+        $groupedModels = BrandModel::groupedByFuel($models);
+
+        return view('brands.model', compact('brand', 'type', 'vintage', 'models', 'groupedModels'));
+    }
+
+    $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+
+    $type = RareType::where('rare_brand_id', $rareBrand->id)
+        ->where('slug', $typeSlug)
+        ->firstOrFail();
+
+    $vintage = RareVintage::where('type_id', $type->id)
+        ->where('slug', $vintageSlug)
+        ->firstOrFail();
+
+    $models = RareBrandModel::forVintage($vintage)->get();
+    $groupedModels = RareBrandModel::groupedByFuel($models);
+
+    return view('rarebrands.model', compact('rareBrand', 'type', 'vintage', 'models', 'groupedModels'));
+    
 })->name('model');
 
 Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function($brandSlug, $typeSlug, $vintageSlug, $modelSlug) {
