@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Models\RareBrands\Type;
 
 class RareBrand extends Model
 {
@@ -20,4 +21,10 @@ class RareBrand extends Model
             }
         });
     }
+
+    public function types()
+    {
+        return $this->hasMany(Type::class);
+    }
+
 }

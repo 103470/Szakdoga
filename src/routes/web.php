@@ -368,9 +368,15 @@ Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategorySl
     }
 
     if ($brandSlug) {
-        $brand = Brand::where('slug', $brandSlug)->firstOrFail();
-        $types = $brand->types;
-        return view('categories.type', compact('category', 'subcategory', 'brand', 'types', 'productCategory'));
+        $brand = Brand::where('slug', $brandSlug)->first();
+        if ($brand) {
+            $types = $brand->types;
+            return view('categories.type', compact('category', 'subcategory', 'brand', 'types', 'productCategory'));
+        }
+
+        $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+        $rareTypes = $rareBrand->types; 
+        return view('categories.raretypes', compact('category', 'subcategory', 'rareBrand', 'rareTypes', 'productCategory'));
     }
 
     if ($productCategory) {
