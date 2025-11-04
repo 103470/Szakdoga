@@ -98,23 +98,48 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}', function($brandSlug, $
 })->name('model');
 
 Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function($brandSlug, $typeSlug, $vintageSlug, $modelSlug) {
-    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
-    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail(); 
+    $brand = Brand::where('slug', $brandSlug)->first();
 
-    $vintage = Vintage::where('type_id', $type->id)
-                      ->where('slug', $vintageSlug)
-                      ->firstOrFail();
+    if ($brand) {
+        $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
 
-    $model = BrandModel::where('slug', $modelSlug)
-                       ->where('type_id', $type->id)
-                       ->firstOrFail();
+        $vintage = Vintage::where('type_id', $type->id)
+                          ->where('slug', $vintageSlug)
+                          ->firstOrFail();
+
+        $model = BrandModel::where('slug', $modelSlug)
+                           ->where('type_id', $type->id)
+                           ->firstOrFail();
+
+        $categories = Category::where('requires_model', true)
+                              ->orderBy('name')
+                              ->get();
+
+        return view('brands.categories', compact('brand', 'type', 'vintage', 'model', 'categories'));
+    }
+
+    $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+
+    $type = RareType::where('rare_brand_id', $rareBrand->id)
+        ->where('slug', $typeSlug)
+        ->firstOrFail();
+
+    $vintage = RareVintage::where('type_id', $type->id)
+        ->where('slug', $vintageSlug)
+        ->firstOrFail();
+
+    $model = RareBrandModel::where('slug', $modelSlug)
+        ->where('type_id', $type->id)
+        ->firstOrFail();
 
     $categories = Category::where('requires_model', true)
                           ->orderBy('name')
                           ->get();
 
-    return view('brands.categories', compact('brand', 'type', 'vintage', 'model', 'categories'));
+    return view('rarebrands.categories', compact('rareBrand', 'type', 'vintage', 'model', 'categories'));
+
 })->name('kategoria');
+
 
 Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', function(
     $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug
