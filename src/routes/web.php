@@ -411,7 +411,6 @@ Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug
 function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSlug, $typeSlug) {
 
     $category = Category::where('slug', $categorySlug)->firstOrFail();
-
     $subcategory = SubCategory::where('slug', $subcategorySlug)
         ->where('category_id', $category->kategory_id)
         ->firstOrFail();
@@ -423,18 +422,30 @@ function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSl
             ->firstOrFail();
     }
 
-    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $brand = Brand::where('slug', $brandSlug)->first();
 
-    $type = Type::where('slug', $typeSlug)
-        ->where('brand_id', $brand->id)
+    if ($brand) {
+        $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
+        $vintages = Vintage::where('type_id', $type->id)->get();
+        return view('categories.vintage', compact('category','subcategory','productCategory','brand','type','vintages'));
+    }
+
+    $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+    $type = RareType::where('rare_brand_id', $rareBrand->id)
+        ->where('slug', $typeSlug)
         ->firstOrFail();
 
-    $vintages = Vintage::where('type_id', $type->id)->get();
+    $hasVintage = RareVintage::where('type_id', $type->id)->exists();
 
-    return view('categories.vintage', compact(
-        'category', 'subcategory', 'productCategory', 'brand', 'type', 'vintages'
-    ));
+    if ($hasVintage) {
+        $vintages = RareVintage::where('type_id', $type->id)->get();    
+        return view('categories.rarevintage', compact('category','subcategory','productCategory','rareBrand','type','vintages'));
+    }
+
+    return view('categories.raremodel', compact('category','subcategory','productCategory','rareBrand','type'));
+
 })->name('termekcsoport_vintage');
+
 
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug?}/{brandSlug}/{typeSlug}/{vintageSlug}', 

@@ -55,4 +55,15 @@ class Vintage extends Model
             }
         });
     }
+
+    public function getVintageRangeAttribute()
+    {
+        return sprintf(
+            '%d/%02d - %d/%02d',
+            $this->year_from,
+            $this->month_from,
+            $this->year_to,
+            $this->month_to
+        );
+    }
 }

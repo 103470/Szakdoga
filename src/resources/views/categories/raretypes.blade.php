@@ -26,11 +26,6 @@
     </div>
 
     <div class="d-flex align-items-center mb-4">
-        <div class="me-3">
-            @if($rareBrand->logo)
-                <img src="{{ asset('storage/' . $rareBrand->logo) }}" alt="{{ $rareBrand->name }}" class="img-fluid" style="max-height: 100px;">
-            @endif
-        </div>
         <h2 class="border-start border-4 theme-blue-border ps-3 mb-0">
             {{ $rareBrand->name }}
         </h2>
