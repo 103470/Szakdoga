@@ -28,6 +28,7 @@ class RareBrandModel extends Model
         'year_to',
         'month_to',
         'frame',
+        'body_type',
         'updated_by',
         'deleted_by',
     ];
@@ -45,6 +46,11 @@ class RareBrandModel extends Model
     public function vintage()
     {
         return $this->belongsTo(Vintage::class, 'frame', 'frame');
+    }
+
+    public function partVehicles()
+    {
+        return $this->hasMany(PartVehicle::class, 'unique_code', 'unique_code');
     }
 
     public function getFullNameAttribute()
@@ -70,6 +76,17 @@ class RareBrandModel extends Model
     public static function forVintage($vintage)
     {
         return static::where('frame', $vintage->frame);
+    }
+
+    public function scopeForVintage($query, $vintage)
+    {
+        return $query->where('type_id', $vintage->type_id)
+            ->when($vintage->frame, function ($q) use ($vintage) {
+                $q->where('frame', $vintage->frame);
+            })
+            ->when(!empty($vintage->body_type), function ($q) use ($vintage) {
+                $q->where('body_type', $vintage->body_type);
+            });
     }
 
     protected static function booted()

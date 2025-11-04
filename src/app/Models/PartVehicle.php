@@ -34,4 +34,12 @@ class PartVehicle extends Model
         return $this->belongsTo(RareBrandModel::class, 'unique_code', 'unique_code');
     }
 
+    public function getModelAttribute()
+    {
+        return $this->model_source === 'brand'
+            ? $this->brandModel
+            : $this->rareBrandModel;
+    }
+    
+
 }

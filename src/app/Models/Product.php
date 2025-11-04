@@ -10,6 +10,7 @@ use App\Models\ProductCategory;
 use App\Models\OemNumber;
 use App\Models\PartVehicle;
 use App\Models\Brands\BrandModel;
+use App\Models\RareBrands\RareBrandModel;
 use App\Models\Review;
 
 class Product extends Model
@@ -117,12 +118,19 @@ class Product extends Model
 
     public function brandModels()
     {
-        return BrandModel::whereIn('unique_code', function($query) {
-            $query->select('unique_code')
-                ->from('part_vehicle')
-                ->join('oem_numbers', 'part_vehicle.oem_number_id', '=', 'oem_numbers.id')
-                ->where('oem_numbers.product_id', $this->id);
-        })->get();
+        $vehicles = \DB::table('part_vehicle')
+            ->join('oem_numbers', 'part_vehicle.oem_number_id', '=', 'oem_numbers.id')
+            ->where('oem_numbers.product_id', $this->id)
+            ->select('unique_code', 'model_source')
+            ->get();
+
+        $brandCodes = $vehicles->where('model_source', 'brand')->pluck('unique_code');
+        $rareCodes = $vehicles->where('model_source', 'rarebrand')->pluck('unique_code');
+
+        $brandModels = BrandModel::whereIn('unique_code', $brandCodes)->get();
+        $rareBrandModels = RareBrandModel::whereIn('unique_code', $rareCodes)->get();
+
+        return $brandModels->merge($rareBrandModels);
     }
 
     public function reviews()

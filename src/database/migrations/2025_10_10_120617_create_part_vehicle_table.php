@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('oem_number_id');
             $table->unsignedBigInteger('unique_code'); 
+            $table->enum('model_source', ['brand', 'rarebrand'])->default('brand');
             $table->timestamps();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
@@ -23,11 +24,6 @@ return new class extends Migration
             $table->foreign('oem_number_id')
                 ->references('id')
                 ->on('oem_numbers')
-                ->onDelete('cascade');
-
-            $table->foreign('unique_code')
-                ->references('unique_code')
-                ->on('brand_models')
                 ->onDelete('cascade');
         });
     }

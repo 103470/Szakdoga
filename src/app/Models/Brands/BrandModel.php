@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Models\RareBrands;
+namespace App\Models\Brands;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use App\Models\RareBrands\Type;
-use App\Models\RareBrands\Vintage;
+use App\Models\Brands\Type;
+use App\Models\Brands\Vintage;
 use App\Models\FuelType;
 use App\Models\PartVehicle;
 
-class RareBrandModel extends Model
+class BrandModel extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'rarebrand_models';
+    protected $table = 'brand_models';
 
     protected $fillable = [
         'type_id',
@@ -28,6 +28,7 @@ class RareBrandModel extends Model
         'year_to',
         'month_to',
         'frame',
+        'body_type',
         'updated_by',
         'deleted_by'
     ];
@@ -99,14 +100,15 @@ class RareBrandModel extends Model
         return $yearMatch && $frameMatch;
     }
 
-    public function scopeForVintage($query, Vintage $vintage)
+    public function scopeForVintage($query, $vintage)
     {
         return $query->where('type_id', $vintage->type_id)
-                     ->where('year_from', '<=', $vintage->year_to)
-                     ->where('year_to', '>=', $vintage->year_from)
-                     ->when($vintage->frame, function ($q) use ($vintage) {
-                         $q->where('frame', $vintage->frame);
-                     });
+            ->when($vintage->frame, function ($q) use ($vintage) {
+                $q->where('frame', $vintage->frame);
+            })
+            ->when(!empty($vintage->body_type), function ($q) use ($vintage) {
+                $q->where('body_type', $vintage->body_type);
+            });
     }
 
     public static function groupedByFuel($models)

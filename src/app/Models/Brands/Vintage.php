@@ -19,6 +19,7 @@ class Vintage extends Model
         'name',
         'slug',
         'frame',
+        'body_type',
         'year_from',
         'month_from',
         'year_to',
