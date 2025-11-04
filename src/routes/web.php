@@ -140,14 +140,43 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function($
 
 })->name('kategoria');
 
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug) {
+    $brand = Brand::where('slug', $brandSlug)->first();
 
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', function(
-    $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug
-) {
-    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
-    $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
-    $vintage = Vintage::where('type_id', $type->id)->where('slug', $vintageSlug)->firstOrFail();
-    $model = BrandModel::where('slug', $modelSlug)->where('type_id', $type->id)->firstOrFail();
+    if ($brand) {
+        $type = $brand->types()->where('slug', $typeSlug)->firstOrFail();
+        $vintage = Vintage::where('type_id', $type->id)->where('slug', $vintageSlug)->firstOrFail();
+        $model = BrandModel::where('slug', $modelSlug)->where('type_id', $type->id)->firstOrFail();
+        $category = Category::where('slug', $categorySlug)->firstOrFail();
+
+        $subcategories = SubCategory::where('category_id', $category->kategory_id)
+            ->where(function ($query) use ($model) {
+                $query->whereHas('fuelType', function ($q) use ($model) {
+                    $q->where('id', $model->fuel_type_id)
+                      ->orWhere('is_universal', true);
+                });
+            })
+            ->get();
+
+        return view('brands.subcategories', compact(
+            'brand', 'type', 'vintage', 'model', 'category', 'subcategories'
+        ));
+    }
+
+    $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+    
+    $type = RareType::where('rare_brand_id', $rareBrand->id)
+        ->where('slug', $typeSlug)
+        ->firstOrFail();
+
+    $vintage = RareVintage::where('type_id', $type->id)
+        ->where('slug', $vintageSlug)
+        ->firstOrFail();
+
+    $model = RareBrandModel::where('slug', $modelSlug)
+        ->where('type_id', $type->id)
+        ->firstOrFail();
+
     $category = Category::where('slug', $categorySlug)->firstOrFail();
 
     $subcategories = SubCategory::where('category_id', $category->kategory_id)
@@ -159,7 +188,9 @@ Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlu
         })
         ->get();
 
-    return view('brands.subcategories', compact('brand', 'type', 'vintage', 'model', 'category', 'subcategories'));
+    return view('rarebrands.subcategories', compact(
+        'rareBrand', 'type', 'vintage', 'model', 'category', 'subcategories'
+    ));
 })->name('alkategoria');
 
 
