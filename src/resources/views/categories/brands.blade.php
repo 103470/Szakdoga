@@ -6,9 +6,32 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">B+M Autóalkatrész</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('termekcsoport', $category->slug) }}">{{ $category->name }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ $subcategory->name }}</li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a></li>
+                <li class="breadcrumb-item">
+                    <a href="{{ route('termekcsoport', ['category' => $category->slug]) }}" class="stretched-link">
+                        {{ $category->name }}
+                    </a>
+                </li>
+
+                @if(isset($subcategory))
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}" class="stretched-link">
+                            {{ $subcategory->name }}
+                        </a>
+                    </li>
+                @endif
+
+                 @if(!empty($productCategory))
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('termekcsoport_dynamic', [
+                            'category' => $category->slug,
+                            'subcategory' => $subcategory->slug,
+                            'productCategory' => $productCategory->slug
+                        ]) }}" class="stretched-link">
+                            {{ $productCategory->name }}
+                        </a>
+                    </li>
+                @endif
             </ol>
         </nav>
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>

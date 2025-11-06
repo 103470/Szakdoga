@@ -5,41 +5,77 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">B+M Autóalkatrész</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a></li>
                 <li class="breadcrumb-item">
-                    <a href="{{ route('termekcsoport', ['category' => $category->slug]) }}">
+                    <a href="{{ route('termekcsoport', ['category' => $category->slug]) }}" class="stretched-link">
                         {{ $category->name }}
                     </a>
                 </li>
 
                 @if(isset($subcategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}">
+                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}" class="stretched-link">
                             {{ $subcategory->name }}
                         </a>
                     </li>
                 @endif
 
-                @if(isset($brand))
-                    <li class="breadcrumb-item">{{ $brand->name }}</li>
+                 @if(!empty($productCategory))
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('termekcsoport_dynamic', [
+                            'category' => $category->slug,
+                            'subcategory' => $subcategory->slug,
+                            'productCategory' => $productCategory->slug
+                        ]) }}" class="stretched-link">
+                            {{ $productCategory->name }}
+                        </a>
+                    </li>
                 @endif
 
-                @if(isset($type))
-                    <li class="breadcrumb-item">{{ $type->name }}</li>
+                @if(!empty($brand))
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('termekcsoport_dynamic', [
+                            'category' => $category->slug,
+                            'subcategory' => $subcategory->slug,
+                            'productCategorySlug' => $productCategory->slug ?? null,
+                            'brandSlug' => $brand->slug
+                        ]) }}" class="stretched-link">
+                            {{ $brand->name }}
+                        </a>
+                    </li>
                 @endif
 
-                @if(isset($vintage))
-                    <li class="breadcrumb-item">{{ $vintage->frame }}</li>
+                @if(!empty($type))
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('termekcsoport_vintage', [
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'productCategorySlug' => $productCategory->slug ?? null,
+                            'brandSlug' => $brand->slug,
+                            'typeSlug' => $type->slug
+                        ]) }}" class="stretched-link">
+                            {{ $type->name }}
+                        </a>
+                    </li>
+                @endif
+
+                @if(!empty($vintage))
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('termekcsoport_model', [
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'productCategorySlug' => $productCategory->slug ?? null,
+                            'brandSlug' => $brand->slug,
+                            'typeSlug' => $type->slug,
+                            'vintageSlug' => $vintage->slug
+                        ]) }}" class="stretched-link">
+                            {{ $vintage->frame }}
+                        </a>
+                    </li>
                 @endif
 
                 @if(isset($model))
                     <li class="breadcrumb-item active" aria-current="page">{{ $model->name }}</li>
-                @endif
-
-                @if(isset($productCategory))
-                    <li class="breadcrumb-item active" aria-current="page">{{ $productCategory->name }}</li>
-                @else
-                    <li class="breadcrumb-item active" aria-current="page">Összes termék</li>
                 @endif
             </ol>
         </nav>
