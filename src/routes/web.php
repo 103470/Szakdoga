@@ -518,7 +518,7 @@ function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSl
 
 })->name('termekcsoport_model');
 
-Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug?}/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', 
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug?}/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}',
 function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSlug, $typeSlug, $vintageSlug, $modelSlug) {
 
     $category = Category::where('slug', $categorySlug)->firstOrFail();
@@ -535,23 +535,45 @@ function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSl
             ->first();
     }
 
-    $brand = Brand::where('slug', $brandSlug)->firstOrFail();
+    $brand = Brand::where('slug', $brandSlug)->first();
+    $rareBrand = null;
 
-    $type = Type::where('slug', $typeSlug)
-        ->where('brand_id', $brand->id)
-        ->firstOrFail();
+    if ($brand) {
+        $type = Type::where('slug', $typeSlug)
+            ->where('brand_id', $brand->id)
+            ->firstOrFail();
 
-    $vintage = Vintage::where('slug', $vintageSlug)
-        ->where('type_id', $type->id)
-        ->firstOrFail();
+        $vintage = Vintage::where('slug', $vintageSlug)
+            ->where('type_id', $type->id)
+            ->firstOrFail();
 
-    $model = BrandModel::forVintage($vintage)
-        ->where('slug', $modelSlug)
-        ->when($subcategory->fuelType && !$subcategory->fuelType->is_universal, function ($query) use ($subcategory) {
-            $query->where('fuel_type_id', $subcategory->fuel_type_id);
-        })
-        ->with('fuelType')
-        ->firstOrFail();
+        $model = BrandModel::forVintage($vintage)
+            ->where('slug', $modelSlug)
+            ->when($subcategory->fuelType && !$subcategory->fuelType->is_universal, function ($query) use ($subcategory) {
+                $query->where('fuel_type_id', $subcategory->fuel_type_id);
+            })
+            ->with('fuelType')
+            ->firstOrFail();
+
+    } else {
+        $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+
+        $type = RareType::where('slug', $typeSlug)
+            ->where('rare_brand_id', $rareBrand->id)
+            ->firstOrFail();
+
+        $vintage = RareVintage::where('slug', $vintageSlug)
+            ->where('type_id', $type->id)
+            ->firstOrFail();
+
+        $model = RareBrandModel::forVintage($vintage)
+            ->where('slug', $modelSlug)
+            ->when($subcategory->fuelType && !$subcategory->fuelType->is_universal, function ($query) use ($subcategory) {
+                $query->where('fuel_type_id', $subcategory->fuel_type_id);
+            })
+            ->with('fuelType')
+            ->firstOrFail();
+    }
 
     $products = Product::whereHas('oemNumbers.partVehicles', function ($query) use ($model, $subcategory) {
         $query->where('unique_code', $model->unique_code)
@@ -562,10 +584,17 @@ function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSl
     ->when($productCategory && $productCategory->id, fn($q) => $q->where('product_category_id', $productCategory->id))
     ->get();
 
+    if ($rareBrand) {
+        return view('categories.rareproducts', compact(
+            'category', 'subcategory', 'productCategory', 'rareBrand', 'type', 'vintage', 'model', 'products'
+        ));
+    }
+
     return view('categories.products', compact(
         'category', 'subcategory', 'productCategory', 'brand', 'type', 'vintage', 'model', 'products'
     ));
 })->name('termekcsoport_products');
+
 
 
 
