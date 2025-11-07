@@ -4,62 +4,206 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title','Admin')</title>
+
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --background: #f3f3f3;
+            --highlight: #2c2c2c;
+            --hover: #1a1a1a;
+            --text: #333;
+            --link: #555;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* Navbar */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            height: 64px;
+            padding: 0 1rem;
+        }
+
+        .topbar .brand {
+            font-weight: 700;
+            color: var(--highlight);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--highlight);
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 16px;
+            width: 260px;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            padding: .65rem 1rem;
+            border-radius: 8px;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: var(--hover);
+        }
+
+        .sidebar .nav-link .bi {
+            margin-right: .8rem;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Main content */
+        .content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        /* Cards */
+        .stat-card {
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 1rem;
+        }
+
+        .stat-card .label {
+            color: #777;
+            font-size: .85rem;
+        }
+
+        .stat-card .value {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        a { color: var(--link); }
+        a:hover { color: var(--hover); }
+
+        /* Responsive sidebar */
+        @media (max-width: 991px) {
+            .sidebar { position: fixed; left: -260px; transition: left .25s; z-index: 1030; }
+            .sidebar.show { left: 0; }
+            .content { padding-top: 80px; }
+        }
+    </style>
+
+    @stack('head')
 </head>
-<body class="d-flex flex-column min-vh-100">
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ route('admin.dashboard') }}">Admin panel</a>
-
-        <div class="d-flex ms-auto">
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
-                        <img 
-                            src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('default-avatar.png') }}" 
-                            alt="Profilkép" 
-                            class="rounded-circle me-2" 
-                            width="32" 
-                            height="32">
-                        {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        {{-- <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profil szerkesztése</a></li> --}}
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="dropdown-item">Kijelentkezés</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+<body>
+    <!-- Navbar -->
+    <div class="topbar d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-outline-secondary btn-sm d-lg-none" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="brand">Admin Panel</div>
         </div>
 
-    </div>
-</nav>
-
-<div class="container-fluid flex-grow-1">
-    <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Irányítópult</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.index') }}">Felhasználók</a></li>
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+                <a class="d-flex align-items-center text-dark text-decoration-none" href="#" id="userMenu" data-bs-toggle="dropdown">
+                    <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('default-avatar.png') }}" alt="Profil" width="36" height="36" class="rounded-circle me-2">
+                    <strong>{{ Auth::user()->firstname ?? 'Admin' }}</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Profil</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="dropdown-item">Kijelentkezés</button>
+                        </form>
+                    </li>
                 </ul>
             </div>
-        </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-3">
+        </div>
+    </div>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <aside class="sidebar p-3" id="sidebarMenu">
+            <nav class="nav flex-column">
+
+                <!-- Dinamikus Menü Laravel-ből -->
+                @php
+                    $menus = [
+                        ['name' => 'Márkák', 'icon' => 'bi-tag-fill', 'items' => $brands ?? []],
+                        ['name' => 'Típusok', 'icon' => 'bi-gear-fill', 'items' => $types ?? []],
+                        ['name' => 'Évjáratok', 'icon' => 'bi-calendar-event', 'items' => $years ?? []],
+                        ['name' => 'Modellek', 'icon' => 'bi-car-front-fill', 'items' => $models ?? []],
+                        ['name' => 'Kategóriák', 'icon' => 'bi-list-ul', 'items' => $categories ?? []],
+                        ['name' => 'Alkategóriák', 'icon' => 'bi-tags-fill', 'items' => $subcategories ?? []],
+                    ];
+                @endphp
+
+                @foreach ($menus as $menu)
+                    <div class="nav-item mb-1">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#menu{{ Str::slug($menu['name']) }}">
+                            <span><i class="bi {{ $menu['icon'] }}"></i> {{ $menu['name'] }}</span>
+                            <i class="bi bi-chevron-down small"></i>
+                        </a>
+                        <div class="collapse" id="menu{{ Str::slug($menu['name']) }}">
+                            <ul class="nav flex-column ms-3">
+                                @forelse ($menu['items'] as $item)
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.' . Str::slug($menu['name']) . '.show', $item->id) }}" class="nav-link">
+                                            {{ $item->name }}
+                                        </a>
+                                    </li>
+                                @empty
+                                    <li class="nav-item"><span class="text-white-50 ms-3 small">Nincs adat</span></li>
+                                @endforelse
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.' . Str::slug($menu['name']) . '.create') }}" class="nav-link">+ Új felvétele</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                @endforeach
+
+                <div class="mt-4">
+                    <a class="nav-link" href="#"><i class="bi bi-box-seam"></i> Termékek</a>
+                    <a class="nav-link" href="#"><i class="bi bi-gear"></i> Egyéb</a>
+                </div>
+
+            </nav>
+        </aside>
+
+        <!-- Tartalom -->
+        <main class="content container-fluid">
             @yield('content')
         </main>
     </div>
-</div>
 
-<footer class="bg-dark text-white text-center py-3 mt-auto">
-    &copy; {{ date('Y') }}
-</footer>
+    <footer class="text-center py-3 mt-3">
+        <small class="text-muted">&copy; {{ date('Y') }} Autóalkatrész Webshop</small>
+    </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebarMenu');
+            sidebar.classList.toggle('show');
+        });
+    </script>
+
+    @stack('scripts')
 </body>
 </html>

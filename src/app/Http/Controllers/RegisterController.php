@@ -48,9 +48,9 @@ class RegisterController extends Controller
             'shipping_door' => 'nullable|string|max:50',
 
             // ÁSZF
-            'terms' => 'accepted',
-            'privacy' => 'accepted',
-            'newsletter' => 'nullable'
+            'accept_tos' => 'accepted',
+            'accept_privacy' => 'accepted',
+            'subscribe_newsletter' => 'nullable'
         ]);
 
         // Létrehozás

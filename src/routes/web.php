@@ -9,6 +9,7 @@ use App\Http\Controllers\UserDashboardController;
 use App\Http\Middleware\AdminOnlyMiddleware;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\AdminMarkaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,11 +41,10 @@ Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('soc
 Route::get('login/{provider}/callback', [SocialController::class, 'callback']);
 
 
-//ADMIN DASHBOARD
-Route::middleware(['auth', AdminOnlyMiddleware::class])->prefix('admin')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])->prefix('admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::resource('users', AdminUserController::class, ['as' => 'admin']);
-
+    Route::resource('markak', AdminMarkaController::class, ['as' => 'admin']);
 });
 
 
@@ -54,8 +54,6 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::get('/', [App\Http\Controllers\UserDashboardController::class, 'index'])
          ->name('user.dashboard');
 });
-
-
 
 
 Route::post('/logout', function () {
@@ -88,3 +86,6 @@ Route::post('/reset-password', [ResetPasswordController::class, 'store'])
 Route::view('/aszf', 'aszf')->name('aszf');
 Route::view('/adatvedelem', 'adatvedelem')->name('adatvedelem');
 
+Route::get('/test-admin', function () {
+    return 'Admin middleware működik!';
+})->middleware('admin');
