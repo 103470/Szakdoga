@@ -41,19 +41,23 @@ Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('soc
 Route::get('login/{provider}/callback', [SocialController::class, 'callback']);
 
 
-Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])->prefix('admin')->group(function () {
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    Route::resource('users', AdminUserController::class, ['as' => 'admin']);
-    Route::resource('markak', AdminMarkaController::class, ['as' => 'admin']);
+Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
+    ->prefix('admin')
+    ->as('admin.')
+    ->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('users', AdminUserController::class);
+        Route::resource('markak', AdminMarkaController::class);
+    });
+
+
+
+Route::middleware(['auth'])->prefix('user')->as('user.')->group(function () {
+    Route::get('/', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [App\Http\Controllers\UserDashboardController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile', [App\Http\Controllers\UserDashboardController::class, 'updateProfile'])->name('profile.update');
 });
 
-
-
-//USER DASHBOARD
-Route::middleware(['auth'])->prefix('user')->group(function () {
-    Route::get('/', [App\Http\Controllers\UserDashboardController::class, 'index'])
-         ->name('user.dashboard');
-});
 
 
 Route::post('/logout', function () {

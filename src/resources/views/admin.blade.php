@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="hu">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,7 +28,7 @@
         /* Navbar */
         .topbar {
             background: #fff;
-            border-bottom: 1px solid rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             height: 64px;
             padding: 0 1rem;
         }
@@ -47,7 +48,7 @@
         }
 
         .sidebar .nav-link {
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 500;
             padding: .65rem 1rem;
             border-radius: 8px;
@@ -64,7 +65,7 @@
 
         .sidebar a {
             text-decoration: none;
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
         }
 
         /* Main content */
@@ -77,7 +78,7 @@
         .stat-card {
             border-radius: 10px;
             background: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 1rem;
         }
 
@@ -91,19 +92,36 @@
             font-size: 1.3rem;
         }
 
-        a { color: var(--link); }
-        a:hover { color: var(--hover); }
+        a {
+            color: var(--link);
+        }
+
+        a:hover {
+            color: var(--hover);
+        }
 
         /* Responsive sidebar */
         @media (max-width: 991px) {
-            .sidebar { position: fixed; left: -260px; transition: left .25s; z-index: 1030; }
-            .sidebar.show { left: 0; }
-            .content { padding-top: 80px; }
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                transition: left .25s;
+                z-index: 1030;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .content {
+                padding-top: 80px;
+            }
         }
     </style>
 
     @stack('head')
 </head>
+
 <body>
     <!-- Navbar -->
     <div class="topbar d-flex align-items-center justify-content-between">
@@ -122,7 +140,9 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="#">Profil</a></li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -141,40 +161,83 @@
 
                 <!-- Dinamikus Menü Laravel-ből -->
                 @php
-                    $menus = [
-                        ['name' => 'Márkák', 'icon' => 'bi-tag-fill', 'items' => $brands ?? []],
-                        ['name' => 'Típusok', 'icon' => 'bi-gear-fill', 'items' => $types ?? []],
-                        ['name' => 'Évjáratok', 'icon' => 'bi-calendar-event', 'items' => $years ?? []],
-                        ['name' => 'Modellek', 'icon' => 'bi-car-front-fill', 'items' => $models ?? []],
-                        ['name' => 'Kategóriák', 'icon' => 'bi-list-ul', 'items' => $categories ?? []],
-                        ['name' => 'Alkategóriák', 'icon' => 'bi-tags-fill', 'items' => $subcategories ?? []],
-                    ];
+                $menus = [
+                ['name' => 'Márkák', 'icon' => 'bi-tag-fill', 'items' => $brands ?? []],
+                ['name' => 'Típusok', 'icon' => 'bi-gear-fill', 'items' => $types ?? []],
+                ['name' => 'Évjáratok', 'icon' => 'bi-calendar-event', 'items' => $years ?? []],
+                ['name' => 'Modellek', 'icon' => 'bi-car-front-fill', 'items' => $models ?? []],
+                ['name' => 'Kategóriák', 'icon' => 'bi-list-ul', 'items' => $categories ?? []],
+                ['name' => 'Alkategóriák', 'icon' => 'bi-tags-fill', 'items' => $subcategories ?? []],
+                ];
                 @endphp
 
                 @foreach ($menus as $menu)
-                    <div class="nav-item mb-1">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#menu{{ Str::slug($menu['name']) }}">
-                            <span><i class="bi {{ $menu['icon'] }}"></i> {{ $menu['name'] }}</span>
-                            <i class="bi bi-chevron-down small"></i>
-                        </a>
-                        <div class="collapse" id="menu{{ Str::slug($menu['name']) }}">
-                            <ul class="nav flex-column ms-3">
-                                @forelse ($menu['items'] as $item)
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.' . Str::slug($menu['name']) . '.show', $item->id) }}" class="nav-link">
-                                            {{ $item->name }}
-                                        </a>
-                                    </li>
-                                @empty
-                                    <li class="nav-item"><span class="text-white-50 ms-3 small">Nincs adat</span></li>
-                                @endforelse
-                                <li class="nav-item">
-                                    <a href="{{ route('admin.' . Str::slug($menu['name']) . '.create') }}" class="nav-link">+ Új felvétele</a>
-                                </li>
-                            </ul>
-                        </div>
+                <div class="nav-item mb-1">
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#menu{{ Str::slug($menu['name']) }}">
+                        <span><i class="bi {{ $menu['icon'] }}"></i> {{ $menu['name'] }}</span>
+                        <i class="bi bi-chevron-down small"></i>
+                    </a>
+                    <div class="collapse" id="menu{{ Str::slug($menu['name']) }}">
+                        <ul class="nav flex-column ms-3">
+
+                            @if ($menu['name'] === 'Márkák')
+                            <li class="nav-item">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuPopularBrands">
+                                    <span>Népszerű márkák</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+                                <div class="collapse" id="subMenuPopularBrands">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.markak.index', ['filter' => 'gyakori']) }}" class="nav-link">Összes népszerű márka</a></li>
+                                        <li><a href="{{ route('admin.markak.create', ['type' => 'gyakori']) }}" class="nav-link">+ Új népszerű márka</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuRareBrands">
+                                    <span>Ritka márkák</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+                                <div class="collapse" id="subMenuRareBrands">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.markak.index', ['filter' => 'ritka']) }}" class="nav-link">Összes ritka márka</a></li>
+                                        <li><a href="{{ route('admin.markak.create', ['type' => 'ritka']) }}" class="nav-link">+ Új ritka márka</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <hr class="text-white-50 my-2">
+                            @endif
+
+                            @forelse ($menu['items'] as $item)
+                            <li class="nav-item">
+                                <a href="{{ route('admin.' . Str::slug($menu['name']) . '.show', $item->id) }}" class="nav-link">
+                                    {{ $item->name }}
+                                </a>
+                            </li>
+                            @empty
+                            <li class="nav-item"><span class="text-white-50 ms-3 small">Nincs adat</span></li>
+                            @endforelse
+                        </ul>
                     </div>
+                </div>
                 @endforeach
+
+
+                <div class="nav-item mb-1 mt-3">
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#menuUsers">
+                        <span><i class="bi bi-people-fill"></i> Felhasználók</span>
+                        <i class="bi bi-chevron-down small"></i>
+                    </a>
+                    <div class="collapse" id="menuUsers">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.users.index') }}" class="nav-link">📋 Összes felhasználó</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
                 <div class="mt-4">
                     <a class="nav-link" href="#"><i class="bi bi-box-seam"></i> Termékek</a>
@@ -206,4 +269,5 @@
 
     @stack('scripts')
 </body>
+
 </html>
