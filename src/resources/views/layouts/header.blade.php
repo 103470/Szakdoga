@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Kezdőlap</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -24,11 +25,23 @@
             </div>
       </form>
     </div>
-    <div class="mx-2">
+    <div class="d-flex align-items-center gap-2 mx-2">
         <a href="#" class="text-decoration-none text-light">Légy te is eladó</a>
-        <a href="#" class="btn theme-orange-btn btn-sm text-light"><i class="fa-solid fa-user"></i>Bejelentkezés</a>
-        <a href="#" class="btn theme-green-btn btn-sm text-light"><i class="fa-solid fa-cart-shopping"></i>Kosár</a>
-    </div>
+
+        <a href="#" class="btn theme-orange-btn btn-sm text-light">
+            <i class="fa-solid fa-user"></i> Bejelentkezés
+        </a>
+
+        <div class="dropdown">
+            <a href="#cart-dropdown" class="btn theme-green-btn btn-sm text-light cart-toggle" data-bs-toggle="dropdown">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Kosár
+                <span class="badge bg-warning text-dark cart-count">0</span>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-end p-0" id="cart-dropdown" style="min-width:300px;"></div>
+        </div>
+    </div>  
   </div>
 </nav>
 

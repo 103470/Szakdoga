@@ -51,11 +51,14 @@
                         value="1"
                         min="1"
                         max="{{ $product->stock }}"
+                        style="width: 40px;" 
                         readonly>
                     <button type="button" class="btn btn-outline-secondary btn-sm quantity-increase">+</button>
                 </div>
 
-                <button class="btn btn-warning fw-bold text-dark btn-md">Kosárba</button>
+                <button class="btn btn-warning w-45 fw-bold text-dark btn-md add-to-cart-btn" data-id="{{ $product->id }}">
+                    Kosárba
+                </button>
             </div>
 
 

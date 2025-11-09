@@ -162,7 +162,9 @@
                                     <button type="button" class="btn btn-outline-secondary btn-sm quantity-increase text-light">+</button>
                                 </div>
 
-                                <button class="btn btn-warning w-100 fw-bold text-dark">Kosárba</button>
+                                <button class="btn btn-warning w-100 fw-bold text-dark add-to-cart-btn" data-id="{{ $product->id }}">
+                                    Kosárba
+                                </button>
                             </div>
                         </div>
                     </div>

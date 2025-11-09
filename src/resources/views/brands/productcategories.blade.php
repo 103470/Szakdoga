@@ -3,7 +3,6 @@
 @section('content')
 <div class="body-container my-5">
 
-    {{-- Breadcrumbs --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
@@ -19,7 +18,6 @@
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
     </div>
 
-    {{-- Fejléc --}}
     <div class="d-flex align-items-center mb-3">
         <div class="me-3">
             <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="img-fluid" style="max-height: 100px;">
@@ -34,7 +32,6 @@
         Kérjük válassza ki a termékkategóriát!
     </p>
 
-    {{-- Termékkategóriák listázása --}}
     @if($productCategories->isEmpty())
         <p class="text-center">Nincs elérhető termékkategória ehhez az alkategóriához.</p>
     @else

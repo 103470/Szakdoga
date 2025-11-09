@@ -15,6 +15,7 @@ use App\Models\Product;
 use App\Models\RareBrands\Type as RareType;
 use App\Models\RareBrands\Vintage as RareVintage;
 use App\Models\RareBrands\RareBrandModel;
+use App\Http\Controllers\CartController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -594,6 +595,15 @@ function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSl
         'category', 'subcategory', 'productCategory', 'brand', 'type', 'vintage', 'model', 'products'
     ));
 })->name('termekcsoport_products');
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::get('/cart/content', [CartController::class, 'getCartContent'])->name('cart.content');
+Route::delete('/cart/item/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
+Route::patch('/cart/item/{id}', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+Route::get('/cart/dropdown', [CartController::class, 'dropdown'])->name('cart.dropdown');
+
+
 
 
 

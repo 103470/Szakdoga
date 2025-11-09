@@ -89,15 +89,8 @@
                         <div class="col-md-3 text-end">
                             <div class="p-3">
                                 <p class="fw-bold text-danger fs-5 mb-1">{{ number_format($product->price, 0, ',', ' ') }} Ft</p>
-                                <p class="small text-success mb-2">
-                                    @if($product->stock > 0)
-                                        Raktáron: {{ $product->stock }} db
-                                    @else
-                                        Beszerezhető ({{ $product->delivery_time ?? '2-3 munkanap' }})
-                                    @endif
-                                </p>
 
-                               <div class="input-group quantity-selector mb-2" style="max-width: 120px; float: right;">
+                                <div class="input-group quantity-selector mb-2" style="max-width: 120px; float: right;">
                                     <button type="button" class="btn btn-outline-secondary btn-sm quantity-decrease text-light">-</button>
                                     <input type="number"
                                         class="form-control text-center quantity-input"
@@ -108,7 +101,9 @@
                                     <button type="button" class="btn btn-outline-secondary btn-sm quantity-increase text-light">+</button>
                                 </div>
 
-                                <button class="btn btn-warning w-100 fw-bold text-dark">Kosárba</button>
+                                <button class="btn btn-warning w-100 fw-bold text-dark add-to-cart-btn" data-id="{{ $product->id }}">
+                                    Kosárba
+                                </button>
                             </div>
                         </div>
                     </div>

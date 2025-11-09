@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const target = document.querySelector(this.getAttribute('href'));
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-     document.querySelectorAll('.quantity-selector').forEach(selector => {
+    document.querySelectorAll('.quantity-selector').forEach(selector => {
         const decreaseBtn = selector.querySelector('.quantity-decrease');
         const increaseBtn = selector.querySelector('.quantity-increase');
         const input = selector.querySelector('.quantity-input');
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!input) return;
 
         const min = parseInt(input.getAttribute('min')) || 1;
-        const max = parseInt(input.getAttribute('max')) || 1;
+        const max = parseInt(input.getAttribute('max')) || 100;
 
         const updateButtons = () => {
             decreaseBtn.disabled = parseInt(input.value) <= min;
@@ -41,11 +42,198 @@ document.addEventListener("DOMContentLoaded", function() {
 
         updateButtons();
     });
+
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const productId = this.dataset.id;
+            const card = this.closest('.card') || document;
+            const quantityInput = card.querySelector('.quantity-input');
+            const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+
+            fetch(`/cart/add/${productId}`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    const cartCount = document.querySelector('.cart-count');
+                    if (cartCount && data.cartCount !== undefined) cartCount.textContent = data.cartCount;
+                    refreshCartDropdown();
+                } else {
+                    showAlert('Hiba történt a kosárhoz adáskor!', 'danger');
+                }
+            })
+            .catch(err => {
+                console.error('Hiba a kosárhoz adáskor:', err);
+                showAlert('Szerverhiba!', 'danger');
+            });
+        });
+    });
+
+    function showAlert(message, type = 'success') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+        alertDiv.style.zIndex = '1055';
+        alertDiv.innerHTML = `
+            <div>${message}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        setTimeout(() => {
+            alertDiv.classList.remove('show');
+            setTimeout(() => alertDiv.remove(), 300);
+        }, 3000);
+    }
+
+    function refreshCartDropdown() {
+        fetch('/cart/dropdown')
+            .then(res => res.json())
+            .then(cartData => {
+                const dropdown = document.querySelector('#cart-dropdown');
+                if (!dropdown) return;
+
+                let items = Array.isArray(cartData.cart) ? cartData.cart : Object.values(cartData.cart);
+
+                if (!items || items.length === 0) {
+                    dropdown.innerHTML = `
+                        <p class="text-center p-3">A kosár üres <i class="fa-solid fa-cart-shopping"></i></p>
+                    `;
+                    const cartCountElem = document.querySelector('.cart-count');
+                    if (cartCountElem) cartCountElem.textContent = 0;
+                    return; 
+                }
+
+                let html = `<ul class="list-group list-group-flush">`;
+
+                items.forEach(item => {
+                    html += `
+                        <li class="list-group-item d-flex align-items-center justify-content-between">
+                            <img src="${item.product?.image ?? '/placeholder.png'}" 
+                                alt="${item.product?.name ?? 'Termék'}" 
+                                class="me-2" 
+                                style="width:50px; height:50px; object-fit:cover;">
+
+                            <div class="flex-grow-1 me-2">
+                                <div class="fw-bold">${item.product?.name ?? 'Ismeretlen termék'}</div>
+                                <div class="text-muted">${item.product?.price ?? 0} Ft</div>
+                            </div>
+
+                            <div class="input-group input-group-sm me-2" style="width:100px;">
+                                <button class="btn btn-outline-secondary quantity-decrease" data-id="${item.product_id}">-</button>
+                                <input type="text" class="form-control text-center quantity-input" 
+                                    value="${item.quantity}" readonly 
+                                    data-max="${item.product?.stock ?? 1}" 
+                                    data-id="${item.product_id}">
+                                <button class="btn btn-outline-secondary quantity-increase" data-id="${item.product_id}">+</button>
+                            </div>
+
+                            <button class="btn btn-outline-danger btn-sm remove-item-btn" data-id="${item.product_id}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </li>
+                    `;
+                });
+
+                html += `</ul>
+                        <div class="p-3 text-end fw-bold">Összesen: ${cartData.total ?? 0} Ft</div>
+                        <div class="p-2 text-center">
+                            <a href="/cart" class="btn btn-warning w-100">🛒 Kosár megtekintése</a>
+                        </div>`;
+
+                dropdown.innerHTML = html;
+
+                const cartCountElem = document.querySelector('.cart-count');
+                if (cartCountElem && cartData.count !== undefined) {
+                    cartCountElem.textContent = cartData.count;
+                }
+
+                dropdown.querySelectorAll('.quantity-increase').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const input = btn.closest('li').querySelector('.quantity-input');
+                        const max = parseInt(input.dataset.max) || 1;
+                        if (parseInt(input.value) < max) changeQuantity(btn.dataset.id, 1);
+                    });
+                });
+
+                dropdown.querySelectorAll('.quantity-decrease').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const input = btn.closest('li').querySelector('.quantity-input');
+                        if (parseInt(input.value) > 1) changeQuantity(btn.dataset.id, -1);
+                    });
+                });
+
+                dropdown.querySelectorAll('.remove-item-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        removeItemFromCart(btn.dataset.id);
+                    });
+                });
+            })
+            .catch(err => console.error('Kosár dropdown frissítési hiba:', err));
+    }
+
+    function changeQuantity(id, delta) {
+        fetch(`/cart/item/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ delta })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const input = document.querySelector(`.quantity-input[data-id="${id}"]`);
+            if (input) input.value = data.newQuantity;
+
+            const totalElem = document.querySelector('#cart-dropdown .text-end.fw-bold');
+            if (totalElem) totalElem.textContent = `Összesen: ${data.total} Ft`;
+
+            const cartCountElem = document.querySelector('.cart-count');
+            if (cartCountElem && data.count !== undefined) {
+                cartCountElem.textContent = data.count;
+            }
+        })
+        .catch(err => console.error('Hiba a mennyiség frissítésekor:', err));
+    }
+
+
+    function removeItemFromCart(id) {
+        fetch(`/cart/item/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const itemElem = document.querySelector(`.remove-item-btn[data-id="${id}"]`)?.closest('li');
+            if (itemElem) {
+                itemElem.style.transition = 'opacity 0.3s';
+                itemElem.style.opacity = 0;
+                setTimeout(() => itemElem.remove(), 300);
+            }
+
+            const totalElem = document.querySelector('#cart-dropdown .text-end.fw-bold');
+            if (totalElem) totalElem.textContent = `Összesen: ${data.total} Ft`;
+
+            refreshCartDropdown();
+        })
+        .catch(err => console.error('Hiba a törléskor:', err));
+    }
+
+
+    refreshCartDropdown();
 });
-
-
-
-
-
-
-
