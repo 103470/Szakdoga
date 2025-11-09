@@ -52,13 +52,12 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
 
 
 
-Route::middleware(['auth'])->prefix('user')->as('user.')->group(function () {
-    Route::get('/', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profile', [App\Http\Controllers\UserDashboardController::class, 'editProfile'])->name('profile.edit');
-    Route::post('/profile', [App\Http\Controllers\UserDashboardController::class, 'updateProfile'])->name('profile.update');
+Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
+    Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [UserDashboardController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+
 });
-
-
 
 Route::post('/logout', function () {
     Auth::logout();
