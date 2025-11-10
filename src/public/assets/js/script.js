@@ -43,6 +43,30 @@ document.addEventListener("DOMContentLoaded", function() {
         updateButtons();
     });
 
+    document.body.addEventListener('click', function (e) {
+        const incBtn = e.target.closest('.quantity-increase');
+        const decBtn = e.target.closest('.quantity-decrease');
+
+        if (incBtn) {
+            e.preventDefault();
+            const id = incBtn.dataset.id;
+            changeQuantity(id, 1, true);
+        }
+
+        if (decBtn) {
+            e.preventDefault();
+            const id = decBtn.dataset.id;
+            changeQuantity(id, -1, true);
+        }
+
+        const removeBtn = e.target.closest('.remove-item-btn');
+        if (removeBtn) {
+            e.preventDefault();
+            const id = removeBtn.dataset.id;
+            removeItemFromCart(id, true);
+        }
+    });
+    
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const productId = this.dataset.id;
@@ -184,7 +208,10 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(err => console.error('Kosár dropdown frissítési hiba:', err));
     }
 
-    function changeQuantity(id, delta) {
+    function changeQuantity(id, delta, isCartPage = false) {
+        const input = document.querySelector(`.quantity-input[data-id="${id}"]`);
+        if (!input) return;
+
         fetch(`/cart/item/${id}`, {
             method: 'PATCH',
             headers: {
@@ -195,22 +222,32 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(res => res.json())
         .then(data => {
-            const input = document.querySelector(`.quantity-input[data-id="${id}"]`);
-            if (input) input.value = data.newQuantity;
+            if (!data.success) return;
 
-            const totalElem = document.querySelector('#cart-dropdown .text-end.fw-bold');
-            if (totalElem) totalElem.textContent = `Összesen: ${data.total} Ft`;
+            input.value = data.newQuantity;
+
+            if (isCartPage) {
+                const subtotalElem = document.getElementById('subtotal');
+                const shippingElem = document.getElementById('shipping');
+                const totalElem = document.getElementById('cart-total');
+
+                if (subtotalElem) subtotalElem.textContent = (data.subtotal ?? 0).toLocaleString('hu-HU') + ' Ft';
+                const shippingCost = (data.count > 0 ? 990 : 0);
+                if (shippingElem) shippingElem.textContent = shippingCost.toLocaleString('hu-HU') + ' Ft';
+                if (totalElem) totalElem.textContent = ((data.subtotal ?? 0) + shippingCost).toLocaleString('hu-HU') + ' Ft';
+            } else {
+                refreshCartDropdown();
+            }
 
             const cartCountElem = document.querySelector('.cart-count');
-            if (cartCountElem && data.count !== undefined) {
-                cartCountElem.textContent = data.count;
-            }
+            if (cartCountElem && data.count !== undefined) cartCountElem.textContent = data.count;
         })
         .catch(err => console.error('Hiba a mennyiség frissítésekor:', err));
     }
 
 
-    function removeItemFromCart(id) {
+
+    function removeItemFromCart(id, isCartPage = false) {
         fetch(`/cart/item/${id}`, {
             method: 'DELETE',
             headers: {
@@ -219,20 +256,53 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(res => res.json())
         .then(data => {
-            const itemElem = document.querySelector(`.remove-item-btn[data-id="${id}"]`)?.closest('li');
-            if (itemElem) {
-                itemElem.style.transition = 'opacity 0.3s';
-                itemElem.style.opacity = 0;
-                setTimeout(() => itemElem.remove(), 300);
+            if (isCartPage) {
+                const itemElem = document.querySelector(`.remove-item-btn[data-id="${id}"]`)?.closest('.cart-item');
+                if (itemElem) {
+                    itemElem.style.transition = 'opacity 0.3s';
+                    itemElem.style.opacity = 0;
+                    setTimeout(() => itemElem.remove(), 300);
+                }
+
+                const subtotalElem = document.getElementById('subtotal');
+                const shippingElem = document.getElementById('shipping');
+                const totalElem = document.getElementById('cart-total');
+
+                if (subtotalElem) subtotalElem.textContent = (data.subtotal ?? 0).toLocaleString('hu-HU') + ' Ft';
+                const shippingCost = (data.count > 0 ? 990 : 0);
+                if (shippingElem) shippingElem.textContent = shippingCost.toLocaleString('hu-HU') + ' Ft';
+                if (totalElem) totalElem.textContent = ((data.subtotal ?? 0) + shippingCost).toLocaleString('hu-HU') + ' Ft';
+
+                if (data.count === 0) {
+                    document.querySelector('.col-lg-8').innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="fa-solid fa-cart-shopping fa-3x mb-3"></i>
+                            <p class="fs-5">Üres a kosarad</p>
+                            <a href="/" class="btn btn-primary mt-3">Vásárlás folytatása</a>
+                        </div>
+                    `;
+                }
+            } else {
+                const itemElem = document.querySelector(`.remove-item-btn[data-id="${id}"]`)?.closest('li');
+                if (itemElem) {
+                    itemElem.style.transition = 'opacity 0.3s';
+                    itemElem.style.opacity = 0;
+                    setTimeout(() => itemElem.remove(), 300);
+                }
+
+                const totalElem = document.querySelector('#cart-dropdown .text-end.fw-bold');
+                if (totalElem) totalElem.textContent = `Összesen: ${data.total.toLocaleString('hu-HU')} Ft`;
+                refreshCartDropdown();
             }
 
-            const totalElem = document.querySelector('#cart-dropdown .text-end.fw-bold');
-            if (totalElem) totalElem.textContent = `Összesen: ${data.total} Ft`;
-
-            refreshCartDropdown();
+            const cartCountElem = document.querySelector('.cart-count');
+            if (cartCountElem && data.count !== undefined) {
+                cartCountElem.textContent = data.count;
+            }
         })
         .catch(err => console.error('Hiba a törléskor:', err));
     }
+
 
 
     refreshCartDropdown();

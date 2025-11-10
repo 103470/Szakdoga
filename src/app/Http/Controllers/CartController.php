@@ -11,18 +11,24 @@ class CartController extends Controller
 {
     public function index()
     {
-        $cart = $this->getCartCollection();
-        $total = $cart->sum(fn($i) => $i->product->price * $i->quantity);
+        if (Auth::check()) {
+            $cartItems = Auth::user()->cartItems()->with('product')->get();
+        } else {
+            $cartSession = session('cart', []);
+            $cartItems = collect($cartSession)->map(function ($item) {
+                $product = Product::find($item['product_id']);
+                return (object)[
+                    'product' => $product,
+                    'quantity' => $item['quantity']
+                ];
+            });
+        }
 
-        $html = view('partials.cart_dropdown', compact('cart', 'total'))->render();
-
-        return response()->json([
-            'success' => true,
-            'cart' => $cart,
-            'total' => $total,
-            'html' => $html
+        return view('partials.cart', [
+            'cart' => $cartItems
         ]);
     }
+
 
 
     private function getCartCollection()
@@ -60,66 +66,84 @@ class CartController extends Controller
     public function add(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $quantity = (int) $request->input('quantity', 1);
+        $quantity = max(1, (int) $request->input('quantity', 1));
 
         if (Auth::check()) {
             $user = Auth::user();
-            $user->cartItems()->updateOrCreate(
-                ['product_id' => $product->id],
-                ['quantity' => \DB::raw('quantity + {$quantity}')]
-            );
+            $cartItem = $user->cartItems()->firstOrNew(['product_id' => $product->id]);
+
+            $cartItem->quantity = ($cartItem->quantity ?? 0) + $quantity;
+            $cartItem->save();
         } else {
             $cart = session('cart', []);
+
             if (isset($cart[$id])) {
                 $cart[$id]['quantity'] += $quantity;
             } else {
                 $cart[$id] = [
                     'product_id' => $product->id,
-                    'quantity' => 1
+                    'quantity' => $quantity,
                 ];
             }
+
             session(['cart' => $cart]);
         }
 
-        \Log::info('Session cart after add:', session('cart'));
-
         return response()->json([
             'success' => true,
-            'message' => "{$product->name} sikeresen a kosárba került!",
+            'message' => "{$product->name} sikeresen a kosárba került ({$quantity} db)!",
             'cartCount' => $this->getCartCollection()->sum('quantity'),
         ]);
     }
 
-    
     public function updateQuantity(Request $request, $id)
     {
-        $delta = $request->input('delta', 0);
-        $cart = session('cart', []);
-
-        if (!isset($cart[$id])) {
-            return response()->json(['error' => 'Termék nincs a kosárban'], 404);
-        }
-
+        $delta = (int) $request->input('delta', 0);
         $product = Product::find($id);
+
         if (!$product) {
             return response()->json(['error' => 'Termék nem található'], 404);
         }
 
-        $newQuantity = max(1, min($cart[$id]['quantity'] + $delta, $product->stock));
-        $cart[$id]['quantity'] = $newQuantity;
-        session(['cart' => $cart]);
+        if (Auth::check()) {
+            $item = CartItem::where('product_id', $id)
+                            ->where('user_id', Auth::id())
+                            ->first();
 
-        $total = collect($cart)->sum(fn($item) => Product::find($item['product_id'])->price * $item['quantity']);
-        $count = collect($cart)->sum('quantity');
+            if (!$item) {
+                return response()->json(['error' => 'Termék nincs a kosárban'], 404);
+            }
+
+            $newQuantity = max(1, min($item->quantity + $delta, $product->stock));
+            $item->quantity = $newQuantity;
+            $item->save();
+
+            $cartItems = CartItem::where('user_id', Auth::id())->get();
+            $total = $cartItems->sum(fn($i) => $i->product->price * $i->quantity);
+            $count = $cartItems->sum('quantity');
+        } else {
+            $cart = session('cart', []);
+            if (!isset($cart[$id])) {
+                return response()->json(['error' => 'Termék nincs a kosárban'], 404);
+            }
+
+            $newQuantity = max(1, min($cart[$id]['quantity'] + $delta, $product->stock));
+            $cart[$id]['quantity'] = $newQuantity;
+            session(['cart' => $cart]);
+
+            $total = collect($cart)->sum(fn($item) => Product::find($item['product_id'])->price * $item['quantity']);
+            $count = collect($cart)->sum('quantity');
+        }
 
         return response()->json([
             'success' => true,
             'newQuantity' => $newQuantity,
+            'subtotal' => $subtotal,
             'total' => $total,
-            'count' => $count, 
+            'count' => $count,
+            'stock' => $product->stock,
         ]);
     }
-
 
 
     public function getCartContent()
@@ -138,16 +162,36 @@ class CartController extends Controller
     public function removeItem($id)
     {
         if (Auth::check()) {
-            $item = CartItem::findOrFail($id);
-            $item->delete();
+            $item = CartItem::where('product_id', $id)
+                            ->where('user_id', Auth::id())
+                            ->first();
+
+            if ($item) {
+                $item->delete();
+            }
+
+            $cartItems = CartItem::where('user_id', Auth::id())->get();
+            $total = $cartItems->sum(fn($i) => $i->product->price * $i->quantity);
+            $count = $cartItems->sum('quantity');
         } else {
             $cart = session('cart', []);
-            unset($cart[$id]);
-            session(['cart' => $cart]);
+            if (isset($cart[$id])) {
+                unset($cart[$id]);
+                session(['cart' => $cart]);
+            }
+
+            $total = collect($cart)->sum(fn($item) => Product::find($item['product_id'])->price * $item['quantity']);
+            $count = collect($cart)->sum('quantity');
         }
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'total' => $total,
+            'count' => $count,
+        ]);
     }
+
+
 
     public function dropdown()
     {
