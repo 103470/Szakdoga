@@ -484,6 +484,20 @@ body {
     transform: translateY(-3px);
 }
 
+.body-container .card {
+    background-color: #e9ecef; 
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.body-container .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+
+
 /* Háttér:#f3f3f3
    Kiemelés: #2c2c2c
    Hover: #1a1a1a

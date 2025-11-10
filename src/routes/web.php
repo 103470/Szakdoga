@@ -16,6 +16,7 @@ use App\Models\RareBrands\Type as RareType;
 use App\Models\RareBrands\Vintage as RareVintage;
 use App\Models\RareBrands\RareBrandModel;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -602,6 +603,14 @@ Route::get('/cart/content', [CartController::class, 'getCartContent'])->name('ca
 Route::delete('/cart/item/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
 Route::patch('/cart/item/{id}', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
 Route::get('/cart/dropdown', [CartController::class, 'dropdown'])->name('cart.dropdown');
+
+Route::prefix('checkout')->group(function () {
+    Route::get('/choice', [CheckoutController::class, 'choice'])->name('checkout.choice');
+    Route::get('/details', [CheckoutController::class, 'details'])->name('checkout.details');
+    Route::post('/details/submit', [CheckoutController::class, 'submitDetails'])->name('checkout.details.submit');
+});
+
+
 
 
 
