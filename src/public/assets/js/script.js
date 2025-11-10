@@ -306,4 +306,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     refreshCartDropdown();
+
+    document.getElementById('sameAsShipping').addEventListener('change', function() {
+        const checked = this.checked;
+        if(checked) {
+            document.getElementById('billing_name').value = document.getElementById('shipping_name').value;
+            document.getElementById('billing_phone').value = document.getElementById('shipping_phone').value;
+            document.getElementById('billing_address').value = document.getElementById('shipping_address').value;
+            document.getElementById('billing_city').value = document.getElementById('shipping_city').value;
+            document.getElementById('billing_zip').value = document.getElementById('shipping_zip').value;
+            document.getElementById('billing_country').value = document.getElementById('shipping_country').value;
+        } else {
+            document.getElementById('billing_name').value = '';
+            document.getElementById('billing_phone').value = '';
+            document.getElementById('billing_address').value = '';
+            document.getElementById('billing_city').value = '';
+            document.getElementById('billing_zip').value = '';
+            document.getElementById('billing_country').value = '';
+        }
+    });
 });

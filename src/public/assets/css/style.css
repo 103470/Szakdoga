@@ -496,6 +496,25 @@ body {
     box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
+.checkout-details-container .card {
+    max-width: 600px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.checkout-details-container .card input.form-control {
+    max-width: 100%; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.checkout-details-container .form-check {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
 
 
 /* Háttér:#f3f3f3
