@@ -514,6 +514,18 @@ body {
     margin-right: auto;
 }
 
+.checkout-payment-container .card {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.checkout-payment-container .form-check {
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 
 
 

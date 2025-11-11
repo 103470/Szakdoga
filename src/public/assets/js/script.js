@@ -311,18 +311,28 @@ document.addEventListener("DOMContentLoaded", function() {
         const checked = this.checked;
         if(checked) {
             document.getElementById('billing_name').value = document.getElementById('shipping_name').value;
-            document.getElementById('billing_phone').value = document.getElementById('shipping_phone').value;
+            document.getElementById('billing_email').value = document.getElementById('shipping_email').value;
+
+            const prefix = document.getElementById('shipping_phone_prefix').value;
+            const number = document.getElementById('shipping_phone').value;
+            document.getElementById('billing_phone').value = number;
+            document.getElementById('billing_phone_prefix').value = prefix;
+
             document.getElementById('billing_address').value = document.getElementById('shipping_address').value;
             document.getElementById('billing_city').value = document.getElementById('shipping_city').value;
             document.getElementById('billing_zip').value = document.getElementById('shipping_zip').value;
             document.getElementById('billing_country').value = document.getElementById('shipping_country').value;
         } else {
             document.getElementById('billing_name').value = '';
+            document.getElementById('billing_email').value = '';
             document.getElementById('billing_phone').value = '';
+            document.getElementById('billing_phone_prefix').value = '';
             document.getElementById('billing_address').value = '';
             document.getElementById('billing_city').value = '';
             document.getElementById('billing_zip').value = '';
             document.getElementById('billing_country').value = '';
         }
     });
+
+
 });

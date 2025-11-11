@@ -21,11 +21,29 @@
             </div>
 
             <div class="mb-3">
+                <label for="shipping_email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="shipping_email" name="shipping_email"
+                    value="{{ old('shipping_email', $user->shipping_email ?? $user->email ?? '') }}" required>
+                @error('shipping_email')<div class="text-danger small">{{ $message }}</div>@enderror
+            </div>
+
+
+            <div class="mb-3">
                 <label for="shipping_phone" class="form-label">Telefonszám</label>
-                <input type="text" class="form-control" id="shipping_phone" name="shipping_phone"
-                       value="{{ old('shipping_phone', $user->shipping_phone ?? $user->phone ?? '') }}" required>
+                <div class="d-flex">
+                    <select name="shipping_phone_prefix" id="shipping_phone_prefix" class="form-select me-2" style="max-width: 100px;" required>
+                        @foreach($phonePrefixes as $prefix)
+                            <option value="{{ $prefix->prefix }}" {{ (old('shipping_phone_prefix', $user->shipping_phone_prefix ?? '+36') == $prefix->prefix) ? 'selected' : '' }}>
+                                {{ $prefix->prefix }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <input type="text" class="form-control" id="shipping_phone" name="shipping_phone"
+                        value="{{ old('shipping_phone', $user->shipping_phone ?? '') }}" placeholder="70/435-44-55" required>
+                </div>
                 @error('shipping_phone')<div class="text-danger small">{{ $message }}</div>@enderror
             </div>
+
 
             <div class="mb-3">
                 <label for="shipping_address" class="form-label">Utca, házszám</label>
@@ -82,8 +100,17 @@
 
             <div class="mb-3">
                 <label for="billing_phone" class="form-label">Telefonszám</label>
-                <input type="text" class="form-control" id="billing_phone" name="billing_phone"
-                       value="{{ old('billing_phone', $user->phone ?? '') }}" required>
+                <div class="d-flex">
+                    <select name="billing_phone_prefix" id="billing_phone_prefix" class="form-select me-2" style="max-width: 100px;" required>
+                        @foreach($phonePrefixes as $prefix)
+                            <option value="{{ $prefix->prefix }}" {{ (old('billing_phone_prefix', $user->billing_phone_prefix ?? '+36') == $prefix->prefix) ? 'selected' : '' }}>
+                                {{ $prefix->prefix }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <input type="text" class="form-control" id="billing_phone" name="billing_phone"
+                        value="{{ old('billing_phone', $user->billing_phone ?? '') }}" placeholder="70/435-44-55" required>
+                </div>
                 @error('billing_phone')<div class="text-danger small">{{ $message }}</div>@enderror
             </div>
 
