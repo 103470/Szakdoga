@@ -98,9 +98,16 @@ class CheckoutController extends Controller
             ? CartItem::where('user_id', Auth::id())->get() 
             : session('cart', []);
 
-            foreach ($cartItems as $item) {
-            $product = Auth::check() ? $item->product : $item['product'];
-            $quantity = Auth::check() ? $item->quantity : $item['quantity'];
+        foreach ($cartItems as $item) {
+            if (Auth::check()) {
+                $product = $item->product;
+                $quantity = $item->quantity;
+            } else {
+                $product = Product::find($item['product_id']); 
+                $quantity = $item['quantity'];
+            }
+
+            if (!$product) continue;
 
             $orderItem = new OrderItem();
             $orderItem->order_id = $order->id;
@@ -118,8 +125,8 @@ class CheckoutController extends Controller
 
         session()->forget('checkout_data');
 
-        return redirect()->route('order.success', ['order' => $order->id])
-                         ->with('success', 'A rendelésed sikeresen elküldve!');
+        return view('checkout.success', ['order' => $order])
+             ->with('success', 'A rendelésed sikeresen elküldve!');
     }
 
     public function showPaymentPage()
