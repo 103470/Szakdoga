@@ -7,6 +7,10 @@ use App\Models\PhonePrefix;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\DeliveryOption;
+use App\Models\PaymentOption;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
 
 class CheckoutController extends Controller
 {
@@ -117,4 +121,32 @@ class CheckoutController extends Controller
         return redirect()->route('order.success', ['order' => $order->id])
                          ->with('success', 'A rendelésed sikeresen elküldve!');
     }
+
+    public function showPaymentPage()
+    {
+         if (Auth::check()) {
+            $cartItems = CartItem::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        } else {
+            $sessionCart = session('cart', []);
+            $cartItems = collect($sessionCart)->map(function ($item) {
+                $product = Product::find($item['product_id']);
+                return (object)[
+                    'product' => $product,
+                    'quantity' => $item['quantity'] ?? 0
+                ];
+            });
+        }
+
+        $subtotal = $cartItems->sum(function ($item) {
+            return ($item->product->price ?? 0) * $item->quantity;
+        });
+
+        $deliveryOptions = DeliveryOption::where('is_active', true)->get();
+        $paymentOptions = PaymentOption::where('is_active', true)->get();
+
+        return view('checkout.payment', compact('deliveryOptions', 'paymentOptions', 'subtotal'));
+    }
+
 }

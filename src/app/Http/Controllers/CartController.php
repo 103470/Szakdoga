@@ -35,19 +35,15 @@ class CartController extends Controller
     {
         if (Auth::check()) {
             $cart = Auth::user()->cartItems()->with('product')->get();
-            \Log::info('Auth cart', ['cart' => $cart->toArray()]);
             return $cart;
         }
 
         $sessionCart = session('cart', []);
-        \Log::info('Raw session cart', ['cart' => $sessionCart]);
 
         $cartCollection = collect($sessionCart)->map(function ($item) {
-            \Log::info('Session cart item', ['item' => $item]);
 
             $product = Product::find($item['product_id'] ?? null);
             if (!$product) {
-                \Log::warning('Product not found for cart item', ['item' => $item]);
                 return null;
             }
 
@@ -57,8 +53,6 @@ class CartController extends Controller
                 'quantity'   => $item['quantity'] ?? 0,
             ];
         })->filter();
-
-        \Log::info('Processed session cart', ['cart' => $cartCollection->toArray()]);
 
         return $cartCollection;
     }
@@ -196,8 +190,6 @@ class CartController extends Controller
     public function dropdown()
     {
         $cart = $this->getCartCollection();
-
-        \Log::info('CART DATA', ['cart' => $cart]);
 
         $cartArray = collect($cart)->map(function ($item) {
             $productId = is_array($item) ? ($item['product_id'] ?? null) : ($item->product_id ?? null);

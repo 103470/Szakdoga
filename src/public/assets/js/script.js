@@ -303,36 +303,63 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(err => console.error('Hiba a törléskor:', err));
     }
 
-
-
     refreshCartDropdown();
 
-    document.getElementById('sameAsShipping').addEventListener('change', function() {
-        const checked = this.checked;
-        if(checked) {
-            document.getElementById('billing_name').value = document.getElementById('shipping_name').value;
-            document.getElementById('billing_email').value = document.getElementById('shipping_email').value;
+    const sameAsShippingElem = document.getElementById('sameAsShipping');
+    if (sameAsShippingElem) {
+        sameAsShippingElem.addEventListener('change', function() {
+            const checked = this.checked;
+            if(checked) {
+                document.getElementById('billing_name').value = document.getElementById('shipping_name').value;
+                document.getElementById('billing_email').value = document.getElementById('shipping_email').value;
 
-            const prefix = document.getElementById('shipping_phone_prefix').value;
-            const number = document.getElementById('shipping_phone').value;
-            document.getElementById('billing_phone').value = number;
-            document.getElementById('billing_phone_prefix').value = prefix;
+                const prefix = document.getElementById('shipping_phone_prefix').value;
+                const number = document.getElementById('shipping_phone').value;
+                document.getElementById('billing_phone').value = number;
+                document.getElementById('billing_phone_prefix').value = prefix;
 
-            document.getElementById('billing_address').value = document.getElementById('shipping_address').value;
-            document.getElementById('billing_city').value = document.getElementById('shipping_city').value;
-            document.getElementById('billing_zip').value = document.getElementById('shipping_zip').value;
-            document.getElementById('billing_country').value = document.getElementById('shipping_country').value;
-        } else {
-            document.getElementById('billing_name').value = '';
-            document.getElementById('billing_email').value = '';
-            document.getElementById('billing_phone').value = '';
-            document.getElementById('billing_phone_prefix').value = '';
-            document.getElementById('billing_address').value = '';
-            document.getElementById('billing_city').value = '';
-            document.getElementById('billing_zip').value = '';
-            document.getElementById('billing_country').value = '';
+                document.getElementById('billing_address').value = document.getElementById('shipping_address').value;
+                document.getElementById('billing_city').value = document.getElementById('shipping_city').value;
+                document.getElementById('billing_zip').value = document.getElementById('shipping_zip').value;
+                document.getElementById('billing_country').value = document.getElementById('shipping_country').value;
+            } else {
+                document.getElementById('billing_name').value = '';
+                document.getElementById('billing_email').value = '';
+                document.getElementById('billing_phone').value = '';
+                document.getElementById('billing_phone_prefix').value = '';
+                document.getElementById('billing_address').value = '';
+                document.getElementById('billing_city').value = '';
+                document.getElementById('billing_zip').value = '';
+                document.getElementById('billing_country').value = '';
+            }
+        });
+    }
+
+    const subtotalElem = document.getElementById('subtotal-value');
+    if (subtotalElem) {
+
+        function updateTotal() {
+            const subtotal = Number(subtotalElem.dataset.subtotal) || 0;
+            const delivery = document.querySelector('input[name="delivery_option"]:checked');
+            const payment = document.querySelector('input[name="payment_option"]:checked');
+            const deliveryPrice = Number(delivery?.dataset.price) || 0;
+            const paymentPrice = Number(payment?.dataset.fee) || 0;
+            const sum = subtotal + deliveryPrice + paymentPrice;
+
+            const shippingElem = document.getElementById('shipping-cost');
+            const paymentElem = document.getElementById('payment-fee');
+            const totalElem = document.getElementById('total');
+
+            if (shippingElem) shippingElem.textContent = deliveryPrice.toLocaleString('hu-HU') + ' Ft';
+            if (paymentElem) paymentElem.textContent = paymentPrice.toLocaleString('hu-HU') + ' Ft';
+            if (totalElem) totalElem.textContent = sum.toLocaleString('hu-HU') + ' Ft';
         }
-    });
+
+        document.querySelectorAll('input[name="delivery_option"], input[name="payment_option"]')
+            .forEach(r => r.addEventListener('change', updateTotal));
+
+        updateTotal();
+    }
 
 
 });

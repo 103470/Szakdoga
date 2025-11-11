@@ -608,6 +608,8 @@ Route::prefix('checkout')->group(function () {
     Route::get('/choice', [CheckoutController::class, 'choice'])->name('checkout.choice');
     Route::get('/details', [CheckoutController::class, 'details'])->name('checkout.details');
     Route::post('/details/submit', [CheckoutController::class, 'submitDetails'])->name('checkout.details.submit');
+    Route::get('/payment', [CheckoutController::class, 'showPaymentPage'])->name('checkout.payment');
+    Route::post('/finalize', [CheckoutController::class, 'finalize'])->name('checkout.finalize');
 });
 
 
