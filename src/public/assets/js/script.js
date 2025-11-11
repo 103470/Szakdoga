@@ -361,5 +361,41 @@ document.addEventListener("DOMContentLoaded", function() {
         updateTotal();
     }
 
+    const checkoutForm = document.getElementById('checkout-form');
+    if (!checkoutForm) return;
+
+    checkoutForm.addEventListener('submit', function(e) {
+        const tosCheckbox = document.getElementById('accept-tos');
+        const privacyCheckbox = document.getElementById('accept-privacy');
+
+        const tosError = document.getElementById('tos-error');
+        const privacyError = document.getElementById('privacy-error');
+
+        let valid = true;
+
+        if (!tosCheckbox.checked) {
+            valid = false;
+            tosCheckbox.classList.add('is-invalid');
+            tosError.textContent = 'El kell fogadni az Általános Szerződési feltételeket!';
+        } else {
+            tosCheckbox.classList.remove('is-invalid');
+            tosError.textContent = '';
+        }
+
+        if (!privacyCheckbox.checked) {
+            valid = false;
+            privacyCheckbox.classList.add('is-invalid');
+            privacyError.textContent = 'El kell fogadni az adatvédelmi szabályzatot!';
+        } else {
+            privacyCheckbox.classList.remove('is-invalid');
+            privacyError.textContent = '';
+        }
+
+        if (!valid) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+
 
 });

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container my-5">
 
-    <form action="{{ route('checkout.finalize') }}" method="POST">
+    <form id="checkout-form" action="{{ route('checkout.finalize') }}" method="POST">
         @csrf
 
         <div class="row">
@@ -78,9 +78,32 @@
 
                     <hr>
 
-                    <div class="d-flex justify-content-between fw-bold fs-5">
+                    <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
                         <span>Végösszeg:</span>
                         <span id="total">{{ number_format($subtotal, 0, ',', ' ') }} Ft</span>
+                    </div>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="accept-tos">
+                        <label class="form-check-label" for="accept-tos">
+                            A megrendelés elküldésével a Vásárló kijelenti, hogy az 
+                            <a href="/aszf" target="_blank">Általános Szerződési Feltételek</a> dokumentumban foglaltakat elolvasta, megértette és elfogadja.
+                        </label>
+                        <div class="invalid-feedback" id="tos-error"></div>
+                    </div>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="accept-privacy">
+                        <label class="form-check-label" for="accept-privacy">
+                            A Vásárló kijelenti továbbá, hogy a 
+                            <a href="/adatvedelmi" target="_blank">B+M Webáruház adatvédelmi szabályait</a> megismerte, megértette és elfogadja.
+                        </label>
+                        <div class="invalid-feedback" id="privacy-error"></div>
+                    </div>
+
+
+                    <div class="text-muted mb-3">
+                        Tájékoztatunk, hogy a „Megrendelés leadása” gombra való kattintás fizetési kötelezettséget von maga után.
                     </div>
 
                     <button type="submit" class="btn btn-warning w-100 mt-4 fw-bold py-2">
