@@ -63,6 +63,12 @@ class CheckoutController extends Controller
         return view('checkout.payment', compact('checkoutData'));
     }
 
+    protected function generateOrderNumber($length = 8)
+    {
+        return strtoupper(substr(bin2hex(random_bytes($length)), 0, $length));
+    }
+
+
     public function finalize(Request $request)
     {
         $checkoutData = session('checkout_data');
@@ -92,6 +98,7 @@ class CheckoutController extends Controller
         $order->delivery_option = $request->input('delivery_option', 'courier');
         $order->payment_option = $request->input('payment_option', 'card');
 
+        $order->order_number = $this->generateOrderNumber(8); 
         $order->save();
 
         $cartItems = Auth::check() 

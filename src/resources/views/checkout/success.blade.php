@@ -10,7 +10,7 @@
         </p>
 
         <h4 class="mb-4 text-primary">
-            #{{ $order->id }}
+            #{{ $order->order_number }}
         </h4>
 
         <p class="mb-4">
