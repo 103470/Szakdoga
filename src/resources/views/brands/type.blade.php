@@ -23,7 +23,6 @@
         Kérjük válassza ki gépjárműve megfelelő típusát!
     </p>
 
-    {{-- 🔍 Keresőmező --}}
     <div class="mb-3">
         <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
     </div>
