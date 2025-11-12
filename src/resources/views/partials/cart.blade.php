@@ -48,7 +48,7 @@
                             </div>
                         </div>
 
-                        <div class="text-end fw-bold" style="min-width: 120px;">
+                        <div class="text-end fw-bold" style="min-width: 120px;" data-price="{{ $product->price }}">
                             {{ number_format($product->price * $item->quantity, 0, ',', ' ') }} Ft
                         </div>
                     </div>

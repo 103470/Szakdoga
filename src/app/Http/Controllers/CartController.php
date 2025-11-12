@@ -128,15 +128,17 @@ class CartController extends Controller
             $total = collect($cart)->sum(fn($item) => Product::find($item['product_id'])->price * $item['quantity']);
             $count = collect($cart)->sum('quantity');
         }
+        $subtotal = $product->price * $newQuantity;
 
         return response()->json([
             'success' => true,
             'newQuantity' => $newQuantity,
-            'subtotal' => $subtotal,
+            'subtotal' => $subtotal,  
             'total' => $total,
             'count' => $count,
             'stock' => $product->stock,
         ]);
+
     }
 
 
