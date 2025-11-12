@@ -78,6 +78,10 @@
         </div>
     </div>
 
+    <div class="mb-3">
+        <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
+    </div>
+
     <div class="table-responsive mt-4">
         @if(collect($models)->isEmpty())
             <div class="alert alert-info">Nincs elérhető modell adat ennél az évjáratnál.</div>

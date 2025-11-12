@@ -23,25 +23,31 @@
         Kérjük válassza ki gépjárműve megfelelő típusát!
     </p>
 
+    {{-- 🔍 Keresőmező --}}
+    <div class="mb-3">
+        <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
+    </div>
+
     @if($brand->types->isEmpty())
         <p class="text-center">Nincs elérhető típus ennél a márkánál.</p>
     @else
-    <div class="row">
-    @foreach($brand->types->chunk(15) as $chunk)
-        @if($loop->index < 3)
-            <div class="col-md-4 col-sm-6 col-12">
-                @foreach($chunk as $type)
-                    <div class="card type-card mb-2 text-center">
-                        <a href="{{ route('tipus', ['brandSlug' => $brand->slug, 'typeSlug' => $type->slug]) }}" class="stretched-link"></a>
-                        <div class="card-body d-flex align-items-center justify-content-center">
-                            <div class="type-card-title">{{ $type->name }}</div>
-                        </div>
+        <div class="row" id="typeList">
+            @foreach($brand->types->chunk(15) as $chunk)
+                @if($loop->index < 3)
+                    <div class="col-md-4 col-sm-6 col-12">
+                        @foreach($chunk as $type)
+                            <div class="card type-card mb-2 text-center">
+                                <a href="{{ route('tipus', ['brandSlug' => $brand->slug, 'typeSlug' => $type->slug]) }}" class="stretched-link"></a>
+                                <div class="card-body d-flex align-items-center justify-content-center">
+                                    <div class="type-card-title">{{ $type->name }}</div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
-            </div>
-        @endif
-    @endforeach
-    </div>
+                @endif
+            @endforeach
+        </div>
     @endif
 </div>
+
 @endsection

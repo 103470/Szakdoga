@@ -17,6 +17,7 @@ use App\Models\RareBrands\Vintage as RareVintage;
 use App\Models\RareBrands\RareBrandModel;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -611,6 +612,9 @@ Route::prefix('checkout')->group(function () {
     Route::get('/payment', [CheckoutController::class, 'showPaymentPage'])->name('checkout.payment');
     Route::post('/finalize', [CheckoutController::class, 'finalize'])->name('checkout.finalize');
 });
+
+Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+
 
 
 

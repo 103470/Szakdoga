@@ -28,6 +28,10 @@
         Kérjük válassza ki a kategóriát!
     </p>
 
+    <div class="mb-3">
+        <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
+    </div>
+
     @if($categories->isEmpty())
         <p class="text-center">Nincs elérhető kategória ehhez a modellhez.</p>
         @else

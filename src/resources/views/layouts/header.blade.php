@@ -18,9 +18,9 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div>
-        <form class="d-flex" role="search">
+        <form class="d-flex" role="search" action="{{ route('products.search') }}" method="GET">
             <div class="input-group">
-                <input class="form-control" style="width:350px" type="search" placeholder="Kezdj el gépelni" aria-label="Search"/>
+                <input name="q" class="form-control" style="width:350px" type="search" placeholder="Kezdj el gépelni" aria-label="Search"/>
                 <button class="btn btn-light text-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
       </form>

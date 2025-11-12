@@ -24,6 +24,10 @@
         Kérjük, válassza ki gépjárműve megfelelő típusát!
     </p>
 
+    <div class="mb-3">
+        <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
+    </div>
+
     @if($types->isEmpty())
         <div class="alert alert-info text-center">
             Nincs elérhető típus ennél a ritka márkánál.

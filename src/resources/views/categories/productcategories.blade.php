@@ -22,6 +22,10 @@
         Kérjük, válassza ki a termékkategóriát!
     </p>
 
+    <div class="mb-3">
+        <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
+    </div>
+
     @if($productCategories->isEmpty())
         <p class="text-center">Nincs elérhető termékkategória ehhez az alkategóriához.</p>
     @else

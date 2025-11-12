@@ -31,6 +31,10 @@
         </div>
     </div>
 
+    <div class="mb-3">
+        <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
+    </div>
+
     <div class="table-responsive mt-4">
         <table class="table text-center mb-0 vintage-table">
             <thead>

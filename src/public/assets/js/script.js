@@ -1,5 +1,33 @@
+console.log('✅ script.js betöltve');
 document.addEventListener("DOMContentLoaded", function() {
+    console.log('✅ DOMContentLoaded fut');
 
+
+    const typeSearch = document.getElementById('typeSearch');
+
+    if (typeSearch) {
+        console.log('✅ typeSearch megtalálva');
+
+        const normalize = str => str?.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase() || '';
+
+        typeSearch.addEventListener('input', function() {
+            const filter = normalize(this.value);
+            const cards = document.querySelectorAll('.type-card');
+
+            console.log('🔍 Keresés:', filter, ' | kártyák száma:', cards.length);
+
+            cards.forEach(card => {
+                const titleElem = card.querySelector('.type-card-title');
+                const text = titleElem ? titleElem.textContent : card.textContent;
+                const matches = normalize(text).includes(filter);
+
+                card.classList.toggle('d-none', !matches);
+
+                console.log('Kártya:', text, ' | matches:', matches);
+            });
+        });
+    }
+    
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const target = document.querySelector(this.getAttribute('href'));

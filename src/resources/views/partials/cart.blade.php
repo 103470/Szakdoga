@@ -71,10 +71,10 @@
                     <span>Összeg:</span>
                     <span id="subtotal">{{ number_format($subtotal, 0, ',', ' ') }} Ft</span>
                 </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <span>Szállítási költség:</span>
-                    <span id="shipping">{{ number_format($shipping, 0, ',', ' ') }} Ft</span>
-                </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Szállítási költség:</span>
+                        <span id="shipping">{{ number_format($shipping, 0, ',', ' ') }} Ft</span>
+                    </div>
                 <hr>
                 <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
                     <span>Végösszeg:</span>

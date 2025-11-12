@@ -43,6 +43,10 @@
         Kérjük válassza ki az alkategóriát!
     </p>
 
+    <div class="mb-3">
+        <input type="text" id="typeSearch" class="form-control" placeholder="Szűkítés...">
+    </div>
+
     @if($subcategories->isEmpty())
         <p class="text-center">Nincs elérhető alkategória ehhez a kategóriához.</p>
     @else
