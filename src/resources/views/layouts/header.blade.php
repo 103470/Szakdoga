@@ -39,7 +39,7 @@
                 <span class="badge bg-warning text-dark cart-count">0</span>
             </a>
 
-            <div class="dropdown-menu dropdown-menu-end p-0" id="cart-dropdown" style="min-width:300px;"></div>
+            <div class="dropdown-menu dropdown-menu-end p-0" id="cart-dropdown" style="min-width:300px;" data-bs-auto-close="outside"></div>
         </div>
     </div>  
   </div>

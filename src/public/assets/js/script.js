@@ -74,29 +74,47 @@ document.addEventListener("DOMContentLoaded", function() {
         updateButtons();
     });
 
-    document.body.addEventListener('click', function (e) {
-        const incBtn = e.target.closest('.quantity-increase');
-        const decBtn = e.target.closest('.quantity-decrease');
 
-        if (incBtn) {
-            e.preventDefault();
-            const id = incBtn.dataset.id;
-            changeQuantity(id, 1, true);
-        }
+    document.addEventListener('click', function (e) {
+        const dropdown = document.querySelector('#cart-dropdown');
 
-        if (decBtn) {
-            e.preventDefault();
-            const id = decBtn.dataset.id;
-            changeQuantity(id, -1, true);
-        }
+        if (dropdown && dropdown.contains(e.target)) {
+            e.stopPropagation();
 
-        const removeBtn = e.target.closest('.remove-item-btn');
-        if (removeBtn) {
-            e.preventDefault();
-            const id = removeBtn.dataset.id;
-            removeItemFromCart(id, true);
+            if (e.target.closest('.quantity-increase')) {
+                e.preventDefault();
+                const btn = e.target.closest('.quantity-increase');
+                const id = btn.dataset.id;
+                changeQuantity(id, 1);
+            }
+
+            if (e.target.closest('.quantity-decrease')) {
+                e.preventDefault();
+                const btn = e.target.closest('.quantity-decrease');
+                const id = btn.dataset.id;
+                changeQuantity(id, -1);
+            }
+
+            if (e.target.closest('.remove-item-btn')) {
+                e.preventDefault();
+                const btn = e.target.closest('.remove-item-btn');
+                const id = btn.dataset.id;
+                removeItemFromCart(id);
+            }
         }
     });
+
+    document.querySelectorAll('.quantity-increase, .quantity-decrease, .remove-item-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = btn.dataset.id;
+
+            if (btn.classList.contains('quantity-increase')) changeQuantity(id, 1, true);
+            if (btn.classList.contains('quantity-decrease')) changeQuantity(id, -1, true);
+            if (btn.classList.contains('remove-item-btn')) removeItemFromCart(id, true);
+        });
+    });
+
     
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -181,15 +199,15 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
 
                             <div class="input-group input-group-sm me-2" style="width:100px;">
-                                <button class="btn btn-outline-secondary quantity-decrease" data-id="${item.product_id}">-</button>
+                                <button class="btn btn-outline-secondary quantity-decrease" data-bs-toggle="none" data-id="${item.product_id}">-</button>
                                 <input type="text" class="form-control text-center quantity-input" 
                                     value="${item.quantity}" readonly 
                                     data-max="${item.product?.stock ?? 1}" 
                                     data-id="${item.product_id}">
-                                <button class="btn btn-outline-secondary quantity-increase" data-id="${item.product_id}">+</button>
+                                <button class="btn btn-outline-secondary quantity-increase" data-bs-toggle="none" data-id="${item.product_id}">+</button>
                             </div>
 
-                            <button class="btn btn-outline-danger btn-sm remove-item-btn" data-id="${item.product_id}">
+                            <button class="btn btn-outline-danger btn-sm remove-item-btn" data-bs-toggle="none" data-id="${item.product_id}">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </li>
@@ -204,12 +222,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 dropdown.innerHTML = html;
 
+                dropdown.querySelectorAll('.quantity-increase, .quantity-decrease, .remove-item-btn')
+                    .forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation(); // 🔹 megakadályozza a dropdown bezárását
+                            const id = btn.dataset.id;
+
+                            if (btn.classList.contains('quantity-increase')) changeQuantity(id, 1);
+                            if (btn.classList.contains('quantity-decrease')) changeQuantity(id, -1);
+                            if (btn.classList.contains('remove-item-btn')) removeItemFromCart(id);
+                        });
+                    });
+
                 const cartCountElem = document.querySelector('.cart-count');
                 if (cartCountElem && cartData.count !== undefined) {
                     cartCountElem.textContent = cartData.count;
                 }
 
-                dropdown.querySelectorAll('.quantity-increase').forEach(btn => {
+            
+                /*dropdown.querySelectorAll('.quantity-increase').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -234,13 +265,14 @@ document.addEventListener("DOMContentLoaded", function() {
                         e.stopPropagation();
                         removeItemFromCart(btn.dataset.id);
                     });
-                });
+                });*/
             })
             .catch(err => console.error('Kosár dropdown frissítési hiba:', err));
     }
 
     function changeQuantity(id, delta, isCartPage = false) {
         const input = document.querySelector(`.quantity-input[data-id="${id}"]`);
+
         if (!input) return;
 
         fetch(`/cart/item/${id}`, {
@@ -257,25 +289,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
             input.value = data.newQuantity;
 
-            if (isCartPage) {
-                const subtotalElem = document.getElementById('subtotal');
-                const shippingElem = document.getElementById('shipping');
-                const totalElem = document.getElementById('cart-total');
-
-                if (subtotalElem) subtotalElem.textContent = (data.subtotal ?? 0).toLocaleString('hu-HU') + ' Ft';
-                const shippingCost = (data.count > 0 ? 990 : 0);
-                if (shippingElem) shippingElem.textContent = shippingCost.toLocaleString('hu-HU') + ' Ft';
-                if (totalElem) totalElem.textContent = ((data.subtotal ?? 0) + shippingCost).toLocaleString('hu-HU') + ' Ft';
-            } else {
-                refreshCartDropdown();
-            }
+            setTimeout(refreshCartDropdown, 200);
 
             const cartCountElem = document.querySelector('.cart-count');
-            if (cartCountElem && data.count !== undefined) cartCountElem.textContent = data.count;
+            if (cartCountElem && data.count !== undefined)
+                cartCountElem.textContent = data.count;
         })
         .catch(err => console.error('Hiba a mennyiség frissítésekor:', err));
     }
-
 
 
     function removeItemFromCart(id, isCartPage = false) {

@@ -62,29 +62,35 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="mb-3">Rendelés összegzése</h5>
+
                     @php
-                        $subtotal = $cart->sum(fn($item) => $item->product->price * $item->quantity);
-                        $shipping = $cart->isEmpty() ? 0 : 990;
-                        $total = $subtotal + $shipping;
+                        $subtotal = 0;
                     @endphp
-                    <div class="d-flex justify-content-between mb-2">
-                    <span>Összeg:</span>
-                    <span id="subtotal">{{ number_format($subtotal, 0, ',', ' ') }} Ft</span>
-                </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Szállítási költség:</span>
-                        <span id="shipping">{{ number_format($shipping, 0, ',', ' ') }} Ft</span>
+
+                    @foreach ($cart as $item)
+                        @php
+                            $product = $item->product;
+                            $itemTotal = $product->price * $item->quantity;
+                            $subtotal += $itemTotal;
+                        @endphp
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ $item->quantity }} × {{ $product->name }}</span>
+                            <span>{{ number_format($itemTotal, 0, ',', ' ') }} Ft</span>
+                        </div>
+                    @endforeach
+
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                        <span>Végösszeg:</span>
+                        <span id="cart-total">{{ number_format($subtotal, 0, ',', ' ') }} Ft</span>
                     </div>
-                <hr>
-                <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
-                    <span>Végösszeg:</span>
-                    <span id="cart-total">{{ number_format($total, 0, ',', ' ') }} Ft</span>
-                </div>
+
                     <a href="{{ route('checkout.choice') }}" class="btn btn-primary w-100 fw-bold py-2">
                         Folytatás
                     </a>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
