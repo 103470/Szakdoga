@@ -8,7 +8,7 @@
                 <li class="breadcrumb-item">
                     <a href="{{ route('home') }}">B+M Autóalkatrész</a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">{{ $rareBrand->name }}</li>
+                <li class="breadcrumb-item active" aria-current="page">{{ $brand->name }}</li>
             </ol>
         </nav>
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
@@ -16,7 +16,7 @@
 
     <div class="d-flex align-items-center mb-4">
         <h2 class="border-start border-4 theme-blue-border ps-3 mb-0">
-            {{ $rareBrand->name }}
+            {{ $brand->name }}
         </h2>
     </div>
 
@@ -38,7 +38,7 @@
                 <div class="col-md-4 col-sm-6 col-12 mb-3">
                     <div class="card type-card mb-2 text-center shadow-sm">
                         <a href="{{ route('tipus', [
-                            'brandSlug' => $rareBrand->slug,
+                            'brandSlug' => $brand->slug,
                             'typeSlug' => $type->slug
                         ]) }}" class="stretched-link"></a>
 

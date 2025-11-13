@@ -35,25 +35,21 @@ class BrandController extends Controller
         $this->resolveService = $resolveService;
     }
 
-    public function type($slug)
+    public function type($data)
     {
-        $brand = Brand::where('slug', $slug)->firstOrFail();
-        $types = Type::where('brand_id', $brand->id)
-            ->orderBy('name', 'asc')
-            ->get();
+        $brand = $data['brand'];
+        $types = $data['isRare']
+            ? Type::where('rare_brand_id', $brand->id)->orderBy('name', 'asc')->get()
+            : Type::where('brand_id', $brand->id)->orderBy('name', 'asc')->get();
 
-        return view('brands.type', compact('brand', 'types'));
+        $view = $data['isRare'] ? 'rarebrands.type' : 'brands.type';
+
+        return view($view, compact('brand', 'types'));
     }
 
 
-    public function vintage($brandSlug, $typeSlug)
+    public function vintage($data)
     {
-        $data = $this->resolveService->resolveVintage($brandSlug, $typeSlug);
-
-        if ($data['isRare']) {
-            abort(404);
-        }
-
         if ($data['vintages']->count() === 1) {
             $singleVintage = $data['vintages']->first();
             return redirect()->route('modell', [
@@ -70,46 +66,39 @@ class BrandController extends Controller
         ]);
     }
 
-    public function model($brandSlug, $typeSlug, $vintageSlug)
+    public function model($data)
     {
-        $data = $this->resolveService->resolveModel($brandSlug, $typeSlug, $vintageSlug);
+        $brand = $data['brand'];
+        $type = $data['type'];
+        $vintage = $data['vintage'];
+        $models = $data['models'];
 
-        if ($data['isRare']) {
-            abort(404); 
-        }
-
-        if ($data['models']->count() === 1) {
-            $singleModel = $data['models']->first();
+        if ($models->count() === 1) {
+            $singleModel = $models->first();
             return redirect()->route('kategoria', [
-                'brandSlug' => $data['brand']->slug,
-                'typeSlug' => $data['type']->slug,
-                'vintageSlug' => $data['vintage']->slug,
+                'brandSlug' => $brand->slug,
+                'typeSlug' => $type->slug,
+                'vintageSlug' => $vintage->slug,
                 'modelSlug' => $singleModel->slug
             ]);
         }
 
-        $groupedModels = BrandModel::groupedByFuel($data['models']);
+        $groupedModels = BrandModel::groupedByFuel($models);
 
         return view('brands.model', [
-            'brand' => $data['brand'],
-            'type' => $data['type'],
-            'vintage' => $data['vintage'],
-            'models' => $data['models'],
+            'brand' => $brand,
+            'type' => $type,
+            'vintage' => $vintage,
+            'models' => $models,
             'groupedModels' => $groupedModels
         ]);
     }
 
-    public function categories($brandSlug, $typeSlug, $vintageSlug, $modelSlug)
+    public function categories($data)
     {
-        $data = $this->resolveService->resolveCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
-
-        if ($data['isRare']) {
-            abort(404); 
-        }
-
         $categories = Category::where('requires_model', true)
-                              ->orderBy('name')
-                              ->get();
+                            ->orderBy('name')
+                            ->get();
 
         return view('brands.categories', [
             'brand' => $data['brand'],
@@ -120,20 +109,8 @@ class BrandController extends Controller
         ]);
     }
 
-    public function subcategories($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug) 
+    public function subcategories($data)
     {
-        $data = $this->resolveService->resolveSubcategory(
-            $brandSlug,
-            $typeSlug,
-            $vintageSlug,
-            $modelSlug,
-            $categorySlug
-        );
-
-        if ($data['isRare']) {
-            abort(404);
-        }
-
         $subcategories = SubCategory::where('category_id', $data['category']->kategory_id)
             ->where(function ($query) use ($data) {
                 $query->whereHas('fuelType', function ($q) use ($data) {
@@ -181,22 +158,8 @@ class BrandController extends Controller
         ]);
     }
 
-
-    public function productCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug) 
+    public function productCategory($data)
     {
-        $data = $this->resolveService->resolveProductCategory(
-            $brandSlug,
-            $typeSlug,
-            $vintageSlug,
-            $modelSlug,
-            $categorySlug,
-            $subcategorySlug
-        );
-
-        if ($data['isRare']) {
-            abort(404);
-        }
-
         $productCategories = $data['subcategory']->productCategories()->get();
 
         if ($productCategories->count() === 1) {
@@ -240,22 +203,9 @@ class BrandController extends Controller
         ]);
     }
 
-
-    public function products($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug) 
+    public function products($data)
     {
-        $data = $this->resolveService->resolveProductCategory(
-            $brandSlug,
-            $typeSlug,
-            $vintageSlug,
-            $modelSlug,
-            $categorySlug,
-            $subcategorySlug
-        );
-
-        if ($data['isRare']) {
-            abort(404);
-        }
-
+        $productCategorySlug = $data['productCategorySlug'] ?? 'osszes_termek';
         $uniqueId = $data['model']->unique_code;
 
         if ($productCategorySlug === 'osszes_termek') {
@@ -267,8 +217,8 @@ class BrandController extends Controller
 
             $productCategory = null;
         } else {
-            $productCategory = ProductCategory::where('slug', $productCategorySlug)
-                ->where('subcategory_id', $data['subcategory']->subcategory_id)
+            $productCategory = $data['subcategory']->productCategories()
+                ->where('slug', $productCategorySlug)
                 ->first();
 
             $products = $productCategory
@@ -280,8 +230,11 @@ class BrandController extends Controller
                 : collect();
         }
 
-        return view('brands.products', [
-            'brand' => $data['brand'],
+        $view = $data['isRare'] ? 'rarebrands.products' : 'brands.products';
+        $brandVar = $data['isRare'] ? 'rareBrand' : 'brand';
+
+        return view($view, array_merge([
+            $brandVar => $data['brand'],
             'type' => $data['type'],
             'vintage' => $data['vintage'],
             'model' => $data['model'],
@@ -289,7 +242,8 @@ class BrandController extends Controller
             'subcategory' => $data['subcategory'],
             'productCategory' => $productCategory,
             'products' => $products
-        ]);
+        ]));
     }
+
 
 }

@@ -26,12 +26,18 @@ class BrandResolverService
     {
         $brand = Brand::where('slug', $slug)->first();
         if ($brand) {
-            return app(BrandController::class)->type($slug);
+            return [
+                'isRare' => false,
+                'brand' => $brand
+            ];
         }
 
         $rareBrand = RareBrand::where('slug', $slug)->first();
         if ($rareBrand) {
-            return app(RareBrandController::class)->type($slug);
+            return [
+                'isRare' => true,
+                'brand' => $rareBrand
+            ];
         }
 
         abort(404, 'Márka nem található.');
@@ -47,10 +53,10 @@ class BrandResolverService
             $vintages = Vintage::where('type_id', $type->id)->get();
 
             return [
+                'isRare' => false,
                 'brand' => $brand,
                 'type' => $type,
-                'vintages' => $vintages,
-                'isRare' => false
+                'vintages' => $vintages
             ];
         }
 
@@ -61,23 +67,23 @@ class BrandResolverService
         $vintages = RareVintage::where('type_id', $type->id)->get();
 
         return [
+            'isRare' => true,
             'brand' => $rareBrand,
             'type' => $type,
-            'vintages' => $vintages,
-            'isRare' => true
+            'vintages' => $vintages
         ];
     }
 
-    public function resolveModel($brandSlug, $typeSlug, $vintageSlug)
+
+    public function resolveModel(string $brandSlug, string $typeSlug, string $vintageSlug): array
     {
-        $brand = Brand::where('slug', $brandSlug)->first();
-        if ($brand) {
+        if ($brand = Brand::where('slug', $brandSlug)->first()) {
             $type = Type::where('brand_id', $brand->id)
                         ->where('slug', $typeSlug)
                         ->firstOrFail();
             $vintage = Vintage::where('type_id', $type->id)
-                                ->where('slug', $vintageSlug)
-                                ->firstOrFail();
+                            ->where('slug', $vintageSlug)
+                            ->firstOrFail();
             $models = BrandModel::forVintage($vintage)->get();
 
             return [
@@ -94,8 +100,8 @@ class BrandResolverService
                         ->where('slug', $typeSlug)
                         ->firstOrFail();
         $vintage = RareVintage::where('type_id', $type->id)
-                                ->where('slug', $vintageSlug)
-                                ->firstOrFail();
+                            ->where('slug', $vintageSlug)
+                            ->firstOrFail();
         $models = RareBrandModel::forVintage($vintage)->get();
 
         return [
@@ -107,10 +113,11 @@ class BrandResolverService
         ];
     }
 
+
+
     public function resolveCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug)
     {
-        $brand = Brand::where('slug', $brandSlug)->first();
-        if ($brand) {
+        if ($brand = Brand::where('slug', $brandSlug)->first()) {
             $type = Type::where('brand_id', $brand->id)
                         ->where('slug', $typeSlug)
                         ->firstOrFail();
@@ -149,6 +156,7 @@ class BrandResolverService
             'isRare' => true
         ];
     }
+
 
     public function resolveSubcategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug)
     {

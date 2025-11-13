@@ -20,6 +20,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Services\BrandResolverService;
+use App\Services\BrandControllerDispatcher;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,85 +29,58 @@ Route::get('/', function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/tipus/{slug}', function($slug, BrandResolverService $resolver) {
-    return $resolver->resolveType($slug);
+    $data = $resolver->resolveType($slug);
+    return BrandControllerDispatcher::dispatch($data, 'type');
 })->name('marka');
+
 
 Route::get('/tipus/{brandSlug}/{typeSlug}', function($brandSlug, $typeSlug, BrandResolverService $resolver) {
     $data = $resolver->resolveVintage($brandSlug, $typeSlug);
-
-    if ($data['isRare']) {
-        return app(RareBrandController::class)
-                   ->vintage($brandSlug, $typeSlug);
-    }
-
-    return app(BrandController::class)
-               ->vintage($brandSlug, $typeSlug);
+    return BrandControllerDispatcher::dispatch($data, 'vintage');
 })->name('tipus');
+
 
 Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}', function($brandSlug, $typeSlug, $vintageSlug, BrandResolverService $resolver) {
     $data = $resolver->resolveModel($brandSlug, $typeSlug, $vintageSlug);
-
-    if ($data['isRare']) {
-        return app(RareBrandController::class)->model($brandSlug, $typeSlug, $vintageSlug);
-    }
-
-    return app(BrandController::class)->model($brandSlug, $typeSlug, $vintageSlug);
+    return BrandControllerDispatcher::dispatch($data, 'model');
 })->name('model');
 
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, BrandResolverService $resolver) {
-    $data = $resolver->resolveModel($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
 
-    if ($data['isRare']) {
-        return app(RareBrandController::class)->categories($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
-    }
-
-    return app(BrandController::class)->categories($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function(
+    $brandSlug, $typeSlug, $vintageSlug, $modelSlug, BrandResolverService $resolver
+) {
+    $data = $resolver->resolveCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
+    return BrandControllerDispatcher::dispatch($data, 'categories');
 })->name('kategoria');
 
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, BrandResolverService $resolver) {
-    $data = $resolver->resolveSubcategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug);
 
-    if ($data['isRare']) {
-        return app(RareBrandController::class)
-                   ->subcategories($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug);
-    }
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', 
+    function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, BrandResolverService $resolver) {
 
-    return app(BrandController::class)
-               ->subcategories($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug);
+        $data = $resolver->resolveSubcategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug);
+        return BrandControllerDispatcher::dispatch($data, 'subcategories');
 })->name('alkategoria');
 
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}', function(
-    $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, BrandResolverService $resolver
-) {
-    $data = $resolver->resolveProductCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug);
 
-    if ($data['isRare']) {
-        return app(RareBrandController::class)->productCategory(
-            $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug
-        );
-    }
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}', 
+    function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, BrandResolverService $resolver) {
 
-    return app(BrandController::class)->productCategory(
-        $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug
-    );
+        $data = $resolver->resolveProductCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug);
+        return BrandControllerDispatcher::dispatch($data, 'productCategory');
 })->name('termekkategoria');
+
 
 Route::get(
     '/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}/{productCategorySlug}',
-    function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug, BrandResolverService $resolver) {
-        $data = $resolver->resolveProductCategory(
-            $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug
-        );
-
-        if ($data['isRare']) {
-            return app(RareBrandController::class)
-                ->products($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug);
-        }
-
-        return app(BrandController::class)
-            ->products($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug);
+    function(
+        $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug,
+        BrandResolverService $resolver
+    ) {
+        $data = $resolver->resolveProducts($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug);
+        return BrandControllerDispatcher::dispatch($data, 'products');
     }
 )->name('termekek');
+
 
 
 

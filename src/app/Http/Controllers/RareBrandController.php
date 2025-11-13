@@ -21,22 +21,20 @@ class RareBrandController extends Controller
         $this->resolveService = $resolveService;
     }
 
-    public function type($slug)
+    public function type(array $data)
     {
-        $rareBrand = RareBrand::where('slug', $slug)->firstOrFail();
-        $types = Type::where('rare_brand_id', $rareBrand->id)->get();
+        $brand = $data['brand'];
+        $types = $data['isRare']
+            ? Type::where('rare_brand_id', $brand->id)->orderBy('name', 'asc')->get()
+            : Type::where('brand_id', $brand->id)->orderBy('name', 'asc')->get();
 
-        return view('rarebrands.type', compact('rareBrand', 'types'));
+        $view = $data['isRare'] ? 'rarebrands.type' : 'brands.type';
+
+        return view($view, compact('brand', 'types'));
     }
 
-    public function vintage($brandSlug, $typeSlug)
+    public function vintage($data)
     {
-        $data = $this->resolveService->resolveVintage($brandSlug, $typeSlug);
-
-        if (!$data['isRare']) {
-            abort(404);
-        }
-
         if ($data['vintages']->count() === 1) {
             $singleVintage = $data['vintages']->first();
             return redirect()->route('modell', [
@@ -53,46 +51,39 @@ class RareBrandController extends Controller
         ]);
     }
 
-    public function model($brandSlug, $typeSlug, $vintageSlug)
+    public function model($data)
     {
-        $data = $this->resolveService->resolveModel($brandSlug, $typeSlug, $vintageSlug);
+        $brand = $data['brand'];
+        $type = $data['type'];
+        $vintage = $data['vintage'];
+        $models = $data['models'];
 
-        if (!$data['isRare']) {
-            abort(404); 
-        }
-
-        if ($data['models']->count() === 1) {
-            $singleModel = $data['models']->first();
+        if ($models->count() === 1) {
+            $singleModel = $models->first();
             return redirect()->route('kategoria', [
-                'brandSlug' => $data['brand']->slug,
-                'typeSlug' => $data['type']->slug,
-                'vintageSlug' => $data['vintage']->slug,
+                'brandSlug' => $brand->slug,
+                'typeSlug' => $type->slug,
+                'vintageSlug' => $vintage->slug,
                 'modelSlug' => $singleModel->slug
             ]);
         }
 
-        $groupedModels = RareBrandModel::groupedByFuel($data['models']);
+        $groupedModels = RareBrandModel::groupedByFuel($models);
 
         return view('rarebrands.model', [
-            'rareBrand' => $data['brand'],
-            'type' => $data['type'],
-            'vintage' => $data['vintage'],
-            'models' => $data['models'],
+            'rareBrand' => $brand,
+            'type' => $type,
+            'vintage' => $vintage,
+            'models' => $models,
             'groupedModels' => $groupedModels
         ]);
     }
 
-    public function categories($brandSlug, $typeSlug, $vintageSlug, $modelSlug)
+    public function categories($data)
     {
-        $data = $this->resolveService->resolveCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
-
-        if (!$data['isRare']) {
-            abort(404); 
-        }
-
         $categories = Category::where('requires_model', true)
-                              ->orderBy('name')
-                              ->get();
+                            ->orderBy('name')
+                            ->get();
 
         return view('rarebrands.categories', [
             'rareBrand' => $data['brand'],
@@ -103,16 +94,8 @@ class RareBrandController extends Controller
         ]);
     }
 
-    public function subcategories($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug)
+    public function subcategories($data)
     {
-        $data = $this->resolveService->resolveSubcategory(
-            $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug
-        );
-
-        if (!$data['isRare']) {
-            abort(404);
-        }
-
         $subcategories = SubCategory::where('category_id', $data['category']->kategory_id)
             ->where(function ($query) use ($data) {
                 $query->whereHas('fuelType', function ($q) use ($data) {
@@ -160,27 +143,12 @@ class RareBrandController extends Controller
         ]);
     }
 
-
-    public function productCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug) 
+    public function productCategory($data)
     {
-        $data = $this->resolveService->resolveProductCategory(
-            $brandSlug,
-            $typeSlug,
-            $vintageSlug,
-            $modelSlug,
-            $categorySlug,
-            $subcategorySlug
-        );
-
-        if (!$data['isRare']) {
-            abort(404);
-        }
-
         $productCategories = $data['subcategory']->productCategories()->get();
 
         if ($productCategories->count() === 1) {
             $singleProductCategory = $productCategories->first();
-
             $products = Product::where('product_category_id', $singleProductCategory->product_category_id)->get();
 
             return view('rarebrands.products', [
@@ -220,21 +188,10 @@ class RareBrandController extends Controller
         ]);
     }
 
-    public function products($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug) 
+
+    public function products($data)
     {
-        $data = $this->resolveService->resolveProductCategory(
-            $brandSlug,
-            $typeSlug,
-            $vintageSlug,
-            $modelSlug,
-            $categorySlug,
-            $subcategorySlug
-        );
-
-        if (!$data['isRare']) {
-            abort(404);
-        }
-
+        $productCategorySlug = $data['productCategorySlug'] ?? 'osszes_termek';
         $uniqueId = $data['model']->unique_code;
 
         if ($productCategorySlug === 'osszes_termek') {
@@ -270,4 +227,5 @@ class RareBrandController extends Controller
             'products' => $products
         ]);
     }
+
 }
