@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\RareBrandController;
 use App\Models\Brand;
 use App\Models\RareBrand;
 use App\Models\Category;
@@ -18,6 +19,7 @@ use App\Models\RareBrands\RareBrandModel;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
+use App\Services\BrandResolverService;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,13 +27,87 @@ Route::get('/', function () {
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/tipus/{slug}', [BrandController::class, 'type'])->name('marka');
-Route::get('/tipus/{brandSlug}/{typeSlug}', [BrandController::class, 'vintage'])->name('tipus');
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}', [BrandController::class, 'model'])->name('model');
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', [BrandController::class, 'categories'])->name('kategoria');
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', [BrandController::class, 'subcategories'])->name('alkategoria');
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}', [BrandController::class, 'productCategory'])->name('termekkategoria');
-Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}/{productCategorySlug}', [BrandController::class, 'products'])->name('termekek');
+Route::get('/tipus/{slug}', function($slug, BrandResolverService $resolver) {
+    return $resolver->resolveType($slug);
+})->name('marka');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}', function($brandSlug, $typeSlug, BrandResolverService $resolver) {
+    $data = $resolver->resolveVintage($brandSlug, $typeSlug);
+
+    if ($data['isRare']) {
+        return app(RareBrandController::class)
+                   ->vintage($brandSlug, $typeSlug);
+    }
+
+    return app(BrandController::class)
+               ->vintage($brandSlug, $typeSlug);
+})->name('tipus');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}', function($brandSlug, $typeSlug, $vintageSlug, BrandResolverService $resolver) {
+    $data = $resolver->resolveModel($brandSlug, $typeSlug, $vintageSlug);
+
+    if ($data['isRare']) {
+        return app(RareBrandController::class)->model($brandSlug, $typeSlug, $vintageSlug);
+    }
+
+    return app(BrandController::class)->model($brandSlug, $typeSlug, $vintageSlug);
+})->name('model');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, BrandResolverService $resolver) {
+    $data = $resolver->resolveModel($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
+
+    if ($data['isRare']) {
+        return app(RareBrandController::class)->categories($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
+    }
+
+    return app(BrandController::class)->categories($brandSlug, $typeSlug, $vintageSlug, $modelSlug);
+})->name('kategoria');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}', function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, BrandResolverService $resolver) {
+    $data = $resolver->resolveSubcategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug);
+
+    if ($data['isRare']) {
+        return app(RareBrandController::class)
+                   ->subcategories($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug);
+    }
+
+    return app(BrandController::class)
+               ->subcategories($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug);
+})->name('alkategoria');
+
+Route::get('/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}', function(
+    $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, BrandResolverService $resolver
+) {
+    $data = $resolver->resolveProductCategory($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug);
+
+    if ($data['isRare']) {
+        return app(RareBrandController::class)->productCategory(
+            $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug
+        );
+    }
+
+    return app(BrandController::class)->productCategory(
+        $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug
+    );
+})->name('termekkategoria');
+
+Route::get(
+    '/tipus/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}/{categorySlug}/{subcategorySlug}/{productCategorySlug}',
+    function($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug, BrandResolverService $resolver) {
+        $data = $resolver->resolveProductCategory(
+            $brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug
+        );
+
+        if ($data['isRare']) {
+            return app(RareBrandController::class)
+                ->products($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug);
+        }
+
+        return app(BrandController::class)
+            ->products($brandSlug, $typeSlug, $vintageSlug, $modelSlug, $categorySlug, $subcategorySlug, $productCategorySlug);
+    }
+)->name('termekek');
+
 
 
 Route::get('/termek/{product:slug}', function(Product $product) {
