@@ -36,7 +36,7 @@ Route::get('/test-middleware', function () {
 
 
 
-//SOCIAL LOGIN
+
 Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('social.redirect');
 Route::get('login/{provider}/callback', [SocialController::class, 'callback']);
 
@@ -68,7 +68,6 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
-    
     ->name('password.request');
 
 //Email küldése a jelszó-visszaállítás linkkel
