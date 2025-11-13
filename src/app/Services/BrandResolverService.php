@@ -24,24 +24,29 @@ class BrandResolverService
      */
     public function resolveType(string $slug)
     {
-        $brand = Brand::where('slug', $slug)->first();
-        if ($brand) {
+        if ($brand = Brand::where('slug', $slug)->first()) {
+            $types = Type::where('brand_id', $brand->id)->orderBy('name')->get();
             return [
                 'isRare' => false,
-                'brand' => $brand
+                'brand' => $brand,
+                'types' => $types,
+                'view' => 'brands.type'
             ];
         }
 
-        $rareBrand = RareBrand::where('slug', $slug)->first();
-        if ($rareBrand) {
+        if ($rareBrand = RareBrand::where('slug', $slug)->first()) {
+            $types = RareType::where('rare_brand_id', $rareBrand->id)->orderBy('name')->get();
             return [
                 'isRare' => true,
-                'brand' => $rareBrand
+                'brand' => $rareBrand,
+                'types' => $types,
+                'view' => 'rarebrands.type'
             ];
         }
 
         abort(404, 'Márka nem található.');
     }
+
 
     public function resolveVintage($brandSlug, $typeSlug)
     {

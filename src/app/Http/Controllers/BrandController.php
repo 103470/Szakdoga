@@ -37,15 +37,13 @@ class BrandController extends Controller
 
     public function type($data)
     {
+        $types = $data['types']; 
         $brand = $data['brand'];
-        $types = $data['isRare']
-            ? Type::where('rare_brand_id', $brand->id)->orderBy('name', 'asc')->get()
-            : Type::where('brand_id', $brand->id)->orderBy('name', 'asc')->get();
-
-        $view = $data['isRare'] ? 'rarebrands.type' : 'brands.type';
+        $view = $data['view'];
 
         return view($view, compact('brand', 'types'));
     }
+
 
 
     public function vintage($data)
