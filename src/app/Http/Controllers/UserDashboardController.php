@@ -29,7 +29,6 @@ class UserDashboardController extends \Illuminate\Routing\Controller
         return view('userdashboard', compact('user', 'orders'));
     }
 
-    /** PROFIL SZERKESZTÉS **/
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
@@ -65,17 +64,14 @@ class UserDashboardController extends \Illuminate\Routing\Controller
             'shipping_door' => 'nullable|string|max:50',
             'is_admin' => 'nullable|boolean',
         ]);
-        // Egyszerű mezők frissítése
         /** @var \App\Models\User $user */
         $user->fill($validated);
         $user->fill($validated);
 
-        // Jelszó frissítése csak ha megadta
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
 
-        // Profilkép kezelése
         if ($request->hasFile('profile_image')) {
             if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
                 Storage::disk('public')->delete($user->profile_image);
