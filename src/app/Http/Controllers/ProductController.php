@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 
+
 class ProductController extends Controller
 {
     public function search(Request $request)
@@ -16,6 +17,15 @@ class ProductController extends Controller
                     ->get();
 
         return view('partials.searchresult', compact('products', 'query'));
+    }
+
+    public function show(Product $product)
+    {
+        $product->load(['reviews.user']);
+
+        $brandModels = $product->brandModels();
+
+        return view('brands.productdetails', compact('product', 'brandModels'));
     }
 
 }
