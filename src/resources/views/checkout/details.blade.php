@@ -44,19 +44,11 @@
                 @error('shipping_phone')<div class="text-danger small">{{ $message }}</div>@enderror
             </div>
 
-
             <div class="mb-3">
-                <label for="shipping_address" class="form-label">Utca, házszám</label>
-                <input type="text" class="form-control" id="shipping_address" name="shipping_address"
-                       value="{{ old('shipping_address', $user->shipping_address ?? '') }}" required>
-                @error('shipping_address')<div class="text-danger small">{{ $message }}</div>@enderror
-            </div>
-
-            <div class="mb-3">
-                <label for="shipping_city" class="form-label">Város</label>
-                <input type="text" class="form-control" id="shipping_city" name="shipping_city"
-                       value="{{ old('shipping_city', $user->shipping_city ?? '') }}" required>
-                @error('shipping_city')<div class="text-danger small">{{ $message }}</div>@enderror
+                <label for="shipping_country" class="form-label">Ország</label>
+                <input type="text" class="form-control" id="shipping_country" name="shipping_country"
+                       value="{{ old('shipping_country', $user->shipping_country ?? '') }}" required>
+                @error('shipping_country')<div class="text-danger small">{{ $message }}</div>@enderror
             </div>
 
             <div class="mb-3">
@@ -67,10 +59,41 @@
             </div>
 
             <div class="mb-3">
-                <label for="shipping_country" class="form-label">Ország</label>
-                <input type="text" class="form-control" id="shipping_country" name="shipping_country"
-                       value="{{ old('shipping_country', $user->shipping_country ?? '') }}" required>
-                @error('shipping_country')<div class="text-danger small">{{ $message }}</div>@enderror
+                <label for="shipping_city" class="form-label">Város</label>
+                <input type="text" class="form-control" id="shipping_city" name="shipping_city"
+                       value="{{ old('shipping_city', $user->shipping_city ?? '') }}" required>
+                @error('shipping_city')<div class="text-danger small">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="shipping_street" class="form-label">Utca, házszám</label>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control" id="shipping_street_name" name="shipping_street_name"
+                        placeholder="Utcanév" value="{{ old('shipping_street_name', '') }}" required>
+                    <input type="text" class="form-control" id="shipping_street_type" name="shipping_street_type"
+                        placeholder="utca/körút/út" value="{{ old('shipping_street_type', '') }}" required>
+                    <input type="text" class="form-control" id="shipping_house_number" name="shipping_house_number"
+                        placeholder="Házszám" value="{{ old('shipping_house_number', '') }}" required>
+                </div>
+                @error('shipping_street_name')<div class="text-danger small">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="shipping_building" class="form-label">Épület</label>
+                <input type="text" class="form-control" id="shipping_building" name="shipping_building"
+                    value="{{ old('shipping_building', '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="shipping_floor" class="form-label">Emelet</label>
+                <input type="text" class="form-control" id="shipping_floor" name="shipping_floor"
+                    value="{{ old('shipping_floor', '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="shipping_door" class="form-label">Ajtó</label>
+                <input type="text" class="form-control" id="shipping_door" name="shipping_door"
+                    value="{{ old('shipping_door', '') }}">
             </div>
         </div>
 
@@ -114,18 +137,11 @@
                 @error('billing_phone')<div class="text-danger small">{{ $message }}</div>@enderror
             </div>
 
-            <div class="mb-3">
-                <label for="billing_address" class="form-label">Utca, házszám</label>
-                <input type="text" class="form-control" id="billing_address" name="billing_address"
-                       value="{{ old('billing_address', $user->billing_address ?? '') }}" required>
-                @error('billing_address')<div class="text-danger small">{{ $message }}</div>@enderror
-            </div>
-
-            <div class="mb-3">
-                <label for="billing_city" class="form-label">Város</label>
-                <input type="text" class="form-control" id="billing_city" name="billing_city"
-                       value="{{ old('billing_city', $user->billing_city ?? '') }}" required>
-                @error('billing_city')<div class="text-danger small">{{ $message }}</div>@enderror
+             <div class="mb-3">
+                <label for="billing_country" class="form-label">Ország</label>
+                <input type="text" class="form-control" id="billing_country" name="billing_country"
+                       value="{{ old('billing_country', $user->billing_country ?? '') }}" required>
+                @error('billing_country')<div class="text-danger small">{{ $message }}</div>@enderror
             </div>
 
             <div class="mb-3">
@@ -136,10 +152,35 @@
             </div>
 
             <div class="mb-3">
-                <label for="billing_country" class="form-label">Ország</label>
-                <input type="text" class="form-control" id="billing_country" name="billing_country"
-                       value="{{ old('billing_country', $user->billing_country ?? '') }}" required>
-                @error('billing_country')<div class="text-danger small">{{ $message }}</div>@enderror
+                <label for="billing_city" class="form-label">Város</label>
+                <input type="text" class="form-control" id="billing_city" name="billing_city"
+                       value="{{ old('billing_city', $user->billing_city ?? '') }}" required>
+                @error('billing_city')<div class="text-danger small">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Utca, házszám</label>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control" id="billing_street_name" name="billing_street_name" placeholder="Utcanév" value="{{ old('billing_street_name', '') }}" required>
+                    <input type="text" class="form-control" id="billing_street_type" name="billing_street_type" placeholder="utca/körút/út" value="{{ old('billing_street_type', '') }}" required>
+                    <input type="text" class="form-control" id="billing_house_number" name="billing_house_number" placeholder="Házszám" value="{{ old('billing_house_number', '') }}" required>
+                </div>
+                @error('billing_street_name')<div class="text-danger small">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="billing_building" class="form-label">Épület</label>
+                <input type="text" class="form-control" id="billing_building" name="billing_building" value="{{ old('billing_building', '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="billing_floor" class="form-label">Emelet</label>
+                <input type="text" class="form-control" id="billing_floor" name="billing_floor" value="{{ old('billing_floor', '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="billing_door" class="form-label">Ajtó</label>
+                <input type="text" class="form-control" id="billing_door" name="billing_door" value="{{ old('billing_door', '') }}">
             </div>
         </div>
 
