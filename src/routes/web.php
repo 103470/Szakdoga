@@ -127,9 +127,13 @@ Route::prefix('checkout')->group(function () {
     Route::post('/details/submit', [CheckoutController::class, 'submitDetails'])->name('checkout.details.submit');
     Route::get('/payment', [CheckoutController::class, 'showPaymentPage'])->name('checkout.payment');
     Route::post('/finalize', [CheckoutController::class, 'finalize'])->name('checkout.finalize');
+     Route::post('/create-session', [CheckoutController::class, 'createStripeCheckoutSession'])->name('checkout.create-session');
+    Route::get('/success', [CheckoutController::class, 'success'])->name('checkout.success');
 });
 
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
+
 
 
 

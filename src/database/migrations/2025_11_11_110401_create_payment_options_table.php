@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');              
             $table->integer('fee')->default(0);  
+            $table->enum('type', ['card', 'cash'])->default('cash');
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

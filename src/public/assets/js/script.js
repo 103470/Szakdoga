@@ -469,5 +469,35 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+    const stripeButton = document.getElementById('stripe-submit');
+
+    if (stripeButton) {
+        stripeButton.addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            const selectedPayment = document.querySelector('input[name="payment_option"]:checked');
+            if (!selectedPayment) return;
+
+            if (selectedPayment.dataset.type === 'card') {
+                const response = await fetch("/checkout/create-session", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url; 
+                } else {
+                    alert(data.error || 'Hiba történt');
+                }
+            } else {
+                document.getElementById('checkout-form').submit();
+            }
+        });
+    }
+
 
 });

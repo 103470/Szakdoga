@@ -12,6 +12,9 @@ use App\Models\PaymentOption;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Address;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
+use App\Models\Payment;use Stripe\Webhook;
 
 class CheckoutController extends Controller
 {
@@ -164,8 +167,7 @@ class CheckoutController extends Controller
 
         session()->forget('checkout_data');
 
-        return view('checkout.success', ['order' => $order])
-             ->with('success', 'A rendelésed sikeresen elküldve!');
+        return redirect()->route('checkout.success', ['order_id' => $order->id]);
     }
 
     public function showPaymentPage()
@@ -194,5 +196,116 @@ class CheckoutController extends Controller
 
         return view('checkout.payment', compact('deliveryOptions', 'paymentOptions', 'subtotal'));
     }
+
+    public function success(Request $request)
+    {
+        $sessionId = $request->input('session_id');
+
+        $payment = Payment::where('transaction_id', $sessionId)->first();
+
+        if (!$payment || !$payment->order) {
+            return redirect()->route('checkout.choice');
+        }
+
+        $order = $payment->order;
+
+        return view('checkout.success', compact('order'));
+    }
+
+
+    public function createStripeCheckoutSession(Request $request)
+    {
+        $checkoutData = session('checkout_data');
+        if (!$checkoutData) {
+            return response()->json(['error' => 'No checkout data'], 400);
+        }
+
+        if (Auth::check()) {
+            $cartItems = CartItem::with('product')->where('user_id', Auth::id())->get();
+        } else {
+            $sessionCart = session('cart', []);
+            $cartItems = collect($sessionCart)->map(fn($item) => [
+                'product' => Product::find($item['product_id']),
+                'quantity' => $item['quantity']
+            ]);
+        }
+
+        $lineItems = [];
+        foreach ($cartItems as $item) {
+            if (Auth::check()) {
+                $product = $item->product;
+                $quantity = $item->quantity;
+            } else {
+                $product = $item['product'];
+                $quantity = $item['quantity'];
+            }
+
+            if (!$product) continue;
+
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => 'huf',
+                    'product_data' => ['name' => $product->name],
+                    'unit_amount' => intval($product->price * 100),
+                ],
+                'quantity' => $quantity,
+            ];
+        }
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $session = Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('checkout.payment'),
+            'metadata' => [
+                'user_id' => Auth::id() ?? null,
+            ],
+        ]);
+
+        $order = Order::where('user_id', Auth::id())->latest()->first(); 
+        if ($order) {
+            Payment::create([
+                'order_id' => $order->id,
+                'payment_method' => 'stripe', 
+                'amount' => $cartItems->sum(fn($i) => ($i['product']->price ?? 0) * $i['quantity']),
+                'transaction_id' => $session->id, 
+                'payment_status' => 'pending', 
+            ]);
+        }
+
+        return response()->json(['url' => $session->url]);
+    }
+
+    public function handleWebhook(Request $request)
+    {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $payload = $request->getContent();
+        $sigHeader = $request->header('Stripe-Signature');
+        $webhookSecret = env('STRIPE_WEBHOOK_SECRET');
+
+        try {
+            $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
+
+        if ($event->type === 'checkout.session.completed') {
+            $session = $event->data->object;
+
+            $payment = Payment::where('transaction_id', $session->id)->first();
+            if ($payment) {
+                $payment->payment_status = 'succeeded';
+                $payment->save();
+            }
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
+
 
 }

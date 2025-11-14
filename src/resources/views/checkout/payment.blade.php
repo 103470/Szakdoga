@@ -44,6 +44,7 @@
                                     id="payment_{{ $option->id }}" 
                                     value="{{ $option->id }}"
                                     data-fee="{{ $option->fee ?? 0 }}"
+                                    data-type="{{ $option->type }}"
                                     {{ $loop->first ? 'checked' : '' }}>
                                 <label class="form-check-label fw-semibold" for="payment_{{ $option->id }}">
                                     {{ $option->name }}
@@ -106,7 +107,7 @@
                         Tájékoztatunk, hogy a „Megrendelés leadása” gombra való kattintás fizetési kötelezettséget von maga után.
                     </div>
 
-                    <button type="submit" class="btn btn-warning w-100 mt-4 fw-bold py-2">
+                    <button type="button" id="stripe-submit" class="btn btn-warning w-100 mt-4 fw-bold py-2">
                         Rendelés véglegesítése
                     </button>
                 </div>
