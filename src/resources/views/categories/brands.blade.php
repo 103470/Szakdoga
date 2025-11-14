@@ -49,11 +49,20 @@
     <div class="row mb-5">
         @forelse($brands as $brand)
             @php
-                $params = [$category->slug, $subcategory->slug];
                 if (isset($productCategory)) {
-                    $params[] = $productCategory->slug;
+                    $params = [
+                        'category' => $category->slug,
+                        'subcategory' => $subcategory->slug,
+                        'productCategorySlug' => $productCategory->slug,
+                        'brandSlug' => $brand->slug,
+                    ];
+                } else {
+                    $params = [
+                        'category' => $category->slug,
+                        'subcategory' => $subcategory->slug,
+                        'brandSlug' => $brand->slug,
+                    ];
                 }
-                $params[] = $brand->slug;
             @endphp
             <div class="col-md-3 col-sm-6 mb-3">
                 <div class="card brand-card text-center h-100">

@@ -34,7 +34,6 @@ class CategoryControllerDispatcher
             ]);
         }
 
-        // Ez a rész kezelje azt az esetet, amikor nincs productCategory, de van már brands lista
         if (isset($data['brands']) || isset($data['rareBrands'])) {
             return view('categories.brands', [
                 'category' => $data['category'],

@@ -60,11 +60,6 @@ class CategoryResolverService
         'subcategory_productCategories_count' => $subcategory->productCategories->count(),
     ]);
 
-        if (!$brandSlug && $productCategorySlug) {
-            $brandSlug = $productCategorySlug;
-            $productCategorySlug = null;
-        }
-
         $data = [
             'category' => $category,
             'subcategory' => $subcategory,
