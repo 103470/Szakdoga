@@ -12,13 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('provider')->nullable()->after('password');
-            $table->string('provider_id')->nullable()->after('provider');
-            $table->string('provider_token')->nullable()->after('provider_id'); // opcionális
-            $table->string('avatar')->nullable()->after('provider_token'); // opcionális
-            $table->string('account_type')->default('user')->change();
-
-        });
+        if (!Schema::hasColumn('users', 'provider')) {
+            $table->string('provider')->nullable();
+        }
+        if (!Schema::hasColumn('users', 'provider_id')) {
+            $table->string('provider_id')->nullable();
+        }
+        if (!Schema::hasColumn('users', 'provider_token')) {
+            $table->string('provider_token')->nullable();
+        }
+        if (!Schema::hasColumn('users', 'avatar')) {
+            $table->string('avatar')->nullable();
+        }
+    });
     }
 
     /**
@@ -27,7 +33,18 @@ return new class extends Migration
    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['provider', 'provider_id', 'provider_token', 'avatar']);
-        });
+        if (Schema::hasColumn('users', 'provider')) {
+            $table->dropColumn('provider');
+        }
+        if (Schema::hasColumn('users', 'provider_id')) {
+            $table->dropColumn('provider_id');
+        }
+        if (Schema::hasColumn('users', 'provider_token')) {
+            $table->dropColumn('provider_token');
+        }
+        if (Schema::hasColumn('users', 'avatar')) {
+            $table->dropColumn('avatar');
+        }
+    });
     }
 };

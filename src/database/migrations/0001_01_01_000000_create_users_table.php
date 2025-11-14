@@ -13,19 +13,25 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->boolean('is_admin')->default(false)->after('password');
 
-            // Te formod mezői
-            $table->string('lastname');    // vezetéknév
-            $table->string('firstname');   // keresztnév
+            // Alap adatok
+            $table->string('lastname');
+            $table->string('firstname');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('account_type'); // personal / business
+
+            // Admin jelölő
+            $table->boolean('is_admin')->default(false);
+
+            // Fiókadattípus
+            $table->string('account_type');
+
+            // Telefonszám
             $table->string('phone_country_code');
             $table->string('phone_number');
 
-            // Számlázási cím
+            // Billing cím
             $table->string('billing_country');
             $table->string('billing_zip');
             $table->string('billing_city');
@@ -36,7 +42,7 @@ return new class extends Migration
             $table->string('billing_floor')->nullable();
             $table->string('billing_door')->nullable();
 
-            // Szállítási cím
+            // Shipping cím
             $table->string('shipping_country');
             $table->string('shipping_zip');
             $table->string('shipping_city');
@@ -47,14 +53,15 @@ return new class extends Migration
             $table->string('shipping_floor')->nullable();
             $table->string('shipping_door')->nullable();
 
-            // Extra mezők a Laravel auth miatt
-            $table->rememberToken();
-            $table->timestamps();
-
+            // Social auth mezők
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
             $table->string('provider_token')->nullable();
             $table->string('avatar')->nullable();
+
+            // Laravel extra mezők
+            $table->rememberToken();
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -73,19 +80,17 @@ return new class extends Migration
         });
     }
 
+
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-        $table->dropColumn('is_admin');
-        
+            if (Schema::hasColumn('users', 'is_admin')) {
+                $table->dropColumn('is_admin');
+            }
         });
-        
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
-        
     }
 };
