@@ -52,8 +52,7 @@ class CategoryControllerDispatcher
                 'products' => $data['products']
             ]);
         }
-
-        // Debug: ide már nem kéne eljutni, de ha igen, logoljunk
+        
         logger()->warning('CategoryControllerDispatcher::dispatch reached abort', array_keys($data));
         abort(404);
     }

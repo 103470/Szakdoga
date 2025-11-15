@@ -15,7 +15,7 @@
 
                 @if(isset($subcategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}" class="stretched-link">
+                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug, 'productCategorySlug' => $productCategory->slug ?? 'osszes_termek']) }}" class="stretched-link">
                             {{ $subcategory->name }}
                         </a>
                     </li>
@@ -26,9 +26,9 @@
                         <a href="{{ route('termekcsoport_dynamic', [
                             'category' => $category->slug,
                             'subcategory' => $subcategory->slug,
-                            'productCategory' => $productCategory->slug
-                        ]) }}" class="stretched-link">
-                            {{ $productCategory->name }}
+                            'productCategorySlug' => $productCategory->slug ?? 'osszes_termek'
+                        ]) }}">
+                            {{ $productCategory->name ?? 'Összes termék' }}
                         </a>
                     </li>
                 @endif
@@ -60,6 +60,7 @@
                     $params = [
                         'category' => $category->slug,
                         'subcategory' => $subcategory->slug,
+                        'productCategorySlug' => 'osszes_termek',
                         'brandSlug' => $brand->slug,
                     ];
                 }

@@ -40,7 +40,8 @@
                             <div class="type-card-title">{{ $subcategory->name }}</div>
                             <a href="{{ route('termekcsoport_dynamic', [
                                 'category' => $category->slug,
-                                'subcategory' => $subcategory->slug
+                                'subcategory' => $subcategory->slug,
+                                'productCategorySlug' => 'osszes_termek'
                             ]) }}" class="stretched-link"></a>
                         </div>
                     </div>

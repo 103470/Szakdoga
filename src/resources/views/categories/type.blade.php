@@ -14,7 +14,7 @@
 
                 @if(isset($subcategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}" class="stretched-link">
+                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug, 'productCategorySlug' => $productCategory->slug ?? 'osszes_termek']) }}" class="stretched-link">
                             {{ $subcategory->name }}
                         </a>
                     </li>
@@ -61,15 +61,28 @@
     @else
         <div class="row">
             @foreach($types as $type)
-                <div class="col-md-4 col-sm-6 col-12 mb-3">
-                    <div class="card type-card mb-2 text-center shadow-sm">
-                        <a href="{{ route('termekcsoport_vintage', [
+                @php
+                    if (isset($productCategory)) {
+                        $params = [
                             'categorySlug' => $category->slug,
                             'subcategorySlug' => $subcategory->slug,
-                            'productCategorySlug' => optional($productCategory)->slug,
+                            'productCategorySlug' => $productCategory->slug,
                             'brandSlug' => $brand->slug,
                             'typeSlug' => $type->slug
-                        ]) }}" class="stretched-link"></a>
+                        ];
+                    } else {
+                        $params = [
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'productCategorySlug' => 'osszes_termek',
+                            'brandSlug' => $brand->slug,
+                            'typeSlug' => $type->slug
+                        ];
+                    }
+                @endphp
+                <div class="col-md-4 col-sm-6 col-12 mb-3">
+                    <div class="card type-card mb-2 text-center shadow-sm">
+                        <a href="{{ route('termekcsoport_vintage', $params) }}" class="stretched-link"></a>
                         <div class="card-body d-flex align-items-center justify-content-center">
                             <div class="type-card-title fw-semibold">{{ $type->name }}</div>
                         </div>

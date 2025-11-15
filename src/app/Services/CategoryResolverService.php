@@ -51,64 +51,56 @@ class CategoryResolverService
 
     public static function resolve(Category $category, SubCategory $subcategory, ?string $productCategorySlug = null, ?string $brandSlug = null): array
     {
-        logger()->info('CategoryResolverService::resolve called', [
-        'category' => $category->slug,
-        'subcategory' => $subcategory->slug,
-        'productCategorySlug' => $productCategorySlug,
-        'brandSlug' => $brandSlug,
-        'category_requires_model' => $category->requires_model,
-        'subcategory_productCategories_count' => $subcategory->productCategories->count(),
-    ]);
+        $productCategory = $productCategorySlug
+            ? ProductCategory::where('slug', $productCategorySlug)
+                ->where('subcategory_id', $subcategory->subcategory_id)
+                ->first()
+            : null;
 
         $data = [
             'category' => $category,
             'subcategory' => $subcategory,
-            'productCategory' => null,
+            'productCategory' => $productCategory,
             'brand' => null,
-            'rareBrand' => null
+            'rareBrand' => null,
+            'types' => null,
+            'rareTypes' => null,
+            'products' => null,
+            'brands' => null,
+            'rareBrands' => null,
+            'productCategories' => null
         ];
-
-        if ($productCategorySlug) {
-            $data['productCategory'] = ProductCategory::where('slug', $productCategorySlug)
-                ->where('subcategory_id', $subcategory->subcategory_id)
-                ->firstOrFail();
-        }
 
         if ($brandSlug) {
             $brand = Brand::where('slug', $brandSlug)->first();
             if ($brand) {
-                $data['brand'] = $brand; 
+                $data['brand'] = $brand;
                 $data['types'] = $brand->types;
             } else {
                 $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
-                $data['rareBrand'] = $rareBrand; 
+                $data['rareBrand'] = $rareBrand;
                 $data['rareTypes'] = $rareBrand->types;
             }
         }
 
-
-        if ($data['productCategory']) {
+        if ($productCategory) {
             if ($category->requires_model) {
                 $data['brands'] = Brand::all();
                 $data['rareBrands'] = RareBrand::all();
             } else {
-                $data['products'] = Product::where('product_category_id', $data['productCategory']->id)->get();
+                $data['products'] = Product::where('product_category_id', $productCategory->id)->get();
             }
         } else {
-            $productCategories = $subcategory->productCategories;
-            if ($productCategories->isNotEmpty()) {
-                $data['productCategories'] = $productCategories;
-            } elseif ($category->requires_model) {
-                $data['brands'] = Brand::all();
-                $data['rareBrands'] = RareBrand::all();
-            } else {
-                $data['products'] = Product::where('subcategory_id', $subcategory->subcategory_id)->get();
-            }
+            $data['productCategories'] = null;
+            $data['products'] = null;
+            $data['brands'] = null;
+            $data['rareBrands'] = null;
         }
 
-        logger()->info('CategoryResolverService::resolve result keys', array_keys($data));
+
         return $data;
     }
+
 
     public static function getData(
         string $categorySlug,

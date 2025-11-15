@@ -24,6 +24,7 @@ use App\Services\BrandControllerDispatcher;
 use App\Http\Controllers\CategoryController;
 use App\Services\CategoryResolverService;
 use App\Services\CategoryControllerDispatcher;
+use App\Services\UrlNormalizer;
 
 Route::get('/', function () {
     return view('welcome');
@@ -89,11 +90,11 @@ Route::get('/termek/{product:slug}', [ProductController::class, 'show'])->name('
 Route::get('/termekcsoport/{category:slug}', [CategoryController::class, 'showSubcategories'])
     ->name('termekcsoport');
 
+Route::pattern('productCategorySlug', '[A-Za-z0-9\-_]+');
+
 Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategorySlug?}/{brandSlug?}', 
-    function (Category $category, SubCategory $subcategory, $productCategorySlug = null, $brandSlug = null) {
-        $data = CategoryResolverService::resolve($category, $subcategory, $productCategorySlug, $brandSlug);
-        return CategoryControllerDispatcher::dispatch($data);
-    })->name('termekcsoport_dynamic');
+    [CategoryController::class, 'handle'])
+    ->name('termekcsoport_dynamic');
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug?}/{brandSlug}/{typeSlug}', 
     function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSlug, $typeSlug) {
