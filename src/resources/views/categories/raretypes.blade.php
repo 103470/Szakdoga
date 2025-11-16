@@ -90,7 +90,7 @@
                         @endphp
                         <a href="{{ route($routeName, $params) }}" class="stretched-link"></a>
                         <div class="card-body d-flex align-items-center justify-content-center">
-                            <div class="type-card-title fw-semibold" style="color: #3b5998;">
+                            <div class="type-card-title fw-semibold" style="color: #2c2c2c;">
                                 {{ $type->name }}
                             </div>
                         </div>

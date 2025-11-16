@@ -9,7 +9,7 @@
             A rendelésed sikeresen leadva. A rendelési azonosítód:
         </p>
 
-        <h4 class="mb-4 text-primary">
+        <h4 class="mb-4" style="color: #2c2c2c;">
             #{{ $order->order_number }}
         </h4>
 
@@ -17,7 +17,7 @@
             A rendelés részleteit e-mailben is elküldtük neked a megadott címre.
         </p>
 
-        <a href="{{ route('home') }}" class="btn btn-primary btn-lg px-5 fw-bold">
+        <a href="{{ route('home') }}" class="btn theme-blue-btn btn-lg px-5 fw-bold">
             Vissza a főoldalra
         </a>
     </div>

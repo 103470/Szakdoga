@@ -61,40 +61,6 @@ class CategoryController extends Controller
         return view('categories.subcategories', compact('category', 'subcategories'));
     }
 
-
-    public function showProducts($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSlug, $typeSlug, $vintageSlug, $modelSlug) 
-    {
-        $data = CategoryResolverService::getProductData($categorySlug, $subcategorySlug, $productCategorySlug, $brandSlug, $typeSlug, $vintageSlug, $modelSlug);
-        return CategoryControllerDispatcher::renderProductPage($data);
-    }
-
-    public function handle(Category $category, SubCategory $subcategory, ?string $productCategorySlug = null, ?string $brandSlug = null)
-    {
-        [$productCategorySlug, $brandSlug] = UrlNormalizer::normalize($productCategorySlug, $brandSlug);
-
-        $productCategories = $subcategory->productCategories;
-
-        $isAllProductsSlug = $productCategorySlug === 'osszes_termek' || $productCategorySlug === null;
-
-        if ($isAllProductsSlug) {
-            if ($productCategories->count() > 1) {
-                return view('categories.productcategories', [
-                    'category' => $category,
-                    'subcategory' => $subcategory,
-                    'productCategories' => $productCategories,
-                ]);
-            }
-
-            if ($productCategories->count() === 1) {
-                $productCategorySlug = $productCategories->first()->slug;
-            }
-        }
-
-        $data = CategoryResolverService::resolve($category, $subcategory, $productCategorySlug, $brandSlug);
-
-        return CategoryControllerDispatcher::dispatch($data);
-    }
-
     public function index(Category $category, SubCategory $subcategory)
     {
         $productCategories = ProductCategory::where('subcategory_id', $subcategory->subcategory_id)->get();

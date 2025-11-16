@@ -16,7 +16,7 @@
                     <p class="text-muted mb-4" style="max-width: 280px;">
                         Vásárolj gyorsan, anélkül hogy regisztrálnál – csak add meg a szállítási és számlázási adataidat.
                     </p>
-                    <a href="{{ route('checkout.details') }}" class="btn btn-primary btn-lg px-5 fw-bold">
+                    <a href="{{ route('checkout.details') }}" class="btn theme-blue-btn btn-lg px-5 fw-bold">
                         Vendégként vásárolok
                     </a>
                 </div>
@@ -27,8 +27,8 @@
             <div class="card border-0 shadow-sm h-100 text-center">
                 <div class="card-body d-flex flex-column justify-content-center align-items-center">
                     <h4 class="fw-semibold mb-4">Már van fiókja?</h4>
-                    <i class="fa-solid fa-user fa-4x text-primary mb-4"></i>
-                    <a href="#" class="btn btn-outline-primary btn-lg px-5 fw-bold mb-4">
+                    <i class="fa-solid fa-user fa-4x text-dark-custom mb-4"></i>
+                    <a href="#" class="btn btn-outline-dark-custom btn-lg px-5 fw-bold mb-4">
                         Bejelentkezés
                     </a>
 

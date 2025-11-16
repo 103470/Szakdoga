@@ -185,7 +185,7 @@
         </div>
 
         <div class="text-end mt-4">
-            <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold">
+            <button type="submit" class="btn theme-blue-btn btn-lg px-5 fw-bold">
                 Tovább a fizetésre
             </button>
         </div>

@@ -85,7 +85,7 @@
                         <span id="cart-total">{{ number_format($subtotal, 0, ',', ' ') }} Ft</span>
                     </div>
 
-                    <a href="{{ route('checkout.choice') }}" class="btn btn-primary w-100 fw-bold py-2">
+                    <a href="{{ route('checkout.choice') }}" class="btn theme-blue-btn w-100 fw-bold py-2 text-light">
                         Folytatás
                     </a>
                 </div>

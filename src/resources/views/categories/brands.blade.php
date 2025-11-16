@@ -126,7 +126,7 @@
                 <div class="card brand-card type-card theme-rare-brand text-center h-100">
                     <a href="{{ route($routeName, $params) }}" class="stretched-link"></a>
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <div class="fw-bold" style="color: #3b5998;">{{ $brand->name }}</div>
+                        <div class="fw-bold" style="color: #2c2c2c;">{{ $brand->name }}</div>
                     </div>
                 </div>
             </div>
