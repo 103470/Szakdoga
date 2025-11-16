@@ -3,38 +3,68 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class LoginControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_login_with_valid_credentials()
+    /** @test */
+    public function user_can_login_with_valid_credentials()
     {
-        $user = User::factory()->create([
+        // KÉZI felhasználó létrehozás (factory helyett)
+        $user = User::create([
+            'lastname' => 'Teszt',
+            'firstname' => 'Elek',
             'email' => 'teszt@example.com',
-            'password' => Hash::make('password123')
+            'password' => Hash::make('password123'),
+            'account_type' => 'personal',
+            'phone_country_code' => '+36',
+            'phone_number' => '301234567',
+
+            // billing
+            'billing_country' => 'Hungary',
+            'billing_zip' => '1137',
+            'billing_city' => 'Budapest',
+            'billing_street_name' => 'Fő',
+            'billing_street_type' => 'utca',
+            'billing_house_number' => '12',
+
+            // shipping
+            'shipping_country' => 'Hungary',
+            'shipping_zip' => '1137',
+            'shipping_city' => 'Budapest',
+            'shipping_street_name' => 'Fő',
+            'shipping_street_type' => 'utca',
+            'shipping_house_number' => '12',
+
+            'is_admin' => false,
         ]);
 
+        // Bejelentkezési kérés
         $response = $this->post('/login', [
             'email' => 'teszt@example.com',
             'password' => 'password123'
         ]);
 
+        // Átirányítás és authentikáció ellenőrzése
         $response->assertRedirect('/');
         $this->assertAuthenticatedAs($user);
     }
 
-    public function test_user_cannot_login_with_invalid_credentials()
+    /** @test */
+    public function user_cannot_login_with_invalid_credentials()
     {
+        // NEM létező user email
         $response = $this->post('/login', [
-            'email' => 'random@example.com',
-            'password' => 'wrongpass'
+            'email' => 'nemletezik@example.com',
+            'password' => 'rosszjelszo'
         ]);
 
-        $response->assertSessionHasErrors('email');
+        $response->assertSessionHasErrors(['email']);
         $this->assertGuest();
     }
 }
+
