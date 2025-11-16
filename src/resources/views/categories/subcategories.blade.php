@@ -38,10 +38,9 @@
                     <div class="card type-card mb-2 text-center position-relative">
                         <div class="card-body d-flex align-items-center justify-content-center">
                             <div class="type-card-title">{{ $subcategory->name }}</div>
-                            <a href="{{ route('termekcsoport_dynamic', [
+                            <a href="{{ route('termekcsopor_productCategory', [
                                 'category' => $category->slug,
-                                'subcategory' => $subcategory->slug,
-                                'productCategorySlug' => 'osszes_termek'
+                                'subcategory' => $subcategory->slug
                             ]) }}" class="stretched-link"></a>
                         </div>
                     </div>

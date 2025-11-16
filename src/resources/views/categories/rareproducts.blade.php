@@ -14,18 +14,22 @@
 
                 @if(isset($subcategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}" class="stretched-link">
+                        <a href="{{ route('termekcsoport_dynamic', [
+                            'category' => $category->slug,
+                            'subcategory' => $subcategory->slug
+                        ]) }}" class="stretched-link">
                             {{ $subcategory->name }}
                         </a>
                     </li>
                 @endif
 
-                 @if(!empty($productCategory))
+                @if(!empty($productCategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', [
+                        <a href="{{ route('termekcsoport_dynamic_pc', [
                             'category' => $category->slug,
                             'subcategory' => $subcategory->slug,
-                            'productCategory' => $productCategory->slug
+                            'productCategory' => $productCategory->slug,
+                            'brandSlug' => $rareBrand->slug
                         ]) }}" class="stretched-link">
                             {{ $productCategory->name }}
                         </a>
@@ -34,12 +38,19 @@
 
                 @if(!empty($rareBrand))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', [
-                            'category' => $category->slug,
-                            'subcategory' => $subcategory->slug,
-                            'productCategorySlug' => $productCategory->slug ?? null,
-                            'brandSlug' => $rareBrand->slug
-                        ]) }}" class="stretched-link">
+                        <a href="{{ !empty($productCategory)
+                            ? route('termekcsoport_dynamic_pc', [
+                                'category' => $category->slug,
+                                'subcategory' => $subcategory->slug,
+                                'productCategory' => $productCategory->slug,
+                                'brandSlug' => $rareBrand->slug
+                            ])
+                            : route('termekcsoport_dynamic', [
+                                'category' => $category->slug,
+                                'subcategory' => $subcategory->slug,
+                                'brandSlug' => $rareBrand->slug
+                            ])
+                        }}" class="stretched-link">
                             {{ $rareBrand->name }}
                         </a>
                     </li>
@@ -47,13 +58,21 @@
 
                 @if(!empty($type))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_vintage', [
-                            'categorySlug' => $category->slug,
-                            'subcategorySlug' => $subcategory->slug,
-                            'productCategorySlug' => $productCategory->slug ?? null,
-                            'brandSlug' => $rareBrand->slug,
-                            'typeSlug' => $type->slug
-                        ]) }}" class="stretched-link">
+                        <a href="{{ !empty($productCategory)
+                            ? route('termekcsoport_vintage_pc', [
+                                'categorySlug' => $category->slug,
+                                'subcategorySlug' => $subcategory->slug,
+                                'productCategorySlug' => $productCategory->slug,
+                                'brandSlug' => $rareBrand->slug,
+                                'typeSlug' => $type->slug
+                            ])
+                            : route('termekcsoport_vintage', [
+                                'categorySlug' => $category->slug,
+                                'subcategorySlug' => $subcategory->slug,
+                                'brandSlug' => $rareBrand->slug,
+                                'typeSlug' => $type->slug
+                            ])
+                        }}" class="stretched-link">
                             {{ $type->name }}
                         </a>
                     </li>
@@ -61,14 +80,23 @@
 
                 @if(!empty($vintage))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_model', [
-                            'categorySlug' => $category->slug,
-                            'subcategorySlug' => $subcategory->slug,
-                            'productCategorySlug' => $productCategory->slug ?? null,
-                            'brandSlug' => $rareBrand->slug,
-                            'typeSlug' => $type->slug,
-                            'vintageSlug' => $vintage->slug
-                        ]) }}" class="stretched-link">
+                        <a href="{{ !empty($productCategory)
+                            ? route('termekcsoport_model_pc', [
+                                'categorySlug' => $category->slug,
+                                'subcategorySlug' => $subcategory->slug,
+                                'productCategorySlug' => $productCategory->slug,
+                                'brandSlug' => $rareBrand->slug,
+                                'typeSlug' => $type->slug,
+                                'vintageSlug' => $vintage->slug
+                            ])
+                            : route('termekcsoport_model', [
+                                'categorySlug' => $category->slug,
+                                'subcategorySlug' => $subcategory->slug,
+                                'brandSlug' => $rareBrand->slug,
+                                'typeSlug' => $type->slug,
+                                'vintageSlug' => $vintage->slug
+                            ])
+                        }}" class="stretched-link">
                             {{ $vintage->frame }}
                         </a>
                     </li>

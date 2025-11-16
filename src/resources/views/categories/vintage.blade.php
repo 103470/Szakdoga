@@ -5,7 +5,10 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a></li>
+                <li class="breadcrumb-item">
+                    <a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a>
+                </li>
+
                 <li class="breadcrumb-item">
                     <a href="{{ route('termekcsoport', ['category' => $category->slug]) }}" class="stretched-link">
                         {{ $category->name }}
@@ -14,7 +17,10 @@
 
                 @if(isset($subcategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}" class="stretched-link">
+                        <a href="{{ route('termekcsopor_productCategory', [
+                            'category' => $category->slug,
+                            'subcategory' => $subcategory->slug
+                        ]) }}" class="stretched-link">
                             {{ $subcategory->name }}
                         </a>
                     </li>
@@ -22,7 +28,7 @@
 
                  @if(!empty($productCategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', [
+                        <a href="{{ route('termekcsoport_brand', [
                             'category' => $category->slug,
                             'subcategory' => $subcategory->slug,
                             'productCategory' => $productCategory->slug
@@ -34,18 +40,30 @@
 
                 @if(!empty($brand))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', [
-                            'category' => $category->slug,
-                            'subcategory' => $subcategory->slug,
-                            'productCategorySlug' => $productCategory->slug ?? null,
-                            'brandSlug' => $brand->slug
-                        ]) }}" class="stretched-link">
-                            {{ $brand->name }}
-                        </a>
+                        @if(!empty($productCategory))
+                            <a href="{{ route('termekcsoport_dynamic_pc', [
+                                'category' => $category->slug,
+                                'subcategory' => $subcategory->slug,
+                                'productCategory' => $productCategory->slug,
+                                'brandSlug' => $brand->slug,
+                            ]) }}" class="stretched-link">
+                                {{ $brand->name }}
+                            </a>
+                        @else
+                            <a href="{{ route('termekcsoport_dynamic', [
+                                'category' => $category->slug,
+                                'subcategory' => $subcategory->slug,
+                                'brandSlug' => $brand->slug,
+                            ]) }}" class="stretched-link">
+                                {{ $brand->name }}
+                            </a>
+                        @endif
                     </li>
                 @endif
+
                 <li class="breadcrumb-item active" aria-current="page">{{ $type->name }}</li>
             </ol>
+
         </nav>
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
     </div>
@@ -78,14 +96,22 @@
             <tbody>
                 @forelse($vintages as $vintage)
                 <tr style="cursor: pointer;"
-                    onclick="window.location='{{ route('termekcsoport_model', [
-                        'categorySlug' => $category->slug,
-                        'subcategorySlug' => $subcategory->slug,
-                        'productCategorySlug' => optional($productCategory)->slug,
-                        'brandSlug' => $brand->slug,
-                        'typeSlug' => $type->slug,
-                        'vintageSlug' => $vintage->slug
-                    ]) }}'">
+                    onclick="window.location='{{ $productCategory
+                        ? route('termekcsoport_model_pc', [
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'productCategorySlug' => $productCategory->slug,
+                            'brandSlug' => $brand->slug,
+                            'typeSlug' => $type->slug,
+                            'vintageSlug' => $vintage->slug
+                        ])
+                        : route('termekcsoport_model', [
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'brandSlug' => $brand->slug,
+                            'typeSlug' => $type->slug,
+                            'vintageSlug' => $vintage->slug
+                        ]) }}'">
                     <td>{{ $vintage->name }}</td>
                     <td>{{ $vintage->vintage_range }}</td>
                     <td>{{ $vintage->frame ?? '-' }}</td>

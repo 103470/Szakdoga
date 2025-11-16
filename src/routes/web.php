@@ -90,18 +90,64 @@ Route::get('/termek/{product:slug}', [ProductController::class, 'show'])->name('
 Route::get('/termekcsoport/{category:slug}', [CategoryController::class, 'showSubcategories'])
     ->name('termekcsoport');
 
-Route::pattern('productCategorySlug', '[A-Za-z0-9\-_]+');
+Route::get('/termekcsoport/{category:slug}/{subcategory:slug}', 
+    [CategoryController::class, 'index']
+)->name('termekcsopor_productCategory');
 
-Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategorySlug?}/{brandSlug?}', 
+Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategory:slug}',
+    [CategoryController::class, 'productCategory']
+)->name('termekcsoport_brand');
+
+Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{brandSlug}', 
+    [CategoryController::class, 'brand']
+)->name('termekcsoport_dynamic');
+
+Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategory:slug}/{brandSlug}', 
+    [CategoryController::class, 'productCategoryBrand']
+)->name('termekcsoport_dynamic_pc');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}', 
+    [CategoryController::class, 'vintage']
+)->name('termekcsoport_vintage');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug}/{brandSlug}/{typeSlug}', 
+    [CategoryController::class, 'productCategoryVintage']
+)->name('termekcsoport_vintage_pc');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}', 
+    [CategoryController::class, 'model']
+)->name('termekcsoport_model');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}', 
+    [CategoryController::class, 'productCategoryModel']
+)->name('termekcsoport_model_pc');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', 
+    [CategoryController::class, 'product']
+)->name('termekcsoport_products');
+
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', 
+    [CategoryController::class, 'productCategoryProduct']
+)->name('termekcsoport_products_pc');
+
+
+
+
+
+
+
+
+/*Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategorySlug?}/{brandSlug?}', 
     [CategoryController::class, 'handle'])
     ->name('termekcsoport_dynamic');
 
-Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug?}/{brandSlug}/{typeSlug}', 
+Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}', 
     function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSlug, $typeSlug) {
         $data = CategoryResolverService::getData($categorySlug, $subcategorySlug, $productCategorySlug, $brandSlug, $typeSlug);
         return CategoryControllerDispatcher::render($data);
     }
 )->name('termekcsoport_vintage');
+
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug?}/{brandSlug}/{typeSlug}/{vintageSlug}', 
     function ($categorySlug, $subcategorySlug, $productCategorySlug = null, $brandSlug, $typeSlug, $vintageSlug) {
@@ -112,7 +158,7 @@ Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug?}/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}',
     [CategoryController::class, 'showProducts'])
-    ->name('termekcsoport_products');
+    ->name('termekcsoport_products');*/
 
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

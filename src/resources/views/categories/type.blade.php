@@ -5,7 +5,10 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a></li>
+                <li class="breadcrumb-item">
+                    <a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a>
+                </li>
+
                 <li class="breadcrumb-item">
                     <a href="{{ route('termekcsoport', ['category' => $category->slug]) }}" class="stretched-link">
                         {{ $category->name }}
@@ -14,15 +17,18 @@
 
                 @if(isset($subcategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug, 'productCategorySlug' => $productCategory->slug ?? 'osszes_termek']) }}" class="stretched-link">
+                        <a href="{{ route('termekcsopor_productCategory', [
+                            'category' => $category->slug,
+                            'subcategory' => $subcategory->slug
+                        ]) }}" class="stretched-link">
                             {{ $subcategory->name }}
                         </a>
                     </li>
                 @endif
 
-                 @if(!empty($productCategory))
+                @if(!empty($productCategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', [
+                        <a href="{{ route('termekcsoport_brand', [
                             'category' => $category->slug,
                             'subcategory' => $subcategory->slug,
                             'productCategory' => $productCategory->slug
@@ -31,7 +37,10 @@
                         </a>
                     </li>
                 @endif
-                <li class="breadcrumb-item active" aria-current="page">{{ $brand->name }}</li>
+
+                @if(isset($brand))
+                    <li class="breadcrumb-item active" aria-current="page">{{ $brand->name }}</li>
+                @endif
             </ol>
         </nav>
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
@@ -62,7 +71,8 @@
         <div class="row">
             @foreach($types as $type)
                 @php
-                    if (isset($productCategory)) {
+                    if (!empty($productCategory)) {
+                        // Ha van productCategory, a hosszabb route-ot használjuk
                         $params = [
                             'categorySlug' => $category->slug,
                             'subcategorySlug' => $subcategory->slug,
@@ -70,19 +80,21 @@
                             'brandSlug' => $brand->slug,
                             'typeSlug' => $type->slug
                         ];
+                        $routeName = 'termekcsoport_vintage_pc';
                     } else {
+                        // Ha nincs productCategory, a rövidebb route-ot használjuk
                         $params = [
                             'categorySlug' => $category->slug,
                             'subcategorySlug' => $subcategory->slug,
-                            'productCategorySlug' => 'osszes_termek',
                             'brandSlug' => $brand->slug,
                             'typeSlug' => $type->slug
                         ];
+                        $routeName = 'termekcsoport_vintage';
                     }
                 @endphp
                 <div class="col-md-4 col-sm-6 col-12 mb-3">
                     <div class="card type-card mb-2 text-center shadow-sm">
-                        <a href="{{ route('termekcsoport_vintage', $params) }}" class="stretched-link"></a>
+                        <a href="{{ route($routeName, $params) }}" class="stretched-link"></a>
                         <div class="card-body d-flex align-items-center justify-content-center">
                             <div class="type-card-title fw-semibold">{{ $type->name }}</div>
                         </div>

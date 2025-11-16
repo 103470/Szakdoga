@@ -7,9 +7,10 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">B+M Autóalkatrész</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('termekcsoport', $category->slug) }}">{{ $category->name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('termekcsoport', ['category' => $category->slug]) }}">{{ $category->name }}</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ $subcategory->name }}</li>
             </ol>
+
         </nav>
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
     </div>
@@ -35,7 +36,11 @@
                     <div class="card type-card mb-2 text-center position-relative">
                         <div class="card-body d-flex align-items-center justify-content-center">
                             <div class="type-card-title">{{ $productCategory->name }}</div>
-                            <a href="{{ route('termekcsoport_dynamic', [$category->slug, $subcategory->slug, $productCategory->slug]) }}" class="stretched-link"></a>
+                            <a href="{{ route('termekcsoport_brand', [
+                                'category' => $category->slug,
+                                'subcategory' => $subcategory->slug,
+                                'productCategory' => $productCategory->slug
+                            ]) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>

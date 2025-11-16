@@ -73,23 +73,37 @@
             <tbody>
                 @forelse($vintages as $vintage)
                 <tr style="cursor: pointer;"
-                    onclick="window.location='{{ route('termekcsoport_model', [
-                        'categorySlug' => $category->slug,
-                        'subcategorySlug' => $subcategory->slug,
-                        'productCategorySlug' => optional($productCategory)->slug,
-                        'brandSlug' => $rareBrand->slug,
-                        'typeSlug' => $type->slug,
-                        'vintageSlug' => $vintage->slug 
-                    ]) }}'">
+                    onclick="window.location='
+                    @if($brand)
+                        {{ route('termekcsoport_model', [
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'productCategorySlug' => optional($productCategory)->slug,
+                            'brandSlug' => $brand->slug,
+                            'typeSlug' => $type->slug,
+                            'vintageSlug' => $vintage->slug
+                        ]) }}
+                    @else
+                        {{ route('termekcsoport_model_pc', [
+                            'categorySlug' => $category->slug,
+                            'subcategorySlug' => $subcategory->slug,
+                            'productCategorySlug' => optional($productCategory)->slug,
+                            'brandSlug' => $rareBrand->slug,
+                            'typeSlug' => $type->slug,
+                            'vintageSlug' => $vintage->slug
+                        ]) }}
+                    @endif
+                    '">
                     <td>{{ $vintage->name }}</td>
                     <td>{{ $vintage->vintage_range }}</td>
                     <td>{{ $vintage->frame ?? '-' }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="3">Nincs elérhető évjárat ennél a ritka típusnál.</td>
+                    <td colspan="3">Nincs elérhető évjárat ennél a típusnál.</td>
                 </tr>
                 @endforelse
+
             </tbody>
         </table>
     </div>

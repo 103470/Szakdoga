@@ -4,7 +4,10 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a></li>
+                <li class="breadcrumb-item">
+                    <a href="{{ route('home') }}" class="stretched-link">B+M Autóalkatrész</a>
+                </li>
+
                 <li class="breadcrumb-item">
                     <a href="{{ route('termekcsoport', ['category' => $category->slug]) }}" class="stretched-link">
                         {{ $category->name }}
@@ -13,15 +16,18 @@
 
                 @if(isset($subcategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', ['category' => $category->slug, 'subcategory' => $subcategory->slug]) }}" class="stretched-link">
+                        <a href="{{ route('termekcsopor_productCategory', [
+                            'category' => $category->slug,
+                            'subcategory' => $subcategory->slug
+                        ]) }}" class="stretched-link">
                             {{ $subcategory->name }}
                         </a>
                     </li>
                 @endif
 
-                 @if(!empty($productCategory))
+                @if(!empty($productCategory))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', [
+                        <a href="{{ route('termekcsoport_brand', [
                             'category' => $category->slug,
                             'subcategory' => $subcategory->slug,
                             'productCategory' => $productCategory->slug
@@ -33,32 +39,57 @@
 
                 @if(!empty($rareBrand))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_dynamic', [
-                            'category' => $category->slug,
-                            'subcategory' => $subcategory->slug,
-                            'productCategorySlug' => $productCategory->slug ?? null,
-                            'brandSlug' => $rareBrand->slug
-                        ]) }}" class="stretched-link">
-                            {{ $rareBrand->name }}
-                        </a>
+                        @if(!empty($productCategory))
+                            <a href="{{ route('termekcsoport_dynamic_pc', [
+                                'category' => $category->slug,
+                                'subcategory' => $subcategory->slug,
+                                'productCategory' => $productCategory->slug,
+                                'brandSlug' => $rareBrand->slug
+                            ]) }}" class="stretched-link">
+                                {{ $rareBrand->name }}
+                            </a>
+                        @else
+                            <a href="{{ route('termekcsoport_dynamic', [
+                                'category' => $category->slug,
+                                'subcategory' => $subcategory->slug,
+                                'brandSlug' => $rareBrand->slug
+                            ]) }}" class="stretched-link">
+                                {{ $rareBrand->name }}
+                            </a>
+                        @endif
                     </li>
                 @endif
 
                 @if(!empty($type))
                     <li class="breadcrumb-item">
-                        <a href="{{ route('termekcsoport_vintage', [
-                            'categorySlug' => $category->slug,
-                            'subcategorySlug' => $subcategory->slug,
-                            'productCategorySlug' => $productCategory->slug ?? null,
-                            'brandSlug' => $rareBrand->slug,
-                            'typeSlug' => $type->slug
-                        ]) }}" class="stretched-link">
-                            {{ $type->name }}
-                        </a>
+                        @if(!empty($productCategory))
+                            <a href="{{ route('termekcsoport_vintage_pc', [
+                                'categorySlug' => $category->slug,
+                                'subcategorySlug' => $subcategory->slug,
+                                'productCategorySlug' => $productCategory->slug,
+                                'brandSlug' => $rareBrand->slug,
+                                'typeSlug' => $type->slug
+                            ]) }}" class="stretched-link">
+                                {{ $type->name }}
+                            </a>
+                        @else
+                            <a href="{{ route('termekcsoport_vintage', [
+                                'categorySlug' => $category->slug,
+                                'subcategorySlug' => $subcategory->slug,
+                                'brandSlug' => $rareBrand->slug,
+                                'typeSlug' => $type->slug
+                            ]) }}" class="stretched-link">
+                                {{ $type->name }}
+                            </a>
+                        @endif
                     </li>
                 @endif
-                <li class="breadcrumb-item active" aria-current="page">{{ $vintage->frame }}</li>
+
+                @if(!empty($vintage))
+                    <li class="breadcrumb-item active" aria-current="page">{{ $vintage->frame ?? $vintage->name }}</li>
+                @endif
             </ol>
+
         </nav>
         <a href="{{ url()->previous() }}" class="btn theme-blue-btn text-light">Vissza</a>
     </div>
@@ -103,16 +134,27 @@
                                 <td colspan="5" class="text-start"><strong>{{ $fuel }}</strong></td>
                             </tr>
                             @foreach($models as $model)
-                                <tr onclick="window.location='{{ route('termekcsoport_products', [
-                                    'categorySlug' => $category->slug,
-                                    'subcategorySlug' => $subcategory->slug,
-                                    'productCategorySlug' => optional($productCategory)->slug,
-                                    'brandSlug' => $rareBrand->slug,
-                                    'typeSlug' => $type->slug,
-                                    'vintageSlug' => $vintage->slug,
-                                    'modelSlug' => $model->slug
-                                ]) }}'" style="cursor:pointer;">
-                                
+                                <tr 
+                                    onclick="window.location='{{ !empty($productCategory)
+                                        ? route('termekcsoport_products_pc', [
+                                            'categorySlug' => $category->slug,
+                                            'subcategorySlug' => $subcategory->slug,
+                                            'productCategorySlug' => $productCategory->slug,
+                                            'brandSlug' => $rareBrand->slug,
+                                            'typeSlug' => $type->slug,
+                                            'vintageSlug' => $vintage->slug,
+                                            'modelSlug' => $model->slug
+                                        ])
+                                        : route('termekcsoport_products', [
+                                            'categorySlug' => $category->slug,
+                                            'subcategorySlug' => $subcategory->slug,
+                                            'brandSlug' => $rareBrand->slug,
+                                            'typeSlug' => $type->slug,
+                                            'vintageSlug' => $vintage->slug,
+                                            'modelSlug' => $model->slug
+                                        ]) }}'" 
+                                    style="cursor:pointer;">
+                                    
                                     <td>{{ $model->fullName }}</td>
                                     <td>{{ $model->year_range ?? '-' }}</td>
                                     <td>{{ $model->ccm_formatted ?? '-' }}</td>

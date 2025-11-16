@@ -270,4 +270,167 @@ class CategoryResolverService
 
         return compact('category','subcategory','productCategory','brand','rareBrand','type','vintage','model','products');
     }
+
+    public function product(
+        string $categorySlug,
+        string $subcategorySlug,
+        string $brandSlug,
+        string $typeSlug,
+        string $vintageSlug,
+        string $modelSlug
+    ) {
+        $category = Category::where('slug', $categorySlug)->firstOrFail();
+        $subcategory = SubCategory::with('fuelType')
+            ->where('slug', $subcategorySlug)
+            ->where('category_id', $category->kategory_id)
+            ->firstOrFail();
+
+        $productCategory = null;
+
+        $brand = Brand::where('slug', $brandSlug)->first();
+        $rareBrand = null;
+
+        if ($brand) {
+            $type = Type::where('slug', $typeSlug)
+                ->where('brand_id', $brand->id)
+                ->firstOrFail();
+
+            $vintage = Vintage::where('slug', $vintageSlug)
+                ->where('type_id', $type->id)
+                ->firstOrFail();
+
+            $model = BrandModel::forVintage($vintage)
+                ->where('slug', $modelSlug)
+                ->when(
+                    $subcategory->fuelType && !$subcategory->fuelType->is_universal,
+                    fn($query) => $query->where('fuel_type_id', $subcategory->fuel_type_id)
+                )
+                ->with('fuelType')
+                ->firstOrFail();
+
+            $products = Product::whereHas('oemNumbers.partVehicles', function ($query) use ($model, $subcategory) {
+                    $query->where('unique_code', $model->unique_code)
+                        ->whereHas('oemNumber', fn($q) => $q->whereHas('product', fn($p) => $p->where('subcategory_id', $subcategory->subcategory_id)));
+                })
+                ->get();
+
+            return view('categories.products', compact(
+                'category', 'subcategory', 'productCategory',
+                'brand', 'type', 'vintage', 'model', 'products'
+            ));
+        } else {
+            $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+            $type = RareType::where('slug', $typeSlug)
+                ->where('rare_brand_id', $rareBrand->id)
+                ->firstOrFail();
+
+            $vintage = RareVintage::where('slug', $vintageSlug)
+                ->where('type_id', $type->id)
+                ->firstOrFail();
+
+            $model = RareBrandModel::forVintage($vintage)
+                ->where('slug', $modelSlug)
+                ->when(
+                    $subcategory->fuelType && !$subcategory->fuelType->is_universal,
+                    fn($query) => $query->where('fuel_type_id', $subcategory->fuel_type_id)
+                )
+                ->with('fuelType')
+                ->firstOrFail();
+
+            $products = Product::whereHas('oemNumbers.partVehicles', function ($query) use ($model, $subcategory) {
+                    $query->where('unique_code', $model->unique_code)
+                        ->whereHas('oemNumber', fn($q) => $q->whereHas('product', fn($p) => $p->where('subcategory_id', $subcategory->subcategory_id)));
+                })
+                ->get();
+
+            return view('categories.rareproducts', compact(
+                'category', 'subcategory', 'productCategory',
+                'rareBrand', 'type', 'vintage', 'model', 'products'
+            ));
+        }
+    }
+
+    public function productCategoryProduct(
+        string $categorySlug,
+        string $subcategorySlug,
+        string $productCategorySlug,
+        string $brandSlug,
+        string $typeSlug,
+        string $vintageSlug,
+        string $modelSlug
+    ) {
+        $category = Category::where('slug', $categorySlug)->firstOrFail();
+        $subcategory = SubCategory::with('fuelType')
+            ->where('slug', $subcategorySlug)
+            ->where('category_id', $category->kategory_id)
+            ->firstOrFail();
+
+        $productCategory = ProductCategory::where('slug', $productCategorySlug)
+            ->where('subcategory_id', $subcategory->subcategory_id)
+            ->firstOrFail();
+
+        $brand = Brand::where('slug', $brandSlug)->first();
+        $rareBrand = null;
+
+        if ($brand) {
+            $type = Type::where('slug', $typeSlug)
+                ->where('brand_id', $brand->id)
+                ->firstOrFail();
+
+            $vintage = Vintage::where('slug', $vintageSlug)
+                ->where('type_id', $type->id)
+                ->firstOrFail();
+
+            $model = BrandModel::forVintage($vintage)
+                ->where('slug', $modelSlug)
+                ->when(
+                    $subcategory->fuelType && !$subcategory->fuelType->is_universal,
+                    fn($query) => $query->where('fuel_type_id', $subcategory->fuel_type_id)
+                )
+                ->with('fuelType')
+                ->firstOrFail();
+
+            $products = Product::whereHas('oemNumbers.partVehicles', function ($query) use ($model, $subcategory) {
+                    $query->where('unique_code', $model->unique_code)
+                        ->whereHas('oemNumber', fn($q) => $q->whereHas('product', fn($p) => $p->where('subcategory_id', $subcategory->subcategory_id)));
+                })
+                ->where('product_category_id', $productCategory->id)
+                ->get();
+
+            return view('categories.products', compact(
+                'category', 'subcategory', 'productCategory',
+                'brand', 'type', 'vintage', 'model', 'products'
+            ));
+        } else {
+            $rareBrand = RareBrand::where('slug', $brandSlug)->firstOrFail();
+            $type = RareType::where('slug', $typeSlug)
+                ->where('rare_brand_id', $rareBrand->id)
+                ->firstOrFail();
+
+            $vintage = RareVintage::where('slug', $vintageSlug)
+                ->where('type_id', $type->id)
+                ->firstOrFail();
+
+            $model = RareBrandModel::forVintage($vintage)
+                ->where('slug', $modelSlug)
+                ->when(
+                    $subcategory->fuelType && !$subcategory->fuelType->is_universal,
+                    fn($query) => $query->where('fuel_type_id', $subcategory->fuel_type_id)
+                )
+                ->with('fuelType')
+                ->firstOrFail();
+
+            $products = Product::whereHas('oemNumbers.partVehicles', function ($query) use ($model, $subcategory) {
+                    $query->where('unique_code', $model->unique_code)
+                        ->whereHas('oemNumber', fn($q) => $q->whereHas('product', fn($p) => $p->where('subcategory_id', $subcategory->subcategory_id)));
+                })
+                ->where('product_category_id', $productCategory->id)
+                ->get();
+
+            return view('categories.rareproducts', compact(
+                'category', 'subcategory', 'productCategory',
+                'rareBrand', 'type', 'vintage', 'model', 'products'
+            ));
+        }
+    }
 }
