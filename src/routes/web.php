@@ -98,37 +98,73 @@ Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategory:s
     [CategoryController::class, 'productCategory']
 )->name('termekcsoport_brand');
 
-Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{brandSlug}', 
+/*Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{brandSlug}', 
     [CategoryController::class, 'brand']
-)->name('termekcsoport_dynamic');
+)->where([
+    'brandSlug' => '[^/]+',
+])->name('termekcsoport_dynamic');*/
+
+Route::get('/termekcsoport/{category}/{subcategory}/{brandSlug}', function($category, $subcategory, $brandSlug) {
+    dd($category, $subcategory, $brandSlug);
+});
 
 Route::get('/termekcsoport/{category:slug}/{subcategory:slug}/{productCategory:slug}/{brandSlug}', 
     [CategoryController::class, 'productCategoryBrand']
-)->name('termekcsoport_dynamic_pc');
+)->where([
+    'brandSlug' => '[^/]+',
+])->name('termekcsoport_dynamic_pc');
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}', 
     [CategoryController::class, 'vintage']
-)->name('termekcsoport_vintage');
+)->where([
+    'brandSlug' => '[^/]+',
+    'typeSlug'  => '[^/]+',
+])->name('termekcsoport_vintage');
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug}/{brandSlug}/{typeSlug}', 
     [CategoryController::class, 'productCategoryVintage']
-)->name('termekcsoport_vintage_pc');
+)->where([
+    'brandSlug' => '[^/]+',
+    'typeSlug'  => '[^/]+',
+])->name('termekcsoport_vintage_pc');
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}', 
     [CategoryController::class, 'model']
-)->name('termekcsoport_model');
+)->where([
+    'brandSlug'    => '[^/]+',
+    'typeSlug'     => '[^/]+',
+    'vintageSlug'  => '[^/]+',
+])
+->name('termekcsoport_model');
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}', 
     [CategoryController::class, 'productCategoryModel']
-)->name('termekcsoport_model_pc');
+)->where([
+    'brandSlug'    => '[^/]+',
+    'typeSlug'     => '[^/]+',
+    'vintageSlug'  => '[^/]+',
+])
+->name('termekcsoport_model_pc');
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', 
     [CategoryController::class, 'product']
-)->name('termekcsoport_products');
+)->where([
+    'brandSlug'   => '[^/]+',
+    'typeSlug'    => '[^/]+',
+    'vintageSlug' => '[^/]+',
+    'modelSlug'   => '[^/]+',
+])
+->name('termekcsoport_products');
 
 Route::get('/termekcsoport/{categorySlug}/{subcategorySlug}/{productCategorySlug}/{brandSlug}/{typeSlug}/{vintageSlug}/{modelSlug}', 
     [CategoryController::class, 'productCategoryProduct']
-)->name('termekcsoport_products_pc');
+)->where([
+    'brandSlug'   => '[^/]+',
+    'typeSlug'    => '[^/]+',
+    'vintageSlug' => '[^/]+',
+    'modelSlug'   => '[^/]+',
+])
+->name('termekcsoport_products_pc');
 
 
 
