@@ -85,7 +85,7 @@
                     </div>
 
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="accept-tos">
+                        <input class="form-check-input" type="checkbox" id="accept-tos" required>
                         <label class="form-check-label" for="accept-tos">
                             A megrendelés elküldésével a Vásárló kijelenti, hogy az 
                             <a href="/aszf" target="_blank">Általános Szerződési Feltételek</a> dokumentumban foglaltakat elolvasta, megértette és elfogadja.
@@ -94,7 +94,7 @@
                     </div>
 
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="accept-privacy">
+                        <input class="form-check-input" type="checkbox" id="accept-privacy" required>
                         <label class="form-check-label" for="accept-privacy">
                             A Vásárló kijelenti továbbá, hogy a 
                             <a href="/adatvedelmi" target="_blank">B+M Webáruház adatvédelmi szabályait</a> megismerte, megértette és elfogadja.

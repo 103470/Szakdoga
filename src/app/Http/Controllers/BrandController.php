@@ -50,7 +50,7 @@ class BrandController extends Controller
     {
         if ($data['vintages']->count() === 1) {
             $singleVintage = $data['vintages']->first();
-            return redirect()->route('modell', [
+            return redirect()->route('model', [
                 'brandSlug' => $data['brand']->slug,
                 'typeSlug' => $data['type']->slug,
                 'vintageSlug' => $singleVintage->slug

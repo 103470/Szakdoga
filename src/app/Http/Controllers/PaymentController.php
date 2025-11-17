@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use App\Models\Order;
 
 class PaymentController extends Controller
 {
