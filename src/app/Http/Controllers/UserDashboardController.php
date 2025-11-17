@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Order;
 
 class UserDashboardController extends \Illuminate\Routing\Controller
 {
@@ -19,13 +20,13 @@ class UserDashboardController extends \Illuminate\Routing\Controller
     {
         $user = Auth::user();
 
-        $orders = collect([
-            (object)[ 'id' => 101, 'created_at' => now()->subDays(3), 'total' => 15990, 'status' => 'Teljesítve' ],
-            (object)[ 'id' => 102, 'created_at' => now()->subDay(), 'total' => 24990, 'status' => 'Feldolgozás alatt' ],
-            (object)[ 'id' => 103, 'created_at' => now(), 'total' => 8900, 'status' => 'Függőben' ],
-        ]);
+        $orders = Order::with('items.product')
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('userdashboard', compact('user', 'orders'));
+
     }
 
     public function updateProfile(Request $request)

@@ -41,6 +41,24 @@
 
             <div class="dropdown-menu dropdown-menu-end p-0" id="cart-dropdown" style="min-width:300px;" data-bs-auto-close="outside"></div>
         </div>
+
+        @if(auth()->check())
+          <div>
+              <a href="{{ route('user.dashboard') }}"
+                class="btn btn-light btn-sm d-flex align-items-center justify-content-center"
+                style="width:36px; height:36px; border-radius:50%;">
+
+                  @if(auth()->user()->profile_image)
+                      <img src="{{ asset('storage/' . auth()->user()->profile_image) }}"
+                          class="rounded-circle"
+                          width="30" height="30"
+                          style="object-fit:cover;">
+                  @else
+                      <i class="fa-solid fa-user"></i>
+                  @endif
+              </a>
+          </div>
+        @endif
     </div>  
   </div>
 </nav>
