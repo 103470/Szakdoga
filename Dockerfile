@@ -10,4 +10,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+RUN docker-php-ext-install curl json mbstring openssl
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+WORKDIR /var/www/html
+RUN composer require laravel/socialite
 WORKDIR /var/www/html

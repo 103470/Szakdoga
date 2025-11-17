@@ -3,42 +3,43 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
-
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'lastname' => $this->faker->lastName(),
+            'firstname' => $this->faker->firstName(),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => bcrypt('password123'),
             'remember_token' => Str::random(10),
-        ];
-    }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+            'account_type' => 'personal',
+            'phone_country_code' => '+36',
+            'phone_number' => '301234567',
+
+            'billing_country' => 'Hungary',
+            'billing_zip' => '1137',
+            'billing_city' => 'Budapest',
+            'billing_street_name' => 'Fő',
+            'billing_street_type' => 'utca',
+            'billing_house_number' => '12',
+
+            'shipping_country' => 'Hungary',
+            'shipping_zip' => '1137',
+            'shipping_city' => 'Budapest',
+            'shipping_street_name' => 'Fő',
+            'shipping_street_type' => 'utca',
+            'shipping_house_number' => '12',
+
+            'is_admin' => false,
+            'provider' => null,
+            'provider_id' => null,
+            'provider_token' => null,
+            'avatar' => null,
+        ];
     }
 }
