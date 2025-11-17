@@ -75,5 +75,17 @@ class User extends Authenticatable
     'password' => 'hashed',
     'is_admin' => 'boolean',
     ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 
 }
