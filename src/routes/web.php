@@ -38,17 +38,11 @@ use App\Services\CategoryResolverService;
 use App\Services\CategoryControllerDispatcher;
 use App\Services\UrlNormalizer;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// LOGIN
 Route::get('login', function () {
     return view('login');
 })->name('login');
 Route::post('login', LoginController::class)->name('login.attempt');
 
-// REGISTER
 Route::get('register', function () {
     return view('register');
 })->name('register');
@@ -57,8 +51,6 @@ Route::post('register', [RegisterController::class, 'store'])->name('register');
 Route::get('/test-middleware', function () {
     return class_exists(\App\Http\Middleware\AdminOnlyMiddleware::class) ? 'Megvan!' : 'Nincs meg!';
 });
-
-
 
 
 Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('social.redirect');
@@ -94,17 +86,14 @@ Route::post('/logout', function () {
 Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
     ->name('password.request');
 
-//Email küldése a jelszó-visszaállítás linkkel
 Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('password.email');
 
-//Jelszó visszaállítás űrlap a kapott token alapján
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])
     ->middleware('guest')
     ->name('password.reset');
 
-//Új jelszó mentése
 Route::post('/reset-password', [ResetPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('password.update');
@@ -300,7 +289,7 @@ Route::prefix('checkout')->group(function () {
 });
 
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
-Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
+Route::post('/stripe/webhook', [CheckoutController::class, 'handleWebhook']);
 
 
 

@@ -32,26 +32,10 @@ return new class extends Migration
             $table->string('phone_number');
 
             // Billing cím
-            $table->string('billing_country');
-            $table->string('billing_zip');
-            $table->string('billing_city');
-            $table->string('billing_street_name');
-            $table->string('billing_street_type');
-            $table->string('billing_house_number');
-            $table->string('billing_building')->nullable();
-            $table->string('billing_floor')->nullable();
-            $table->string('billing_door')->nullable();
+            $table->foreignId('shipping_address_id')->nullable()->constrained('addresses')->nullOnDelete();
 
             // Shipping cím
-            $table->string('shipping_country');
-            $table->string('shipping_zip');
-            $table->string('shipping_city');
-            $table->string('shipping_street_name');
-            $table->string('shipping_street_type');
-            $table->string('shipping_house_number');
-            $table->string('shipping_building')->nullable();
-            $table->string('shipping_floor')->nullable();
-            $table->string('shipping_door')->nullable();
+            $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->nullOnDelete();
 
             // Social auth mezők
             $table->string('provider')->nullable();

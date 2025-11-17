@@ -28,7 +28,7 @@
     <div class="d-flex align-items-center gap-2 mx-2">
         <a href="#" class="text-decoration-none text-light">Légy te is eladó</a>
 
-        <a href="#" class="btn theme-orange-btn btn-sm text-light">
+        <a href="{{ route('login') }}" class="btn theme-orange-btn btn-sm text-light">
             <i class="fa-solid fa-user"></i> Bejelentkezés
         </a>
 

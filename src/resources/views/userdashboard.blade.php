@@ -22,10 +22,10 @@
     @endif
 
     <ul class="nav nav-tabs mb-4" id="userTab" role="tablist">
-        <li class="nav-item"><a class="nav-link active" id="alap-tab" data-bs-toggle="tab" href="#alap" role="tab">Alapadatok</a></li>
+        <li class="nav-item"><a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab">Rendeléseim</a></li>
+        <li class="nav-item"><a class="nav-link" id="alap-tab" data-bs-toggle="tab" href="#alap" role="tab">Alapadatok</a></li>
         <li class="nav-item"><a class="nav-link" id="billing-tab" data-bs-toggle="tab" href="#billing" role="tab">Számlázási adatok</a></li>
         <li class="nav-item"><a class="nav-link" id="shipping-tab" data-bs-toggle="tab" href="#shipping" role="tab">Szállítási adatok</a></li>
-        <li class="nav-item"><a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab">Rendeléseim</a></li>
     </ul>
 
     <form method="POST" action="{{ route('user.profile.update') }}" enctype="multipart/form-data" class="card p-4 shadow-sm border-0">
@@ -33,7 +33,7 @@
 
         <div class="tab-content" id="userTabContent">
             {{-- Alapadatok --}}
-            <div class="tab-pane fade show active" id="alap" role="tabpanel">
+            <div class="tab-pane fade show" id="alap" role="tabpanel">
                 <div class="mb-3">
                     <label class="form-label">Vezetéknév</label>
                     <input type="text" name="lastname" value="{{ old('lastname', $user->lastname) }}" class="form-control">
@@ -156,7 +156,7 @@
             </div>
 
             {{-- Rendelések --}}
-            <div class="tab-pane fade" id="orders" role="tabpanel">
+            <div class="tab-pane fade show active" id="orders" role="tabpanel">
                 <table class="table table-bordered mt-3">
                     <thead>
                         <tr>

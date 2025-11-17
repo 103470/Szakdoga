@@ -15,7 +15,6 @@ class UserDashboardController extends \Illuminate\Routing\Controller
         $this->middleware('auth');
     }
 
-    /** FELHASZNÁLÓI FŐOLDAL (DASHBOARD) **/
     public function index()
     {
         $user = Auth::user();
@@ -43,7 +42,6 @@ class UserDashboardController extends \Illuminate\Routing\Controller
             'password' => 'nullable|confirmed|min:6',
             'profile_image' => 'nullable|image|max:2048',
 
-            // Számlázási és szállítási mezők
             'billing_country' => 'nullable|string|max:100',
             'billing_zip' => 'nullable|string|max:20',
             'billing_city' => 'nullable|string|max:100',
@@ -64,7 +62,7 @@ class UserDashboardController extends \Illuminate\Routing\Controller
             'shipping_door' => 'nullable|string|max:50',
             'is_admin' => 'nullable|boolean',
         ]);
-        /** @var \App\Models\User $user */
+
         $user->fill($validated);
         $user->fill($validated);
 

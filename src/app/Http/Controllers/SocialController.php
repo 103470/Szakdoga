@@ -15,8 +15,6 @@ class SocialController extends Controller
         return Socialite::driver($provider)->redirect();
     }
 
-
-
     public function callback($provider)
     {
 
@@ -27,11 +25,9 @@ class SocialController extends Controller
                 ->first();
 
         if (!$user) {
-            // 2) Ha nincs provider alapján, nézzük email alapján
         $user = User::where('email', $socialUser->getEmail())->first();}
 
         if ($user) {
-            // Már van ilyen emailű user => frissítjük a provider információkat
             $user->update([
                 'provider' => $provider,
                 'provider_id' => $socialUser->getId(),
@@ -48,7 +44,7 @@ class SocialController extends Controller
                 'firstname' => $firstname,
                 'lastname' => $lastname,
                 'email' => $socialUser->getEmail(),
-                'password' => Str::random(16), // nem kell bcrypt
+                'password' => Str::random(16),
                 'provider' => $provider,
                 'provider_id' => $socialUser->getId(),
                 'account_type' => 'user',
