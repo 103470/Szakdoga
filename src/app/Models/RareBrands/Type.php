@@ -4,7 +4,9 @@ namespace App\Models\RareBrands;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use App\Models\RareBrand;
+use App\Models\RareBrands\Vintage;
 
 class Type extends Model
 {
@@ -23,6 +25,11 @@ class Type extends Model
     public function rareBrand()
     {
         return $this->belongsTo(RareBrand::class, 'rare_brand_id');
+    }
+
+    public function vintages()
+    {
+        return $this->hasMany(Vintage::class, 'type_id');
     }
 
     protected static function booted()

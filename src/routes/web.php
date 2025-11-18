@@ -39,6 +39,8 @@ use App\Services\CategoryControllerDispatcher;
 use App\Services\UrlNormalizer;
 use App\Http\Controllers\Admin\BrandController as AdminBrand;
 use App\Http\Controllers\Admin\RareBrandController as AdminRareBrand;
+use App\Http\Controllers\Admin\BrandTypeController;
+use App\Http\Controllers\Admin\RareBrandTypeController;
 
 Route::get('login', function () {
     return view('login');
@@ -66,7 +68,25 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('users', AdminUserController::class);
 
+        Route::prefix('markak/tipusok')->name('markak.tipusok.')->group(function () {
+            Route::get('/', [BrandTypeController::class, 'index'])->name('index');
+            Route::get('/create', [BrandTypeController::class, 'create'])->name('create');
+            Route::post('/', [BrandTypeController::class, 'store'])->name('store');
+            Route::get('/{type}/edit', [BrandTypeController::class, 'edit'])->name('edit');
+            Route::put('/{type}', [BrandTypeController::class, 'update'])->name('update');
+            Route::delete('/{type}', [BrandTypeController::class, 'destroy'])->name('destroy');
+        });
+
         Route::resource('markak', AdminBrand::class)->names('markak');
+
+        Route::prefix('ritka-markak/tipusok')->name('ritkamarkak.tipusok.')->group(function () {
+            Route::get('/', [RareBrandTypeController::class, 'index'])->name('index');
+            Route::get('/create', [RareBrandTypeController::class, 'create'])->name('create');
+            Route::post('/', [RareBrandTypeController::class, 'store'])->name('store');
+            Route::get('/{type}/edit', [RareBrandTypeController::class, 'edit'])->name('edit');
+            Route::put('/{type}', [RareBrandTypeController::class, 'update'])->name('update');
+            Route::delete('/{type}', [RareBrandTypeController::class, 'destroy'])->name('destroy');
+        });
 
         Route::resource('ritka-markak', AdminRareBrand::class)->names('ritkamarkak');
     });

@@ -163,13 +163,14 @@
                 <!-- Dinamikus Menü Laravel-ből -->
                 @php
                 $menus = [
-                ['name' => 'Márkák', 'icon' => 'bi-tag-fill', 'items' => $brands ?? []],
-                ['name' => 'Típusok', 'icon' => 'bi-gear-fill', 'items' => $types ?? []],
-                ['name' => 'Évjáratok', 'icon' => 'bi-calendar-event', 'items' => $years ?? []],
-                ['name' => 'Modellek', 'icon' => 'bi-car-front-fill', 'items' => $models ?? []],
-                ['name' => 'Kategóriák', 'icon' => 'bi-list-ul', 'items' => $categories ?? []],
-                ['name' => 'Alkategóriák', 'icon' => 'bi-tags-fill', 'items' => $subcategories ?? []],
+                    ['name' => 'Márkák', 'icon' => 'bi-tag-fill', 'items' => $sidebarBrands ?? []],
+                    ['name' => 'Típusok', 'icon' => 'bi-gear-fill', 'items' => $sidebarTypes ?? []],
+                    ['name' => 'Évjáratok', 'icon' => 'bi-calendar-event', 'items' => $sidebarYears ?? []],
+                    ['name' => 'Modellek', 'icon' => 'bi-car-front-fill', 'items' => $sidebarModels ?? []],
+                    ['name' => 'Kategóriák', 'icon' => 'bi-list-ul', 'items' => $sidebarCategories ?? []],
+                    ['name' => 'Alkategóriák', 'icon' => 'bi-tags-fill', 'items' => $sidebarSubcategories ?? []],
                 ];
+
                 @endphp
 
                 @foreach ($menus as $menu)
@@ -210,6 +211,37 @@
 
                             <hr class="text-white-50 my-2">
                             @endif
+
+                            @if ($menu['name'] === 'Típusok')
+                            <li class="nav-item">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuPopularTypes">
+                                    <span>Népszerű típusok</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+                                <div class="collapse" id="subMenuPopularTypes">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.markak.tipusok.index') }}" class="nav-link">Összes népszerű típus</a></li>
+                                        <li><a href="{{ route('admin.markak.tipusok.create') }}" class="nav-link">+ Új népszerű típus</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuRareTypes">
+                                    <span>Ritka típusok</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+                                <div class="collapse" id="subMenuRareTypes">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.ritkamarkak.tipusok.index') }}" class="nav-link">Összes ritka típus</a></li>
+                                        <li><a href="{{ route('admin.ritkamarkak.tipusok.create') }}" class="nav-link">+ Új ritka típus</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <hr class="text-white-50 my-2">
+                            @endif
+
 
                             @forelse ($menu['items'] as $item)
                             <li class="nav-item">
