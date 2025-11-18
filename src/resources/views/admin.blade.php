@@ -189,8 +189,8 @@
                                 </a>
                                 <div class="collapse" id="subMenuPopularBrands">
                                     <ul class="nav flex-column ms-3">
-                                        <li><a href="{{ route('admin.markak.index', ['filter' => 'gyakori']) }}" class="nav-link">Összes népszerű márka</a></li>
-                                        <li><a href="{{ route('admin.markak.create', ['type' => 'gyakori']) }}" class="nav-link">+ Új népszerű márka</a></li>
+                                        <li><a href="{{ route('admin.markak.index') }}" class="nav-link">Összes népszerű márka</a></li>
+                                        <li><a href="{{ route('admin.markak.create') }}" class="nav-link">+ Új népszerű márka</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -202,8 +202,8 @@
                                 </a>
                                 <div class="collapse" id="subMenuRareBrands">
                                     <ul class="nav flex-column ms-3">
-                                        <li><a href="{{ route('admin.markak.index', ['filter' => 'ritka']) }}" class="nav-link">Összes ritka márka</a></li>
-                                        <li><a href="{{ route('admin.markak.create', ['type' => 'ritka']) }}" class="nav-link">+ Új ritka márka</a></li>
+                                        <li><a href="{{ route('admin.ritkamarkak.index') }}" class="nav-link">Összes ritka márka</a></li>
+                                        <li><a href="{{ route('admin.ritkamarkak.create') }}" class="nav-link">+ Új ritka márka</a></li>
                                     </ul>
                                 </div>
                             </li>

@@ -38,6 +38,7 @@ use App\Services\CategoryResolverService;
 use App\Services\CategoryControllerDispatcher;
 use App\Services\UrlNormalizer;
 use App\Http\Controllers\Admin\BrandController as AdminBrand;
+use App\Http\Controllers\Admin\RareBrandController as AdminRareBrand;
 
 Route::get('login', function () {
     return view('login');
@@ -67,7 +68,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
 
         Route::resource('markak', AdminBrand::class)->names('markak');
 
-        Route::resource('ritka-markak', RareBrandController::class)->names('rare_brands');
+        Route::resource('ritka-markak', AdminRareBrand::class)->names('ritkamarkak');
     });
 
 
