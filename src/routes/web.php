@@ -37,6 +37,7 @@ use App\Http\Controllers\CategoryController;
 use App\Services\CategoryResolverService;
 use App\Services\CategoryControllerDispatcher;
 use App\Services\UrlNormalizer;
+use App\Http\Controllers\Admin\BrandController as AdminBrand;
 
 Route::get('login', function () {
     return view('login');
@@ -63,8 +64,12 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
     ->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('users', AdminUserController::class);
-        Route::resource('markak', AdminMarkaController::class);
+
+        Route::resource('markak', AdminBrand::class)->names('markak');
+
+        Route::resource('ritka-markak', RareBrandController::class)->names('rare_brands');
     });
+
 
 
 

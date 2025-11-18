@@ -226,4 +226,57 @@ class RareBrandController extends Controller
         ]);
     }
 
+    public function index()
+    {
+        $rareBrands = RareBrand::all();
+        return view('admin.rare_brands.index', compact('rareBrands'));
+    }
+
+    public function create()
+    {
+        return view('admin.rare_brands.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        RareBrand::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('admin.rare_brands.index')->with('success', 'Ritka márka hozzáadva!');
+    }
+
+    public function edit($id)
+    {
+        $rareBrand = RareBrand::findOrFail($id);
+        return view('admin.rare_brands.edit', compact('rareBrand'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $rareBrand = RareBrand::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $rareBrand->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('admin.rare_brands.index')->with('success', 'Ritka márka frissítve!');
+    }
+
+    public function destroy($id)
+    {
+        $rareBrand = RareBrand::findOrFail($id);
+        $rareBrand->delete();
+
+        return redirect()->route('admin.rare_brands.index')->with('success', 'Ritka márka törölve!');
+    }
+
 }
