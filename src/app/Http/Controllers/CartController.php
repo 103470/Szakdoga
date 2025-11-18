@@ -191,7 +191,8 @@ class CartController extends Controller
 
     public function dropdown()
     {
-        $cart = $this->getCartCollection();
+        $user = Auth::user();
+        $cart = $user ? $user->cartItems()->with('product')->get() : $this->getCartCollection();
 
         $cartArray = collect($cart)->map(function ($item) {
             $productId = is_array($item) ? ($item['product_id'] ?? null) : ($item->product_id ?? null);
@@ -226,5 +227,6 @@ class CartController extends Controller
             'count' => $count,
         ]);
     }
+
 
 }

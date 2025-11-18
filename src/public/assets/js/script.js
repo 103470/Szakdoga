@@ -470,7 +470,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     const stripeButton = document.getElementById('stripe-submit');
-
     if (stripeButton) {
         stripeButton.addEventListener('click', async function(e) {
             e.preventDefault();
@@ -479,24 +478,70 @@ document.addEventListener("DOMContentLoaded", function() {
             if (!selectedPayment) return;
 
             if (selectedPayment.dataset.type === 'card') {
-                const response = await fetch("/checkout/create-session", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-                    }
-                });
+                try {
+                    const finalizeRes = await fetch("/checkout/finalize", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            delivery_option: document.querySelector('input[name="delivery_option"]:checked')?.value,
+                            payment_option: 'card'
+                        })
+                    });
 
-                const data = await response.json();
-                if (data.url) {
-                    window.location.href = data.url; 
-                } else {
-                    alert(data.error || 'Hiba történt');
+                    const finalizeData = await finalizeRes.json(); 
+
+                    const stripeRes = await fetch("/checkout/create-session", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ order_id: finalizeData.order_id })
+                    });
+
+                    const stripeData = await stripeRes.json(); 
+
+                    if (stripeData.url) {
+                        window.location.href = stripeData.url;
+                    } else {
+                        alert(stripeData.error || 'Hiba a Stripe session létrehozásakor');
+                    }
+
+                } catch (err) {
+                    console.error('Fetch hiba:', err);
+                    alert('Szerverhiba történt!');
                 }
             } else {
                 document.getElementById('checkout-form').submit();
             }
         });
+
+
     }
+
+
+    const pendingDiv = document.getElementById('pending-order');
+    if (!pendingDiv) return;
+
+    const orderId = pendingDiv.dataset.orderId;
+
+    async function checkPayment() {
+        const res = await fetch(`/checkout/payment-status/${orderId}`);
+        const data = await res.json();
+
+        if (data.status === 'succeeded') {
+            window.location.href = `/checkout/success?order_id=${orderId}`;
+        } else if (data.status === 'pending') {
+            setTimeout(checkPayment, 5000);
+        } else {
+            window.location.href = `/checkout/payment`;
+        }
+    }
+
+    checkPayment();
+
 
 });

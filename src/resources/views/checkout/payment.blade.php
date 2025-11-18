@@ -5,7 +5,6 @@
 
     <form id="checkout-form" action="{{ route('checkout.finalize') }}" method="POST">
         @csrf
-
         <div class="row">
             <div class="col-lg-8">
                 <div class="card shadow-sm p-4 mb-4">

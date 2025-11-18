@@ -15,9 +15,16 @@ use App\Models\Address;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use App\Models\Payment;use Stripe\Webhook;
+use App\Enums\OrderStatus;
 
 class CheckoutController extends Controller
 {
+    public function __construct()
+    {
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+    }
+
+
     public function choice()
     {
         return view('checkout.choice');
@@ -67,7 +74,7 @@ class CheckoutController extends Controller
         return redirect()->route('checkout.payment'); 
     }
 
-     public function payment()
+    public function payment()
     {
         $checkoutData = session('checkout_data');
 
@@ -83,11 +90,9 @@ class CheckoutController extends Controller
         return strtoupper(substr(bin2hex(random_bytes($length)), 0, $length));
     }
 
-
     public function finalize(Request $request)
     {
         $checkoutData = session('checkout_data');
-
         if (!$checkoutData) {
             return redirect()->route('checkout.details');
         }
@@ -116,47 +121,83 @@ class CheckoutController extends Controller
             'door' => $checkoutData['billing_door'] ?? null,
         ]);
 
-        $order = new Order();
-        $order->user_id = Auth::id() ?? null;
-        $order->shipping_name = $checkoutData['shipping_name'];
-        $order->shipping_email = $checkoutData['shipping_email'];
-        $order->shipping_phone_prefix = $checkoutData['shipping_phone_prefix'] ?? '+36';
-        $order->shipping_phone = $checkoutData['shipping_phone'];
-        $order->shipping_address_id = $shippingAddress->id;
+        $order = Order::create([
+            'user_id' => Auth::id() ?? null,
+            'shipping_name' => $checkoutData['shipping_name'],
+            'shipping_email' => $checkoutData['shipping_email'],
+            'shipping_phone_prefix' => $checkoutData['shipping_phone_prefix'] ?? '+36',
+            'shipping_phone' => $checkoutData['shipping_phone'],
+            'shipping_address_id' => $shippingAddress->id,
+            'billing_name' => $checkoutData['billing_name'],
+            'billing_email' => $checkoutData['billing_email'],
+            'billing_phone_prefix' => $checkoutData['billing_phone_prefix'] ?? '+36',
+            'billing_phone' => $checkoutData['billing_phone'],
+            'billing_address_id' => $billingAddress->id,
+            'delivery_option' => $request->input('delivery_option', 'courier'),
+            'payment_option' => $request->input('payment_option', 'card'),
+            'order_number' => $this->generateOrderNumber(8),
+            'order_status' => OrderStatus::REGISTERED,
+        ]);
 
-        $order->billing_name = $checkoutData['billing_name'];
-        $order->billing_email = $checkoutData['billing_email'];
-        $order->billing_phone_prefix = $checkoutData['billing_phone_prefix'] ?? '+36';
-        $order->billing_phone = $checkoutData['billing_phone'];
-        $order->billing_address_id = $billingAddress->id;
-
-        $order->delivery_option = $request->input('delivery_option', 'courier');
-        $order->payment_option = $request->input('payment_option', 'card');
-
-        $order->order_number = $this->generateOrderNumber(8);
-        $order->save();
-
-        $cartItems = Auth::check() 
-            ? CartItem::where('user_id', Auth::id())->get() 
+        $cartItems = Auth::check()
+            ? CartItem::with('product')->where('user_id', Auth::id())->get()
             : session('cart', []);
 
+        $amount = 0;
         foreach ($cartItems as $item) {
-            if (Auth::check()) {
-                $product = $item->product;
-                $quantity = $item->quantity;
-            } else {
-                $product = Product::find($item['product_id']); 
-                $quantity = $item['quantity'];
-            }
-
+            $product = Auth::check() ? $item->product : Product::find($item['product_id']);
+            $quantity = Auth::check() ? $item->quantity : $item['quantity'];
             if (!$product) continue;
 
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $order->id;
-            $orderItem->product_id = $product->id;
-            $orderItem->quantity = $quantity;
-            $orderItem->price = $product->price;
-            $orderItem->save();
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'price' => $product->price,
+            ]);
+
+            $amount += $product->price * $quantity;
+        }
+
+        if ($order->payment_option === 'card') {
+            \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+            $session = \Stripe\Checkout\Session::create([
+                'payment_method_types' => ['card'],
+                'mode' => 'payment',
+                'success_url' => route('stripe.pending', [], true)
+                    . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('stripe.cancel', ['order_id' => $order->id], true),
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'huf',
+                        'product_data' => [
+                            'name' => 'Rendelés #' . $order->order_number,
+                        ],
+                        'unit_amount' => $amount * 100,
+                    ],
+                    'quantity' => 1,
+                ]],
+            ]);
+
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'payment_method' => $order->payment_option,
+                'amount' => $amount,
+                'transaction_id' => $session->id,
+                'payment_status' => 'pending',
+                'user_id' => Auth::id() ?? null,
+            ]);
+
+            if (Auth::check()) {
+                CartItem::where('user_id', Auth::id())->delete();
+            } else {
+                session()->forget('cart');
+            }
+
+            session()->forget('checkout_data');
+
+            return redirect($session->url);
         }
 
         if (Auth::check()) {
@@ -169,6 +210,7 @@ class CheckoutController extends Controller
 
         return redirect()->route('checkout.success', ['order_id' => $order->id]);
     }
+
 
     public function showPaymentPage()
     {
@@ -199,112 +241,156 @@ class CheckoutController extends Controller
 
     public function success(Request $request)
     {
-        $sessionId = $request->input('session_id');
+        $orderId = $request->input('order');
 
-        $payment = Payment::where('transaction_id', $sessionId)->first();
-
-        if (!$payment || !$payment->order) {
-            return redirect()->route('checkout.choice');
+        if (!$orderId) {
+            return redirect()->route('checkout.payment');
         }
 
-        $order = $payment->order;
+        $order = Order::findOrFail($orderId);
 
         return view('checkout.success', compact('order'));
     }
-
 
     public function createStripeCheckoutSession(Request $request)
     {
         $checkoutData = session('checkout_data');
         if (!$checkoutData) {
-            return response()->json(['error' => 'No checkout data'], 400);
+            return response()->json(['error' => 'Hiányzó adatok'], 400);
         }
 
-        if (Auth::check()) {
-            $cartItems = CartItem::with('product')->where('user_id', Auth::id())->get();
-        } else {
-            $sessionCart = session('cart', []);
-            $cartItems = collect($sessionCart)->map(fn($item) => [
-                'product' => Product::find($item['product_id']),
-                'quantity' => $item['quantity']
-            ]);
-        }
+        $order = $this->createOrder(
+            $checkoutData,
+            $checkoutData['delivery_option'] ?? 'courier',
+            'card'
+        );
 
-        $lineItems = [];
-        foreach ($cartItems as $item) {
-            if (Auth::check()) {
-                $product = $item->product;
-                $quantity = $item->quantity;
-            } else {
-                $product = $item['product'];
-                $quantity = $item['quantity'];
-            }
+        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
-            if (!$product) continue;
+        $cartItems = OrderItem::where('order_id', $order->id)->with('product')->get();
 
-            $lineItems[] = [
+        $lineItems = $cartItems->map(function ($item) {
+            return [
                 'price_data' => [
                     'currency' => 'huf',
-                    'product_data' => ['name' => $product->name],
-                    'unit_amount' => intval($product->price * 100),
+                    'product_data' => [
+                        'name' => $item->product->name,
+                    ],
+                    'unit_amount' => intval($item->price * 100),
                 ],
-                'quantity' => $quantity,
+                'quantity' => $item->quantity,
             ];
-        }
+        })->toArray();
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $session = Session::create([
+        $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
             'mode' => 'payment',
-            'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('checkout.payment'),
-            'metadata' => [
-                'user_id' => Auth::id() ?? null,
-            ],
+            'success_url' => route('stripe.pending', [], true) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('stripe.cancel', ['order_id' => $order->id], true),
         ]);
 
-        $order = Order::where('user_id', Auth::id())->latest()->first(); 
-        if ($order) {
-            Payment::create([
-                'order_id' => $order->id,
-                'payment_method' => 'stripe', 
-                'amount' => $cartItems->sum(fn($i) => ($i['product']->price ?? 0) * $i['quantity']),
-                'transaction_id' => $session->id, 
-                'payment_status' => 'pending', 
-            ]);
+        Payment::create([
+            'order_id' => $order->id,
+            'payment_method' => 'card',
+            'amount' => $cartItems->sum(fn($item) => $item->price * $item->quantity),
+            'transaction_id' => $session->id,
+            'payment_status' => 'pending',
+            'user_id' => Auth::id() ?? null,
+        ]);
+
+        if (Auth::check()) {
+            CartItem::where('user_id', Auth::id())->delete();
+        } else {
+            session()->forget('cart');
         }
+
+        session()->forget('checkout_data');
 
         return response()->json(['url' => $session->url]);
     }
 
+
+
+    public function pending(Request $request)
+    {
+        $order = Order::findOrFail($request->order);
+        return view('checkout.pending', compact('order'));
+    }
+
     public function handleWebhook(Request $request)
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $webhookSecret = env('STRIPE_WEBHOOK_SECRET');
+        $endpointSecret = env('STRIPE_WEBHOOK_SECRET');
 
         try {
-            $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
+            $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
+            $type = $event->type;
+
+            if ($type === 'checkout.session.completed') {
+                $session = $event->data->object;
+
+                $payment = Payment::where('transaction_id', $session->id)->first();
+                if ($payment) {
+
+                    if ($payment->payment_status === 'succeeded') {
+                        return response()->json(['status' => 'already_processed']);
+                    }
+
+                    $payment->update([
+                        'payment_status' => 'succeeded'
+                    ]);
+
+                    $order = $payment->order;
+                    if ($order) {
+                        $order->update([
+                            'order_status' => OrderStatus::REGISTERED
+                        ]);
+                    }
+                }
+            }
+
+            if ($type === 'payment_intent.payment_failed') {
+
+                $paymentIntent = $event->data->object;
+                $payment = Payment::where('payment_intent', $paymentIntent->id)->first();
+
+                if ($payment) {
+                    $payment->update(['payment_status' => 'failed']);
+
+                    $order = $payment->order;
+                    if ($order) {
+                        $order->update(['order_status' => OrderStatus::PAYMENT_FAILED]);
+
+                         $order->delete();
+                    }
+                }
+            }
+
+            return response()->json(['status' => 'success']);
+
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Invalid signature'], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
+    }
 
-        if ($event->type === 'checkout.session.completed') {
-            $session = $event->data->object;
-
-            $payment = Payment::where('transaction_id', $session->id)->first();
-            if ($payment) {
-                $payment->payment_status = 'succeeded';
-                $payment->save();
+    public function cancel(Request $request)
+    {
+        $orderId = $request->query('order_id');
+        if ($orderId) {
+            $order = Order::find($orderId);
+            if ($order) {
+                $order->update(['order_status' => OrderStatus::PAYMENT_FAILED]);
+                $order->delete(); 
             }
         }
 
-        return response()->json(['status' => 'success']);
+        return redirect()->route('checkout.payment')
+                        ->with('error', 'A fizetés nem sikerült, próbáld újra.');
     }
+
+
 
 
 

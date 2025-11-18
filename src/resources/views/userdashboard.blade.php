@@ -157,26 +157,66 @@
 
             {{-- Rendelések --}}
             <div class="tab-pane fade show active" id="orders" role="tabpanel">
-                <table class="table table-bordered mt-3">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Dátum</th>
-                            <th>Összeg</th>
-                            <th>Státusz</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($orders as $order)
+                @if($orders->isEmpty())
+                    <div class="alert alert-info mt-3">
+                        Még nem rendeltél webáruházunkból.
+                    </div>
+                @else
+                    <table class="table table-bordered mt-3">
+                        <thead class="table-light">
                             <tr>
-                                <td>{{ $order->id }}</td>
-                                <td>{{ $order->created_at->format('Y.m.d H:i') }}</td>
-                                <td>{{ number_format($order->total, 0, ',', ' ') }} Ft</td>
-                                <td>{{ $order->status }}</td>
+                                <th>#</th>
+                                <th>Dátum</th>
+                                <th>Összeg</th>
+                                <th>Státusz</th>
+                                <th>Művelet</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($orders as $order)
+                                <tr>
+                                    <td>{{ $order->order_number }}</td>
+                                    <td>{{ $order->created_at->format('Y.m.d H:i') }}</td>
+                                    <td>{{ number_format($order->total, 0, ',', ' ') }} Ft</td>
+                                    <td>{{ $order->status ?? 'Feldolgozás alatt' }}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#order-{{ $order->id }}">
+                                            Megtekintés
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr class="collapse" id="order-{{ $order->id }}">
+                                    <td colspan="5">
+                                        <table class="table table-sm">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th>Termék</th>
+                                                    <th>Mennyiség</th>
+                                                    <th>Egységár</th>
+                                                    <th>Részösszeg</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($order->items as $item)
+                                                    <tr>
+                                                        <td>{{ $item->product->name ?? 'Termék törölve' }}</td>
+                                                        <td>{{ $item->quantity }}</td>
+                                                        <td>{{ number_format($item->price, 0, ',', ' ') }} Ft</td>
+                                                        <td>{{ number_format($item->price * $item->quantity, 0, ',', ' ') }} Ft</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
         </div>
 

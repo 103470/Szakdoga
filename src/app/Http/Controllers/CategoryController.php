@@ -433,6 +433,10 @@ class CategoryController extends Controller
         }
     }
 
+    public function paymentStatus(Order $order)
+    {
+        return response()->json(['status' => $order->payment->payment_status]);
+    }
 
  
 
