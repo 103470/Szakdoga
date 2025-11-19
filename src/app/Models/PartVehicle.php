@@ -17,6 +17,7 @@ class PartVehicle extends Model
     protected $fillable = [
         'oem_number_id',
         'unique_code',
+        'model_source'
     ];
 
     public function oemNumber()

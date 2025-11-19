@@ -4,9 +4,7 @@
 <div class="container">
     <h1>OEM szám szerkesztése</h1>
 
-    <a href="{{ route('admin.oemszamok.index') }}" class="btn btn-secondary mb-3">
-        Vissza
-    </a>
+    <a href="{{ route('admin.oemszamok.index') }}" class="btn btn-secondary mb-3">← Vissza a listához</a>
 
     @if($errors->any())
         <div class="alert alert-danger">
