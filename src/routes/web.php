@@ -45,6 +45,7 @@ use App\Http\Controllers\Admin\BrandVintageController;
 use App\Http\Controllers\Admin\RareBrandVintageController;
 use App\Http\Controllers\Admin\BrandModelController;
 use App\Http\Controllers\Admin\RareBrandModelController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategory;
 
 Route::get('login', function () {
     return view('login');
@@ -129,8 +130,17 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
             Route::delete('/{model}', [RareBrandModelController::class, 'destroy'])->name('destroy');
         });
 
-
         Route::resource('ritka-markak', AdminRareBrand::class)->names('ritkamarkak');
+
+        Route::prefix('kategoriak')->name('kategoriak.')->group(function () {
+            Route::get('/', [AdminCategory::class, 'index'])->name('index');        
+            Route::get('/create', [AdminCategory::class, 'create'])->name('create'); 
+            Route::post('/', [AdminCategory::class, 'store'])->name('store');        
+            Route::get('/{category}/edit', [AdminCategory::class, 'edit'])->name('edit'); 
+            Route::put('/{category}', [AdminCategory::class, 'update'])->name('update');  
+            Route::delete('/{category}', [AdminCategory::class, 'destroy'])->name('destroy'); 
+        });
+
     });
 
 

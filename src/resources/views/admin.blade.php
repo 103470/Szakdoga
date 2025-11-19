@@ -302,18 +302,20 @@
                                 <hr class="text-white-50 my-2">
                             @endif
 
-
-
-
-                            @forelse ($menu['items'] as $item)
+                            @if ($menu['name'] === 'Kategóriák')
                             <li class="nav-item">
-                                <a href="{{ route('admin.' . Str::slug($menu['name']) . '.show', $item->id) }}" class="nav-link">
-                                    {{ $item->name }}
-                                </a>
+                                <div class="collapse show" id="subMenuCategories">
+                                    <ul class="nav flex-column ms-3">
+                                        <li>
+                                            <a href="{{ route('admin.kategoriak.index') }}" class="nav-link">Összes kategória</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('admin.kategoriak.create') }}" class="nav-link">+ Új kategória</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
-                            @empty
-                            <li class="nav-item"><span class="text-white-50 ms-3 small">Nincs adat</span></li>
-                            @endforelse
+                            @endif
                         </ul>
                     </div>
                 </div>
