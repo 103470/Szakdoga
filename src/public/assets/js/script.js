@@ -543,5 +543,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
     checkPayment();
 
-
 });

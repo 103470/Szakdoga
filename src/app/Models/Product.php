@@ -143,6 +143,10 @@ class Product extends Model
         return $this->reviews()->avg('rating');
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
 
 }

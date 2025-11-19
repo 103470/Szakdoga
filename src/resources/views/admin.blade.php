@@ -368,8 +368,27 @@
                 </div>
 
                 <div class="mt-4">
-                    <a class="nav-link" href="#"><i class="bi bi-box-seam"></i> Termékek</a>
-                    <a class="nav-link" href="#"><i class="bi bi-gear"></i> Egyéb</a>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex justify-content-between align-items-center" 
+                        data-bs-toggle="collapse" 
+                        href="#subMenuProducts">
+                            <span><i class="bi bi-box-seam me-2"></i> Termékek</span>
+                            <i class="bi bi-chevron-down small"></i>
+                        </a>
+
+                        <div class="collapse" id="subMenuProducts">
+                            <ul class="nav flex-column ms-3">
+                                <li>
+                                    <a href="{{ route('admin.termekek.index') }}" class="nav-link">Összes termék</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.termekek.create') }}" class="nav-link">+ Új termék</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <a class="nav-link" href="#"><i class="bi bi-gear me-2"></i> Egyéb</a>
                 </div>
 
             </nav>
@@ -389,10 +408,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebarMenu');
-            sidebar.classList.toggle('show');
+       document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebarMenu');
+                sidebar.classList.toggle('show');
+            });
+        
+            document.querySelectorAll('.toggle-description').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const td = this.closest('td');
+                    td.querySelector('.short-text').classList.toggle('d-none');
+                    td.querySelector('.full-text').classList.toggle('d-none');
+                    this.textContent = this.textContent === '...tovább' ? 'bezár' : '...tovább';
+                });
+            });
         });
+        
     </script>
 
     @stack('scripts')
