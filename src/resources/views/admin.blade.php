@@ -169,6 +169,7 @@
                     ['name' => 'Modellek', 'icon' => 'bi-car-front-fill', 'items' => $sidebarModels ?? []],
                     ['name' => 'Kategóriák', 'icon' => 'bi-list-ul', 'items' => $sidebarCategories ?? []],
                     ['name' => 'Alkategóriák', 'icon' => 'bi-tags-fill', 'items' => $sidebarSubcategories ?? []],
+                    ['name' => 'Termékkategóriák', 'icon' => 'bi-box-seam', 'items' => $sidebarProductCategories ?? []],
                 ];
 
                 @endphp
@@ -332,6 +333,20 @@
                             </li>
                             @endif
 
+                            @if ($menu['name'] === 'Termékkategóriák')
+                                <li class="nav-item">
+                                    <div class="collapse show" id="subMenuProductCategories">
+                                        <ul class="nav flex-column ms-3">
+                                            <li>
+                                                <a href="{{ route('admin.termekkategoriak.index') }}" class="nav-link">Összes termékkategória</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('admin.termekkategoriak.create') }}" class="nav-link">+ Új termékkategória</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            @endif
                         </ul>
                     </div>
                 </div>

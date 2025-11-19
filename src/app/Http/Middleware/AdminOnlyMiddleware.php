@@ -12,7 +12,6 @@ class AdminOnlyMiddleware
     {
         $user = Auth::user();
 
-        // adjust the check to your user model (is_admin, role, etc.)
         if (! $user || ! ($user->is_admin ?? false)) {
             return redirect()->route('login')->with('error', 'Access denied.');
         }

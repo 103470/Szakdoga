@@ -10,6 +10,8 @@ class ProductCategory extends Model
 {
     use SoftDeletes;
 
+    protected $primaryKey = 'product_category_id';
+
     protected $fillable = [
         'subcategory_id',
         'name',
@@ -35,5 +37,10 @@ class ProductCategory extends Model
     public function products()
     {
         return $this->hasMany(Product::class, 'product_category_id');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug'; 
     }
 }
