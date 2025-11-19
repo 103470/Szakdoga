@@ -367,29 +367,144 @@
                     </div>
                 </div>
 
-                <div class="mt-4">
-                    <li class="nav-item">
-                        <a class="nav-link d-flex justify-content-between align-items-center" 
+           <div class="mt-4">
+                <li class="nav-item">
+                    <a class="nav-link d-flex justify-content-between align-items-center" 
                         data-bs-toggle="collapse" 
                         href="#subMenuProducts">
                             <span><i class="bi bi-box-seam me-2"></i> Termékek</span>
                             <i class="bi bi-chevron-down small"></i>
-                        </a>
+                    </a>
 
-                        <div class="collapse" id="subMenuProducts">
-                            <ul class="nav flex-column ms-3">
-                                <li>
-                                    <a href="{{ route('admin.termekek.index') }}" class="nav-link">Összes termék</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin.termekek.create') }}" class="nav-link">+ Új termék</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                    <div class="collapse" id="subMenuProducts">
+                        <ul class="nav flex-column ms-3">
+                            <li>
+                                <a href="{{ route('admin.termekek.index') }}" class="nav-link">Összes termék</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.termekek.create') }}" class="nav-link">+ Új termék</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
 
-                    <a class="nav-link" href="#"><i class="bi bi-gear me-2"></i> Egyéb</a>
-                </div>
+                <li class="nav-item mt-2">
+                    <a class="nav-link d-flex justify-content-between align-items-center" 
+                        data-bs-toggle="collapse" 
+                        href="#subMenuOther">
+                            <span><i class="bi bi-gear me-2"></i> Egyéb</span>
+                            <i class="bi bi-chevron-down small"></i>
+                    </a>
+
+                    <div class="collapse" id="subMenuOther">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item mt-1">
+                                <a class="nav-link d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse"
+                                href="#oemMenu">
+                                    <span>OEM számok</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+
+                                <div class="collapse" id="oemMenu">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.oemszamok.index') }}" class="nav-link">Összes</a></li>
+                                        <li><a href="{{ route('admin.oemszamok.create') }}" class="nav-link">+ Új hozzáadása</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            {{-- Termékkapcsolás --}}
+                            <li class="nav-item mt-1">
+                                <a class="nav-link d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse"
+                                href="#kapcsolasMenu">
+                                    <span>Termékkapcsolás</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+
+                                <div class="collapse" id="kapcsolasMenu">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.termekkapcsolas.index') }}" class="nav-link">Összes</a></li>
+                                        <li><a href="{{ route('admin.termekkapcsolas.create') }}" class="nav-link">+ Új hozzáadása</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            {{-- Előhívószámok --}}
+                            <li class="nav-item mt-1">
+                                <a class="nav-link d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse"
+                                href="#elohivoszamMenu">
+                                    <span>Előhívószámok</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+
+                                <div class="collapse" id="elohivoszamMenu">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.elohivoszamok.index') }}" class="nav-link">Összes</a></li>
+                                        <li><a href="{{ route('admin.elohivoszamok.create') }}" class="nav-link">+ Új hozzáadása</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            {{-- Szállítási opciók --}}
+                            <li class="nav-item mt-1">
+                                <a class="nav-link d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse"
+                                href="#szallitasMenu">
+                                    <span>Szállítási opciók</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+
+                                <div class="collapse" id="szallitasMenu">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.szallitasi.index') }}" class="nav-link">Összes</a></li>
+                                        <li><a href="{{ route('admin.szallitasi.create') }}" class="nav-link">+ Új hozzáadása</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            {{-- Fizetési opciók --}}
+                            <li class="nav-item mt-1">
+                                <a class="nav-link d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse"
+                                href="#fizetesiMenu">
+                                    <span>Fizetési opciók</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+
+                                <div class="collapse" id="fizetesiMenu">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.fizetesi.index') }}" class="nav-link">Összes</a></li>
+                                        <li><a href="{{ route('admin.fizetesi.create') }}" class="nav-link">+ Új hozzáadása</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            {{-- Üzemanyag típusok --}}
+                            <li class="nav-item mt-1">
+                                <a class="nav-link d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse"
+                                href="#uzemanyagMenu">
+                                    <span>Üzemanyag típusok</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </a>
+
+                                <div class="collapse" id="uzemanyagMenu">
+                                    <ul class="nav flex-column ms-3">
+                                        <li><a href="{{ route('admin.uzemanyag.index') }}" class="nav-link">Összes</a></li>
+                                        <li><a href="{{ route('admin.uzemanyag.create') }}" class="nav-link">+ Új hozzáadása</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+
+            </div>
+
 
             </nav>
         </aside>

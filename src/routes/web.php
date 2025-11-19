@@ -49,6 +49,12 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategory;
 use App\Http\Controllers\Admin\SubCategoryController as AdminSubCategory;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProduct;
+use App\Http\Controllers\Admin\OemNumberController;
+use App\Http\Controllers\Admin\PartVehicleController;
+use App\Http\Controllers\Admin\PhonePrefixesController;
+use App\Http\Controllers\Admin\DeliveryOptionController;
+use App\Http\Controllers\Admin\PaymentOptionController;
+use App\Http\Controllers\Admin\FuelTypeController;
 
 Route::get('login', function () {
     return view('login');
@@ -169,6 +175,60 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
             Route::get('/{product}/edit', [AdminProduct::class, 'edit'])->name('edit');
             Route::put('/{product}', [AdminProduct::class, 'update'])->name('update');
             Route::delete('/{product}', [AdminProduct::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('oemszamok')->name('oemszamok.')->group(function () {
+            Route::get('/', [OemNumberController::class, 'index'])->name('index');
+            Route::get('/create', [OemNumberController::class, 'create'])->name('create');
+            Route::post('/', [OemNumberController::class, 'store'])->name('store');
+            Route::get('/{oemNumber}/edit', [OemNumberController::class, 'edit'])->name('edit');
+            Route::put('/{oemNumber}', [OemNumberController::class, 'update'])->name('update');
+            Route::delete('/{oemNumber}', [OemNumberController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('termekkapcsolas')->name('termekkapcsolas.')->group(function () {
+            Route::get('/', [PartVehicleController::class, 'index'])->name('index');
+            Route::get('/create', [PartVehicleController::class, 'create'])->name('create');
+            Route::post('/', [PartVehicleController::class, 'store'])->name('store');
+            Route::get('/{partVehicle}/edit', [PartVehicleController::class, 'edit'])->name('edit');
+            Route::put('/{partVehicle}', [PartVehicleController::class, 'update'])->name('update');
+            Route::delete('/{partVehicle}', [PartVehicleController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('elohivoszamok')->name('elohivoszamok.')->group(function () {
+            Route::get('/', [PhonePrefixesController::class, 'index'])->name('index');
+            Route::get('/create', [PhonePrefixesController::class, 'create'])->name('create');
+            Route::post('/', [PhonePrefixesController::class, 'store'])->name('store');
+            Route::get('/{prefix}/edit', [PhonePrefixesController::class, 'edit'])->name('edit');
+            Route::put('/{prefix}', [PhonePrefixesController::class, 'update'])->name('update');
+            Route::delete('/{prefix}', [PhonePrefixesController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('szallitasi')->name('szallitasi.')->group(function () {
+            Route::get('/', [DeliveryOptionController::class, 'index'])->name('index');
+            Route::get('/create', [DeliveryOptionController::class, 'create'])->name('create');
+            Route::post('/', [DeliveryOptionController::class, 'store'])->name('store');
+            Route::get('/{option}/edit', [DeliveryOptionController::class, 'edit'])->name('edit');
+            Route::put('/{option}', [DeliveryOptionController::class, 'update'])->name('update');
+            Route::delete('/{option}', [DeliveryOptionController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('fizetesi')->name('fizetesi.')->group(function () {
+            Route::get('/', [PaymentOptionController::class, 'index'])->name('index');
+            Route::get('/create', [PaymentOptionController::class, 'create'])->name('create');
+            Route::post('/', [PaymentOptionController::class, 'store'])->name('store');
+            Route::get('/{option}/edit', [PaymentOptionController::class, 'edit'])->name('edit');
+            Route::put('/{option}', [PaymentOptionController::class, 'update'])->name('update');
+            Route::delete('/{option}', [PaymentOptionController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('uzemanyag')->name('uzemanyag.')->group(function () {
+            Route::get('/', [FuelTypeController::class, 'index'])->name('index');
+            Route::get('/create', [FuelTypeController::class, 'create'])->name('create');
+            Route::post('/', [FuelTypeController::class, 'store'])->name('store');
+            Route::get('/{fuel}/edit', [FuelTypeController::class, 'edit'])->name('edit');
+            Route::put('/{fuel}', [FuelTypeController::class, 'update'])->name('update');
+            Route::delete('/{fuel}', [FuelTypeController::class, 'destroy'])->name('destroy');
         });
 
     });

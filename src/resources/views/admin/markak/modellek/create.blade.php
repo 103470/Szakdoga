@@ -31,7 +31,7 @@
             <select name="fuel_type_id" id="fuel_type_id" class="form-control">
                 <option value="">Válassz üzemanyag típust...</option>
                 @foreach($fuelTypes as $fuel)
-                    <option value="{{ $fuel->id }}" {{ old('fuel_type_id') == $fuel->id ? 'selected' : '' }}>
+                    <option value="{{ $fuel->id }}" {{ old('fuel_type_id') == $fuel->id ? 'selected' : '' }}>   
                         {{ ucfirst($fuel->name) }}
                     </option>
                 @endforeach
