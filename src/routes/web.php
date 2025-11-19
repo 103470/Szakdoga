@@ -41,6 +41,8 @@ use App\Http\Controllers\Admin\BrandController as AdminBrand;
 use App\Http\Controllers\Admin\RareBrandController as AdminRareBrand;
 use App\Http\Controllers\Admin\BrandTypeController;
 use App\Http\Controllers\Admin\RareBrandTypeController;
+use App\Http\Controllers\Admin\BrandVintageController;
+use App\Http\Controllers\Admin\RareBrandVintageController;
 
 Route::get('login', function () {
     return view('login');
@@ -77,6 +79,16 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
             Route::delete('/{type}', [BrandTypeController::class, 'destroy'])->name('destroy');
         });
 
+        Route::prefix('markak/evjaratok')->name('markak.evjaratok.')->group(function () {
+            Route::get('/', [BrandVintageController::class, 'index'])->name('index');
+            Route::get('/create', [BrandVintageController::class, 'create'])->name('create');
+            Route::post('/', [BrandVintageController::class, 'store'])->name('store');
+            Route::get('/{vintage}/edit', [BrandVintageController::class, 'edit'])->name('edit');
+            Route::put('/{vintage}', [BrandVintageController::class, 'update'])->name('update');
+            Route::delete('/{vintage}', [BrandVintageController::class, 'destroy'])->name('destroy');
+        });
+
+
         Route::resource('markak', AdminBrand::class)->names('markak');
 
         Route::prefix('ritka-markak/tipusok')->name('ritkamarkak.tipusok.')->group(function () {
@@ -87,6 +99,16 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
             Route::put('/{type}', [RareBrandTypeController::class, 'update'])->name('update');
             Route::delete('/{type}', [RareBrandTypeController::class, 'destroy'])->name('destroy');
         });
+
+        Route::prefix('ritkamarkak/evjaratok')->name('ritkamarkak.evjaratok.')->group(function () {
+            Route::get('/', [RareBrandVintageController::class, 'index'])->name('index');
+            Route::get('/create', [RareBrandVintageController::class, 'create'])->name('create');
+            Route::post('/', [RareBrandVintageController::class, 'store'])->name('store');
+            Route::get('/{vintage}/edit', [RareBrandVintageController::class, 'edit'])->name('edit');
+            Route::put('/{vintage}', [RareBrandVintageController::class, 'update'])->name('update');
+            Route::delete('/{vintage}', [RareBrandVintageController::class, 'destroy'])->name('destroy');
+        });
+
 
         Route::resource('ritka-markak', AdminRareBrand::class)->names('ritkamarkak');
     });

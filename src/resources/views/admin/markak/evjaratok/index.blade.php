@@ -1,0 +1,56 @@
+@extends('admin')
+
+@section('content')
+<div class="container">
+    <h1>Évjáratok</h1> 
+    <a href="{{ route('admin.markak.evjaratok.create') }}" class="btn theme-blue-btn mb-3">+ Új évjárat</a>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <table class="table table-striped w-100">
+        <thead>
+            <tr>
+                <th class="w-20">Típus</th>
+                <th class="w-20">Évjárat neve</th>
+                <th class="w-15">Váz (frame)</th>
+                <th class="w-15">Karosszéria (body type)</th>
+                <th class="w-15">Időszak</th>
+                <th class="text-end w-15">Műveletek</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($vintages as $vintage)
+            <tr>
+                <td>{{ $vintage->type->name ?? '-' }}</td>
+                <td>{{ $vintage->name }}</td>
+                <td>{{ $vintage->frame ?? '-' }}</td>
+                <td>{{ $vintage->body_type ?? '-' }}</td>
+                <td>{{ $vintage->vintage_range }}</td>
+
+                <td class="text-end">
+                    <a href="{{ route('admin.markak.evjaratok.edit', $vintage->id) }}" 
+                       class="btn btn-sm btn-warning">Szerkesztés</a>
+
+                    <form action="{{ route('admin.markak.evjaratok.destroy', $vintage->id) }}" 
+                          method="POST" 
+                          class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-sm btn-danger"
+                                onclick="return confirm('Biztos törölni akarod?')">
+                            Törlés
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">Nincs adat</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+@endsection

@@ -242,6 +242,37 @@
                             <hr class="text-white-50 my-2">
                             @endif
 
+                            @if ($menu['name'] === 'Évjáratok')
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuPopularYears">
+                                        <span>Népszerű évjáratok</span>
+                                        <i class="bi bi-chevron-down small"></i>
+                                    </a>
+                                    <div class="collapse" id="subMenuPopularYears">
+                                        <ul class="nav flex-column ms-3">
+                                            <li><a href="{{ route('admin.markak.evjaratok.index') }}" class="nav-link">Összes népszerű évjárat</a></li>
+                                            <li><a href="{{ route('admin.markak.evjaratok.create') }}" class="nav-link">+ Új népszerű évjárat</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuRareYears">
+                                        <span>Ritka évjáratok</span>
+                                        <i class="bi bi-chevron-down small"></i>
+                                    </a>
+                                    <div class="collapse" id="subMenuRareYears">
+                                        <ul class="nav flex-column ms-3">
+                                            <li><a href="{{ route('admin.ritkamarkak.evjaratok.index') }}" class="nav-link">Összes ritka évjárat</a></li>
+                                            <li><a href="{{ route('admin.ritkamarkak.evjaratok.create') }}" class="nav-link">+ Új ritka évjárat</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <hr class="text-white-50 my-2">
+                            @endif
+
+
 
                             @forelse ($menu['items'] as $item)
                             <li class="nav-item">

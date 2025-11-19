@@ -12,7 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('brand_models', function (Blueprint $table) {
-            $table->string('body_type')->nullable()->after('frame');
+            $table->enum('body_type', [
+                'Sedan',
+                'Coupé',
+                'Kombi',
+                'Kabrió',
+                'Ferdehátú',
+            ])->default('Sedan')->change()->after('frame');
         });
     }
 
@@ -22,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('brand_models', function (Blueprint $table) {
-            //
+            $table->string('body_type')->nullable()->change();
         });
     }
 };
