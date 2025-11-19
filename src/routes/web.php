@@ -46,6 +46,7 @@ use App\Http\Controllers\Admin\RareBrandVintageController;
 use App\Http\Controllers\Admin\BrandModelController;
 use App\Http\Controllers\Admin\RareBrandModelController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategory;
+use App\Http\Controllers\Admin\SubCategoryController as AdminSubCategory;
 
 Route::get('login', function () {
     return view('login');
@@ -140,6 +141,16 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
             Route::put('/{category}', [AdminCategory::class, 'update'])->name('update');  
             Route::delete('/{category}', [AdminCategory::class, 'destroy'])->name('destroy'); 
         });
+
+        Route::prefix('alkategoriak')->name('alkategoriak.')->group(function () {
+            Route::get('/', [AdminSubCategory::class, 'index'])->name('index');
+            Route::get('/create', [AdminSubCategory::class, 'create'])->name('create');
+            Route::post('/', [AdminSubCategory::class, 'store'])->name('store');
+            Route::get('/{subcategory}/edit', [AdminSubCategory::class, 'edit'])->name('edit');
+            Route::put('/{subcategory}', [AdminSubCategory::class, 'update'])->name('update');
+            Route::delete('/{subcategory}', [AdminSubCategory::class, 'destroy'])->name('destroy');
+        });
+
 
     });
 

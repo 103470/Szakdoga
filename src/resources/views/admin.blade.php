@@ -316,6 +316,22 @@
                                 </div>
                             </li>
                             @endif
+
+                            @if ($menu['name'] === 'Alkategóriák')
+                            <li class="nav-item">
+                                <div class="collapse show" id="subMenuSubcategories">
+                                    <ul class="nav flex-column ms-3">
+                                        <li>
+                                            <a href="{{ route('admin.alkategoriak.index') }}" class="nav-link">Összes alkategória</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('admin.alkategoriak.create') }}" class="nav-link">+ Új alkategória</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            @endif
+
                         </ul>
                     </div>
                 </div>

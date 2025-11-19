@@ -20,6 +20,7 @@ class SubCategory extends Model
         'category_id',
         'name',
         'slug',
+        'fuel_type_id',
         'updated_by',
         'deleted_by',
     ];
@@ -46,6 +47,11 @@ class SubCategory extends Model
     public function fuelType()
     {
         return $this->belongsTo(FuelType::class, 'fuel_type_id');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
 
