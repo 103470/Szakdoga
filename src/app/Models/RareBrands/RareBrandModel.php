@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\RareBrands\Type;
 use App\Models\FuelType;
 use App\Models\RareBrands\Vintage;
+use Illuminate\Support\Str;
+use App\Models\PartVehicle;
 
 class RareBrandModel extends Model
 {
@@ -58,11 +60,6 @@ class RareBrandModel extends Model
         return "{$this->name}";
     }
 
-    public function getYearRangeAttribute()
-    {
-        return "{$this->year_from}.{$this->month_from} - {$this->year_to}.{$this->month_to}";
-    }
-
     public function getCcmFormattedAttribute()
     {
         return $this->ccm ? number_format($this->ccm, 0, '', ' ') : null;
@@ -87,6 +84,17 @@ class RareBrandModel extends Model
             ->when(!empty($vintage->body_type), function ($q) use ($vintage) {
                 $q->where('body_type', $vintage->body_type);
             });
+    }
+
+    public function getYearRangeAttribute()
+    {
+        return sprintf(
+            '%d/%02d - %d/%02d',
+            $this->year_from,
+            $this->month_from,
+            $this->year_to,
+            $this->month_to
+        );
     }
 
     protected static function booted()

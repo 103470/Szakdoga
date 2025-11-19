@@ -24,7 +24,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('year_from');
             $table->unsignedTinyInteger('month_from')->default(1);
             $table->unsignedSmallInteger('year_to')->nullable();
-            $table->unsignedTinyInteger('month_to')->default(12)->nullable();
+            $table->unsignedTinyInteger('month_to')->nullable()->default(12);
             $table->string('frame')->nullable();
             $table->foreign('frame')->references('frame')->on('rarebrand_vintages')->onDelete('set null');
             $table->timestamps();

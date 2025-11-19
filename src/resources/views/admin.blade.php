@@ -272,6 +272,37 @@
                                 <hr class="text-white-50 my-2">
                             @endif
 
+                            @if ($menu['name'] === 'Modellek')
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuPopularModels">
+                                        <span>Népszerű modellek</span>
+                                        <i class="bi bi-chevron-down small"></i>
+                                    </a>
+                                    <div class="collapse" id="subMenuPopularModels">
+                                        <ul class="nav flex-column ms-3">
+                                            <li><a href="{{ route('admin.markak.modellek.index') }}" class="nav-link">Összes népszerű modell</a></li>
+                                            <li><a href="{{ route('admin.markak.modellek.create') }}" class="nav-link">+ Új népszerű modell</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#subMenuRareModels">
+                                        <span>Ritka modellek</span>
+                                        <i class="bi bi-chevron-down small"></i>
+                                    </a>
+                                    <div class="collapse" id="subMenuRareModels">
+                                        <ul class="nav flex-column ms-3">
+                                            <li><a href="{{ route('admin.ritkamarkak.modellek.index') }}" class="nav-link">Összes ritka modell</a></li>
+                                            <li><a href="{{ route('admin.ritkamarkak.modellek.create') }}" class="nav-link">+ Új ritka modell</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <hr class="text-white-50 my-2">
+                            @endif
+
+
 
 
                             @forelse ($menu['items'] as $item)

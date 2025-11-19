@@ -43,6 +43,8 @@ use App\Http\Controllers\Admin\BrandTypeController;
 use App\Http\Controllers\Admin\RareBrandTypeController;
 use App\Http\Controllers\Admin\BrandVintageController;
 use App\Http\Controllers\Admin\RareBrandVintageController;
+use App\Http\Controllers\Admin\BrandModelController;
+use App\Http\Controllers\Admin\RareBrandModelController;
 
 Route::get('login', function () {
     return view('login');
@@ -88,6 +90,15 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
             Route::delete('/{vintage}', [BrandVintageController::class, 'destroy'])->name('destroy');
         });
 
+        Route::prefix('markak/modellek')->name('markak.modellek.')->group(function () {
+            Route::get('/', [BrandModelController::class, 'index'])->name('index');
+            Route::get('/create', [BrandModelController::class, 'create'])->name('create');
+            Route::post('/', [BrandModelController::class, 'store'])->name('store');
+            Route::get('/{model}/edit', [BrandModelController::class, 'edit'])->name('edit');
+            Route::put('/{model}', [BrandModelController::class, 'update'])->name('update');
+            Route::delete('/{model}', [BrandModelController::class, 'destroy'])->name('destroy');
+        });
+
 
         Route::resource('markak', AdminBrand::class)->names('markak');
 
@@ -107,6 +118,15 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
             Route::get('/{vintage}/edit', [RareBrandVintageController::class, 'edit'])->name('edit');
             Route::put('/{vintage}', [RareBrandVintageController::class, 'update'])->name('update');
             Route::delete('/{vintage}', [RareBrandVintageController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('ritkamarkak/modellek')->name('ritkamarkak.modellek.')->group(function () {
+            Route::get('/', [RareBrandModelController::class, 'index'])->name('index');
+            Route::get('/create', [RareBrandModelController::class, 'create'])->name('create');
+            Route::post('/', [RareBrandModelController::class, 'store'])->name('store');
+            Route::get('/{model}/edit', [RareBrandModelController::class, 'edit'])->name('edit');
+            Route::put('/{model}', [RareBrandModelController::class, 'update'])->name('update');
+            Route::delete('/{model}', [RareBrandModelController::class, 'destroy'])->name('destroy');
         });
 
 
