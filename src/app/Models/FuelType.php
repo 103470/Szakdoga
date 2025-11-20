@@ -7,6 +7,12 @@ use App\Models\Brands\BrandModel;
 
 class FuelType extends Model
 {
+    protected $fillable = [
+        'name',
+        'is_universal',
+    ];
+
+
     public function brandModels()
     {
         return $this->hasMany(BrandModel::class);

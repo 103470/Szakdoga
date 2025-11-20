@@ -58,6 +58,7 @@ use App\Http\Controllers\Admin\FuelTypeController;
 use App\Http\Controllers\Admin\PhonePrefixesController as AdminPhone;
 use App\Http\Controllers\Admin\DeliveryOptionController as AdminDelivery;
 use App\Http\Controllers\Admin\PaymentOptionController as AdminPayment;
+use App\Http\Controllers\Admin\FuelTypeController as AdminFuel;
 
 Route::get('login', function () {
     return view('login');
@@ -226,12 +227,12 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
         });
 
         Route::prefix('uzemanyag')->name('uzemanyag.')->group(function () {
-            Route::get('/', [FuelTypeController::class, 'index'])->name('index');
-            Route::get('/create', [FuelTypeController::class, 'create'])->name('create');
-            Route::post('/', [FuelTypeController::class, 'store'])->name('store');
-            Route::get('/{fuel}/edit', [FuelTypeController::class, 'edit'])->name('edit');
-            Route::put('/{fuel}', [FuelTypeController::class, 'update'])->name('update');
-            Route::delete('/{fuel}', [FuelTypeController::class, 'destroy'])->name('destroy');
+            Route::get('/', [AdminFuel::class, 'index'])->name('index');
+            Route::get('/create', [AdminFuel::class, 'create'])->name('create');
+            Route::post('/', [AdminFuel::class, 'store'])->name('store');
+            Route::get('/{fuel}/edit', [AdminFuel::class, 'edit'])->name('edit');
+            Route::put('/{fuel}', [AdminFuel::class, 'update'])->name('update');
+            Route::delete('/{fuel}', [AdminFuel::class, 'destroy'])->name('destroy');
         });
 
     });
