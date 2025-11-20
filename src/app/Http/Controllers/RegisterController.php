@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Address;
+use App\Models\CartItem;
 
 class RegisterController extends Controller
 {
@@ -87,6 +88,25 @@ class RegisterController extends Controller
 
 
         Auth::login($user);
+
+        if ($cart = session('cart')) {
+            foreach ($cart as $productId => $item) {
+                CartItem::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'product_id' => $productId,
+                    ],
+                    [
+                        'quantity' => $item['quantity'],
+                    ]
+                );
+            }
+            session()->forget('cart');
+        }
+
+        if ($request->query('checkout')) {
+            return redirect()->route('checkout.details');
+        }
 
         return redirect('/')->with('success', 'Sikeres regisztráció!');
     }

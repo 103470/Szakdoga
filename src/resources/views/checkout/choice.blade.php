@@ -28,14 +28,14 @@
                 <div class="card-body d-flex flex-column justify-content-center align-items-center">
                     <h4 class="fw-semibold mb-4">Már van fiókja?</h4>
                     <i class="fa-solid fa-user fa-4x text-dark-custom mb-4"></i>
-                    <a href="#" class="btn btn-outline-dark-custom btn-lg px-5 fw-bold mb-4">
+                    <a href="{{ route('login') }}?checkout=1" class="btn btn-outline-dark-custom btn-lg px-5 fw-bold mb-4">
                         Bejelentkezés
                     </a>
 
                     <p class="text-muted mb-3" style="max-width: 280px;">
                         Ha még nem rendelkezel felhasználói fiókkal, regisztrálj most és élvezd a gyorsabb vásárlást.
                     </p>
-                    <a href="#" class="btn btn-success btn-lg px-5 fw-bold">
+                    <a href="{{ route('register') }}?checkout=1" class="btn btn-success btn-lg px-5 fw-bold">
                         Regisztráció
                     </a>
                 </div>

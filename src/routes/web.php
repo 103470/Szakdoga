@@ -63,6 +63,7 @@ use App\Http\Controllers\Admin\FuelTypeController as AdminFuel;
 Route::get('login', function () {
     return view('login');
 })->name('login');
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', LoginController::class)->name('login.attempt');
 
 Route::get('register', function () {

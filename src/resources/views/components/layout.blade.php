@@ -110,9 +110,19 @@
     </style>
 </head>
 <body>
-    <header>
-        Bejelentkezés és Regisztráció
+    <header style="position: relative; display: flex; align-items: center; justify-content: center; padding: 1.2em 1em; background-color: #2b2b2b; color: #eaeaea; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+
+        <a href="{{ route('home') }}" style="position: absolute; left: 1em;">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height:50px;">
+        </a>
+
+        <div style="font-weight: bold; text-align: center;">
+            Bejelentkezés és Regisztráció
+        </div>
     </header>
+
+
+
 
     <main>
         {{ $slot }}
