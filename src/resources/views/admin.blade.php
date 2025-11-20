@@ -414,7 +414,6 @@
                                 </div>
                             </li>
 
-                            {{-- Termékkapcsolás --}}
                             <li class="nav-item mt-1">
                                 <a class="nav-link d-flex justify-content-between align-items-center"
                                 data-bs-toggle="collapse"

@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\PhonePrefixesController;
 use App\Http\Controllers\Admin\DeliveryOptionController;
 use App\Http\Controllers\Admin\PaymentOptionController;
 use App\Http\Controllers\Admin\FuelTypeController;
+use App\Http\Controllers\Admin\PhonePrefixesController as AdminPhone;
 
 Route::get('login', function () {
     return view('login');
@@ -196,12 +197,12 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
         });
 
         Route::prefix('elohivoszamok')->name('elohivoszamok.')->group(function () {
-            Route::get('/', [PhonePrefixesController::class, 'index'])->name('index');
-            Route::get('/create', [PhonePrefixesController::class, 'create'])->name('create');
-            Route::post('/', [PhonePrefixesController::class, 'store'])->name('store');
-            Route::get('/{prefix}/edit', [PhonePrefixesController::class, 'edit'])->name('edit');
-            Route::put('/{prefix}', [PhonePrefixesController::class, 'update'])->name('update');
-            Route::delete('/{prefix}', [PhonePrefixesController::class, 'destroy'])->name('destroy');
+            Route::get('/', [AdminPhone::class, 'index'])->name('index');
+            Route::get('/create', [AdminPhone::class, 'create'])->name('create');
+            Route::post('/', [AdminPhone::class, 'store'])->name('store');
+            Route::get('/{prefix}/edit', [AdminPhone::class, 'edit'])->name('edit');
+            Route::put('/{prefix}', [AdminPhone::class, 'update'])->name('update');
+            Route::delete('/{prefix}', [AdminPhone::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('szallitasi')->name('szallitasi.')->group(function () {
