@@ -310,11 +310,13 @@ class CheckoutController extends Controller
         return response()->json(['url' => $session->url]);
     }
 
-
-
     public function pending(Request $request)
     {
-        $order = Order::findOrFail($request->order);
+        $sessionId = $request->query('session_id'); 
+
+        $payment = Payment::where('transaction_id', $sessionId)->firstOrFail();
+        $order = $payment->order;
+
         return view('checkout.pending', compact('order'));
     }
 
@@ -371,7 +373,8 @@ class CheckoutController extends Controller
             return response()->json(['status' => 'success']);
 
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            \Log::error('Stripe Webhook error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -390,7 +393,92 @@ class CheckoutController extends Controller
                         ->with('error', 'A fizetés nem sikerült, próbáld újra.');
     }
 
+    protected function createOrder(array $checkoutData, string $deliveryOption, string $paymentOption)
+    {
+        $shippingAddress = Address::create([
+            'country' => $checkoutData['shipping_country'],
+            'zip' => $checkoutData['shipping_zip'],
+            'city' => $checkoutData['shipping_city'],
+            'street_type' => $checkoutData['shipping_street_type'] ?? null,
+            'street_name' => $checkoutData['shipping_street_name'] ?? null,
+            'house_number' => $checkoutData['shipping_house_number'] ?? null,
+            'building' => $checkoutData['shipping_building'] ?? null,
+            'floor' => $checkoutData['shipping_floor'] ?? null,
+            'door' => $checkoutData['shipping_door'] ?? null,
+        ]);
 
+        $billingAddress = Address::create([
+            'country' => $checkoutData['billing_country'],
+            'zip' => $checkoutData['billing_zip'],
+            'city' => $checkoutData['billing_city'],
+            'street_type' => $checkoutData['billing_street_type'] ?? null,
+            'street_name' => $checkoutData['billing_street_name'] ?? null,
+            'house_number' => $checkoutData['billing_house_number'] ?? null,
+            'building' => $checkoutData['billing_building'] ?? null,
+            'floor' => $checkoutData['billing_floor'] ?? null,
+            'door' => $checkoutData['billing_door'] ?? null,
+        ]);
+
+        $order = Order::create([
+            'user_id' => Auth::id() ?? null,
+            'shipping_name' => $checkoutData['shipping_name'],
+            'shipping_email' => $checkoutData['shipping_email'],
+            'shipping_phone_prefix' => $checkoutData['shipping_phone_prefix'] ?? '+36',
+            'shipping_phone' => $checkoutData['shipping_phone'],
+            'shipping_address_id' => $shippingAddress->id,
+            'billing_name' => $checkoutData['billing_name'],
+            'billing_email' => $checkoutData['billing_email'],
+            'billing_phone_prefix' => $checkoutData['billing_phone_prefix'] ?? '+36',
+            'billing_phone' => $checkoutData['billing_phone'],
+            'billing_address_id' => $billingAddress->id,
+            'delivery_option' => $deliveryOption,
+            'payment_option' => $paymentOption,
+            'order_number' => strtoupper(substr(bin2hex(random_bytes(8)), 0, 8)),
+            'order_status' => OrderStatus::REGISTERED,
+        ]);
+
+        $cartItems = Auth::check()
+            ? CartItem::with('product')->where('user_id', Auth::id())->get()
+            : session('cart', []);
+
+        foreach ($cartItems as $item) {
+            $product = Auth::check() ? $item->product : Product::find($item['product_id']);
+            $quantity = Auth::check() ? $item->quantity : $item['quantity'];
+            if (!$product) continue;
+
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'price' => $product->price,
+            ]);
+        }
+
+        return $order;
+    }
+
+
+    public function paymentStatus(Request $request)
+    {
+        $sessionId = $request->query('session_id');
+
+        if (!$sessionId) {
+            return response()->json(['error' => 'Hiányzó session_id'], 400);
+        }
+
+        $payment = Payment::where('transaction_id', $sessionId)->first();
+
+        if (!$payment) {
+            return response()->json(['error' => 'Nincs ilyen fizetés'], 404);
+        }
+
+        $order = $payment->order;
+
+        return response()->json([
+            'status' => $payment->payment_status,
+            'order_id' => $order->id,
+        ]);
+    }
 
 
 

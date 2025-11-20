@@ -10,13 +10,28 @@ use App\Enums\OrderStatus;
 
 class Order extends Model
 {
-    protected $fillable = [
-        'user_id', 'shipping_name', 'shipping_email', 'shipping_phone', 'shipping_address',
-        'shipping_city', 'shipping_zip', 'shipping_country',
-        'billing_name', 'billing_email', 'billing_phone',
-        'billing_address',
-        'billing_city', 'billing_zip', 'billing_country',
-        'delivery_option', 'payment_option', 'order_number', 'order_status' 
+   protected $fillable = [
+        'user_id',
+        'shipping_name',
+        'shipping_email',
+        'shipping_phone_prefix',
+        'shipping_phone',
+        'shipping_address_id',
+        'shipping_city',
+        'shipping_zip',
+        'shipping_country',
+        'billing_name',
+        'billing_email',
+        'billing_phone_prefix',
+        'billing_phone',
+        'billing_address_id',
+        'billing_city',
+        'billing_zip',
+        'billing_country',
+        'delivery_option',
+        'payment_option',
+        'order_number',
+        'order_status',
     ];
 
     protected $casts = [

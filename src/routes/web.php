@@ -457,8 +457,7 @@ Route::prefix('checkout')->group(function () {
     Route::get('/payment', [CheckoutController::class, 'showPaymentPage'])->name('checkout.payment');
     Route::post('/finalize', [CheckoutController::class, 'finalize'])->name('checkout.finalize');
     Route::post('/create-session', [CheckoutController::class, 'createStripeCheckoutSession'])->name('checkout.create-session');
-    Route::get('/checkout/pending/{order}', [CheckoutController::class, 'pending'])->name('checkout.pending');
-    Route::get('/checkout/payment-status/{order}', [CheckoutController::class, 'paymentStatus']);
+    Route::get('/payment-status', [CheckoutController::class, 'paymentStatus']);
     Route::get('/success', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('/pending', [CheckoutController::class, 'pending'])->name('stripe.pending');
     Route::get('/cancel', [CheckoutController::class, 'cancel'])->name('stripe.cancel');
@@ -466,7 +465,9 @@ Route::prefix('checkout')->group(function () {
 });
 
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
-Route::post('/stripe/webhook', [CheckoutController::class, 'handleWebhook']);
+
+
+
 
 
 

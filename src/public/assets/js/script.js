@@ -474,35 +474,59 @@ document.addEventListener("DOMContentLoaded", function() {
         stripeButton.addEventListener('click', async function(e) {
             e.preventDefault();
 
+            const tosCheckbox = document.getElementById('accept-tos');
+            const privacyCheckbox = document.getElementById('accept-privacy');
+
+            let valid = true;
+
+            if (!tosCheckbox.checked) {
+                valid = false;
+                tosCheckbox.classList.add('is-invalid');
+                document.getElementById('tos-error').textContent = 'El kell fogadni az ÁSZF-et!';
+            } else {
+                tosCheckbox.classList.remove('is-invalid');
+                document.getElementById('tos-error').textContent = '';
+            }
+
+            if (!privacyCheckbox.checked) {
+                valid = false;
+                privacyCheckbox.classList.add('is-invalid');
+                document.getElementById('privacy-error').textContent = 'El kell fogadni az adatvédelmi szabályzatot!';
+            } else {
+                privacyCheckbox.classList.remove('is-invalid');
+                document.getElementById('privacy-error').textContent = '';
+            }
+
+            if (!valid) return;
+
             const selectedPayment = document.querySelector('input[name="payment_option"]:checked');
-            if (!selectedPayment) return;
+            const selectedDelivery = document.querySelector('input[name="delivery_option"]:checked');
+            const delivery_option = selectedDelivery ? selectedDelivery.value : null;
+
+            if (!selectedPayment || !delivery_option) {
+                alert('Kérlek válassz fizetési és szállítási módot!');
+                return;
+            }
 
             if (selectedPayment.dataset.type === 'card') {
                 try {
-                    const finalizeRes = await fetch("/checkout/finalize", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify({
-                            delivery_option: document.querySelector('input[name="delivery_option"]:checked')?.value,
-                            payment_option: 'card'
-                        })
-                    });
-
-                    const finalizeData = await finalizeRes.json(); 
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
                     const stripeRes = await fetch("/checkout/create-session", {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                        headers: { 
+                            "Content-Type": "application/json", 
+                            "X-CSRF-TOKEN": csrfToken 
                         },
-                        body: JSON.stringify({ order_id: finalizeData.order_id })
+                        body: JSON.stringify({ delivery_option })
                     });
 
-                    const stripeData = await stripeRes.json(); 
+                    if (!stripeRes.ok) {
+                        const text = await stripeRes.text();
+                        throw new Error(`Hiba a szerverről: ${text}`);
+                    }
+
+                    const stripeData = await stripeRes.json();
 
                     if (stripeData.url) {
                         window.location.href = stripeData.url;
@@ -514,33 +538,36 @@ document.addEventListener("DOMContentLoaded", function() {
                     console.error('Fetch hiba:', err);
                     alert('Szerverhiba történt!');
                 }
+
             } else {
                 document.getElementById('checkout-form').submit();
             }
         });
-
-
     }
 
 
-    const pendingDiv = document.getElementById('pending-order');
-    if (!pendingDiv) return;
 
-    const orderId = pendingDiv.dataset.orderId;
+    async function checkStatus(sessionId) {
+        try {
+            const res = await fetch(`/checkout/payment-status?session_id=${sessionId}`);
+            const data = await res.json();
 
-    async function checkPayment() {
-        const res = await fetch(`/checkout/payment-status/${orderId}`);
-        const data = await res.json();
-
-        if (data.status === 'succeeded') {
-            window.location.href = `/checkout/success?order_id=${orderId}`;
-        } else if (data.status === 'pending') {
-            setTimeout(checkPayment, 5000);
-        } else {
-            window.location.href = `/checkout/payment`;
+            if (data.status === 'succeeded') {
+                window.location.href = `/checkout/success?order=${data.order_id}`;
+            } else if (data.status === 'failed') {
+                window.location.href = `/checkout/cancel?order=${data.order_id}`;   
+            } else {
+                setTimeout(() => checkStatus(sessionId), 2000);
+            }
+        } catch (err) {
+            console.error(err);
+            setTimeout(() => checkStatus(sessionId), 5000);
         }
     }
 
-    checkPayment();
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) checkStatus(sessionId);
+
 
 });
