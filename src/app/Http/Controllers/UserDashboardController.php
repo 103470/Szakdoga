@@ -20,11 +20,16 @@ class UserDashboardController extends \Illuminate\Routing\Controller
     {
         $user = Auth::user();
 
-        $orders = Order::with('items.product')
-            ->where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+        if ($user->is_admin) {
+            $orders = Order::with('user', 'items.product')
+                ->orderBy('created_at', 'desc')
+                ->paginate(25);
+        } else {
+            $orders = Order::with('items.product')
+                ->where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(25);
+        }
         return view('userdashboard', compact('user', 'orders'));
 
     }

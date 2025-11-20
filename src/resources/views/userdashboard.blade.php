@@ -12,6 +12,39 @@
     .btn-custom:hover { background-color: #1a1a1a; }
     .table th { background-color: #2c2c2c; color: white; }
     .table td { vertical-align: middle; }
+    .pagination .page-link {
+        background-color: #2c2c2c;
+        color: #fff;
+        border: none;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #1a1a1a;
+        color: #fff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #000; 
+        color: #fff;
+        border: none;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background-color: #5a5a5a;
+        color: #ccc;
+        border: none;
+    }
+
+    .btn-view {
+        background-color: #2c2c2c;
+        color: #fff;
+        border: none;
+    }
+
+    .btn-view:hover {
+        background-color: #1a1a1a;
+        color: #fff;
+    }
 </style>
 
 <div class="container py-4">
@@ -20,13 +53,27 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
     <ul class="nav nav-tabs mb-4" id="userTab" role="tablist">
-        <li class="nav-item"><a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab">Rendeléseim</a></li>
-        <li class="nav-item"><a class="nav-link" id="alap-tab" data-bs-toggle="tab" href="#alap" role="tab">Alapadatok</a></li>
-        <li class="nav-item"><a class="nav-link" id="billing-tab" data-bs-toggle="tab" href="#billing" role="tab">Számlázási adatok</a></li>
-        <li class="nav-item"><a class="nav-link" id="shipping-tab" data-bs-toggle="tab" href="#shipping" role="tab">Szállítási adatok</a></li>
+        <li class="nav-item">
+            <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab">
+                @if(Auth::user()?->is_admin)
+                    Rendelések
+                @else
+                    Rendeléseim
+                @endif
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" id="alap-tab" data-bs-toggle="tab" href="#alap" role="tab">Alapadatok</a>
+        </li>
+
+        @unless(Auth::user()?->is_admin)
+            <li class="nav-item"><a class="nav-link" id="billing-tab" data-bs-toggle="tab" href="#billing" role="tab">Számlázási adatok</a></li>
+            <li class="nav-item"><a class="nav-link" id="shipping-tab" data-bs-toggle="tab" href="#shipping" role="tab">Szállítási adatok</a></li>
+        @endunless
     </ul>
+
 
     <form method="POST" action="{{ route('user.profile.update') }}" enctype="multipart/form-data" class="card p-4 shadow-sm border-0">
         @csrf
@@ -159,13 +206,20 @@
             <div class="tab-pane fade show active" id="orders" role="tabpanel">
                 @if($orders->isEmpty())
                     <div class="alert alert-info mt-3">
-                        Még nem rendeltél webáruházunkból.
+                        @if(Auth::user()?->is_admin)
+                            Nincsenek rendelések.
+                        @else
+                            Még nem rendeltél webáruházunkból.
+                        @endif
                     </div>
                 @else
                     <table class="table table-bordered mt-3">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
+                                @if(Auth::user()?->is_admin)
+                                    <th>Felhasználó</th>
+                                @endif
                                 <th>Dátum</th>
                                 <th>Összeg</th>
                                 <th>Státusz</th>
@@ -176,46 +230,26 @@
                             @foreach($orders as $order)
                                 <tr>
                                     <td>{{ $order->order_number }}</td>
+                                    @if(Auth::user()?->is_admin)
+                                        <td>{{ $order->user ? $order->user->lastname . ' ' . $order->user->firstname : 'Vendég' }}</td>
+                                    @endif
                                     <td>{{ $order->created_at->format('Y.m.d H:i') }}</td>
                                     <td>{{ number_format($order->total, 0, ',', ' ') }} Ft</td>
                                     <td>{{ $order->status ?? 'Feldolgozás alatt' }}</td>
                                     <td>
-                                        <button class="btn btn-primary btn-sm"
-                                                type="button"
+                                        <button class="btn btn-view btn-sm" type="button"
                                                 data-bs-toggle="collapse"
                                                 data-bs-target="#order-{{ $order->id }}">
                                             Megtekintés
                                         </button>
                                     </td>
                                 </tr>
-
-                                <tr class="collapse" id="order-{{ $order->id }}">
-                                    <td colspan="5">
-                                        <table class="table table-sm">
-                                            <thead class="table-secondary">
-                                                <tr>
-                                                    <th>Termék</th>
-                                                    <th>Mennyiség</th>
-                                                    <th>Egységár</th>
-                                                    <th>Részösszeg</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($order->items as $item)
-                                                    <tr>
-                                                        <td>{{ $item->product->name ?? 'Termék törölve' }}</td>
-                                                        <td>{{ $item->quantity }}</td>
-                                                        <td>{{ number_format($item->price, 0, ',', ' ') }} Ft</td>
-                                                        <td>{{ number_format($item->price * $item->quantity, 0, ',', ' ') }} Ft</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="mt-3">
+                        {{ $orders->links() }}
+                    </div>
                 @endif
             </div>
         </div>

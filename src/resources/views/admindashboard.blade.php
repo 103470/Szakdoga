@@ -6,23 +6,23 @@
 <div class="container-fluid">
     <h1 class="h4 mb-4">Admin vezérlőpult</h1>
 
-    <div class="row g-4">
+    <div class="row g-4 mt-4">
         <div class="col-md-4">
             <div class="stat-card">
-                <div class="label">Regisztrált márkák</div>
-                <div class="value">{{ isset($brands) ? $brands->count() : 0 }}</div>
+                <div class="label">Összes Márka</div>
+                <div class="value">{{ $allbrands }}</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="stat-card">
-                <div class="label">Modellek</div>
-                <div class="value">{{ isset($models) ? $models->count() : 0 }}</div>
+                <div class="label">Termékek</div>
+                <div class="value">{{ $products->count() }}</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mt-4">
             <div class="stat-card">
-                <div class="label">Kategóriák</div>
-                <div class="value">{{ isset($categories) ? $categories->count() : 0 }}</div>
+                <div class="label">Rendelések</div>
+                <div class="value">{{ $orders->count() }}</div>
             </div>
         </div>
     </div>
