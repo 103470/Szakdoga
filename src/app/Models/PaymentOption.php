@@ -9,6 +9,7 @@ class PaymentOption extends Model
     protected $fillable = [
         'name',
         'fee',
+        'type',
         'description',
         'is_active',
     ];

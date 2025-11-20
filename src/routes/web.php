@@ -57,6 +57,7 @@ use App\Http\Controllers\Admin\PaymentOptionController;
 use App\Http\Controllers\Admin\FuelTypeController;
 use App\Http\Controllers\Admin\PhonePrefixesController as AdminPhone;
 use App\Http\Controllers\Admin\DeliveryOptionController as AdminDelivery;
+use App\Http\Controllers\Admin\PaymentOptionController as AdminPayment;
 
 Route::get('login', function () {
     return view('login');
@@ -216,12 +217,12 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
         });
 
         Route::prefix('fizetesi')->name('fizetesi.')->group(function () {
-            Route::get('/', [PaymentOptionController::class, 'index'])->name('index');
-            Route::get('/create', [PaymentOptionController::class, 'create'])->name('create');
-            Route::post('/', [PaymentOptionController::class, 'store'])->name('store');
-            Route::get('/{option}/edit', [PaymentOptionController::class, 'edit'])->name('edit');
-            Route::put('/{option}', [PaymentOptionController::class, 'update'])->name('update');
-            Route::delete('/{option}', [PaymentOptionController::class, 'destroy'])->name('destroy');
+            Route::get('/', [AdminPayment::class, 'index'])->name('index');
+            Route::get('/create', [AdminPayment::class, 'create'])->name('create');
+            Route::post('/', [AdminPayment::class, 'store'])->name('store');
+            Route::get('/{option}/edit', [AdminPayment::class, 'edit'])->name('edit');
+            Route::put('/{option}', [AdminPayment::class, 'update'])->name('update');
+            Route::delete('/{option}', [AdminPayment::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('uzemanyag')->name('uzemanyag.')->group(function () {
