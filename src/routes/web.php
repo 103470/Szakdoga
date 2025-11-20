@@ -56,6 +56,7 @@ use App\Http\Controllers\Admin\DeliveryOptionController;
 use App\Http\Controllers\Admin\PaymentOptionController;
 use App\Http\Controllers\Admin\FuelTypeController;
 use App\Http\Controllers\Admin\PhonePrefixesController as AdminPhone;
+use App\Http\Controllers\Admin\DeliveryOptionController as AdminDelivery;
 
 Route::get('login', function () {
     return view('login');
@@ -206,12 +207,12 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOnlyMiddleware::class])
         });
 
         Route::prefix('szallitasi')->name('szallitasi.')->group(function () {
-            Route::get('/', [DeliveryOptionController::class, 'index'])->name('index');
-            Route::get('/create', [DeliveryOptionController::class, 'create'])->name('create');
-            Route::post('/', [DeliveryOptionController::class, 'store'])->name('store');
-            Route::get('/{option}/edit', [DeliveryOptionController::class, 'edit'])->name('edit');
-            Route::put('/{option}', [DeliveryOptionController::class, 'update'])->name('update');
-            Route::delete('/{option}', [DeliveryOptionController::class, 'destroy'])->name('destroy');
+            Route::get('/', [AdminDelivery::class, 'index'])->name('index');
+            Route::get('/create', [AdminDelivery::class, 'create'])->name('create');
+            Route::post('/', [AdminDelivery::class, 'store'])->name('store');
+            Route::get('/{option}/edit', [AdminDelivery::class, 'edit'])->name('edit');
+            Route::put('/{option}', [AdminDelivery::class, 'update'])->name('update');
+            Route::delete('/{option}', [AdminDelivery::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('fizetesi')->name('fizetesi.')->group(function () {

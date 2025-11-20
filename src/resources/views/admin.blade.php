@@ -430,7 +430,6 @@
                                 </div>
                             </li>
 
-                            {{-- Előhívószámok --}}
                             <li class="nav-item mt-1">
                                 <a class="nav-link d-flex justify-content-between align-items-center"
                                 data-bs-toggle="collapse"
@@ -447,7 +446,6 @@
                                 </div>
                             </li>
 
-                            {{-- Szállítási opciók --}}
                             <li class="nav-item mt-1">
                                 <a class="nav-link d-flex justify-content-between align-items-center"
                                 data-bs-toggle="collapse"
