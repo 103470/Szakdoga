@@ -32,7 +32,7 @@ class SubCategorySeeder extends Seeder
             SubCategory::create([
                 'category_id'  => $subcategory['category_id'],
                 'name'         => $subcategory['name'],
-                'fuel_type_id' => 2,
+                'fuel_type_id' => 4,
                 'updated_by'   => null,
                 'deleted_by'   => null,
             ]);
