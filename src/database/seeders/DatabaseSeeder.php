@@ -25,8 +25,5 @@ class DatabaseSeeder extends Seeder
             BrandModelSeeder::class,
         ]);
 
-        User::factory()->create([
-           //
-        ]);
     }
 }
