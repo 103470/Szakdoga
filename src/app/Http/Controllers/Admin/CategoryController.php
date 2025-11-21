@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class CategoryController extends Controller
 {
-     public function index()
+    public function index()
     {
         $categories = Category::orderBy('name')->paginate(20);
 
@@ -26,7 +26,7 @@ class CategoryController extends Controller
         $validated = $this->validateCategory($request);
 
         if ($request->hasFile('icon')) {
-            $path = $request->file('icon')->store('category', 'public'); 
+            $path = $request->file('icon')->store('category', 'public');
             $validated['icon'] = $path;
         }
 
@@ -67,16 +67,21 @@ class CategoryController extends Controller
 
         $category->forceDelete();
 
-        return redirect()->route('admin.kategoriak.index')  
+        return redirect()->route('admin.kategoriak.index')
             ->with('success', 'Kategória és minden hozzá tartozó al-kategória törölve!');
     }
 
     private function validateCategory(Request $request, ?Category $category = null)
     {
         return $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->kategory_id . ',kategory_id',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:categories,name,' . ($category->kategory_id ?? 'NULL') . ',kategory_id',
+            ],
+
             'icon' => 'nullable|image|max:2048'
         ]);
     }
-
 }

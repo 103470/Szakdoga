@@ -22,10 +22,14 @@ class RareBrandVintageController extends Controller
     {
         $types = Type::orderBy('name')->get();
 
-        $column = DB::select("SHOW COLUMNS FROM `rarebrand_vintages` WHERE Field = 'body_type'");
-        $enumColumn = $column[0]->Type;
-        preg_match("/^enum\('(.*)'\)$/", $enumColumn, $matches);
-        $bodyTypes = explode("','", $matches[1]);
+        $column = DB::select("SHOW COLUMNS FROM `rarebrand_vintages`");
+        foreach ($column as $col) {
+            if ($col->Field === 'body_type') {
+                $enumColumn = $col->Type;
+                preg_match("/^enum\('(.*)'\)$/", $enumColumn, $matches);
+                $bodyTypes = explode("','", $matches[1]);
+            }
+        }
 
         return view('admin.ritkamarkak.evjaratok.create', compact('types', 'bodyTypes'));
     }
@@ -43,10 +47,14 @@ class RareBrandVintageController extends Controller
     {
         $types = Type::orderBy('name')->get();
 
-        $column = DB::select("SHOW COLUMNS FROM `rarebrand_vintages` WHERE Field = 'body_type'");
-        $enumColumn = $column[0]->Type;
-        preg_match("/^enum\('(.*)'\)$/", $enumColumn, $matches);
-        $bodyTypes = explode("','", $matches[1]);
+        $column = DB::select("SHOW COLUMNS FROM `rarebrand_vintages`");
+        foreach ($column as $col) {
+            if ($col->Field === 'body_type') {
+                $enumColumn = $col->Type;
+                preg_match("/^enum\('(.*)'\)$/", $enumColumn, $matches);
+                $bodyTypes = explode("','", $matches[1]);
+            }
+        }
 
         return view('admin.ritkamarkak.evjaratok.edit', compact('vintage', 'types', 'bodyTypes'));
     }
