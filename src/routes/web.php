@@ -467,6 +467,9 @@ Route::prefix('checkout')->group(function () {
 
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
 
+Route::get('/checkout/finalize-test', [CheckoutController::class, 'finalizeTest'])->name('checkout.finalize.test');
+
+
 
 
 

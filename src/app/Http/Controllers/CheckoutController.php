@@ -198,17 +198,18 @@ class CheckoutController extends Controller
             session()->forget('checkout_data');
 
             return redirect($session->url);
+        }else {
+            if (Auth::check()) {
+                CartItem::where('user_id', Auth::id())->delete();
+            } else {
+                session()->forget('cart');
+            }
+
+            session()->forget('checkout_data');
+
+            return redirect()->route('checkout.success', ['order' => $order->id]);
         }
 
-        if (Auth::check()) {
-            CartItem::where('user_id', Auth::id())->delete();
-        } else {
-            session()->forget('cart');
-        }
-
-        session()->forget('checkout_data');
-
-        return redirect()->route('checkout.success', ['order_id' => $order->id]);
     }
 
 
@@ -479,6 +480,23 @@ class CheckoutController extends Controller
             'order_id' => $order->id,
         ]);
     }
+
+    
+    public function finalizeTest()
+    {
+        $deliveryOptions = collect([
+            (object)['id' => 1, 'name' => 'Személyes átvétel', 'price' => 0],
+            (object)['id' => 2, 'name' => 'Futár', 'price' => 1000]
+        ]);
+        $paymentOptions = collect([
+            (object)['id' => 1, 'name' => 'Készpénz', 'fee' => 0, 'type' => 'cash'],
+            (object)['id' => 2, 'name' => 'Bankkártya', 'fee' => 0, 'type' => 'card']
+        ]);
+        $subtotal = 5000;
+
+        return view('checkout.finalize', compact('deliveryOptions', 'paymentOptions', 'subtotal'));
+    }
+
 
 
 

@@ -540,8 +540,41 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
             } else {
-                document.getElementById('checkout-form').submit();
+                const form = document.getElementById('checkout-form');
+
+                const paymentInput = document.querySelector('input[name="payment_option"]:checked');
+                if (paymentInput) {
+                    let hidden = form.querySelector('input[name="payment_option_hidden"]');
+                    if (!hidden) {
+                        hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'payment_option';
+                        hidden.value = paymentInput.value;
+                        hidden.id = 'payment_option_hidden';
+                        form.appendChild(hidden);
+                    } else {
+                        hidden.value = paymentInput.value;
+                    }
+                }
+
+                const deliveryInput = document.querySelector('input[name="delivery_option"]:checked');
+                if (deliveryInput) {
+                    let hidden = form.querySelector('input[name="delivery_option_hidden"]');
+                    if (!hidden) {
+                        hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'delivery_option';
+                        hidden.value = deliveryInput.value;
+                        hidden.id = 'delivery_option_hidden';
+                        form.appendChild(hidden);
+                    } else {
+                        hidden.value = deliveryInput.value;
+                    }
+                }
+
+                form.submit();
             }
+
         });
     }
 
