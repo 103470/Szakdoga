@@ -18,7 +18,7 @@ return new class extends Migration
                 'Kombi',
                 'Kabrió',
                 'Ferdehátú',
-            ])->default('Sedan')->change()->after('frame');
+            ])->default('Sedan')->after('frame');
         });
     }
 
