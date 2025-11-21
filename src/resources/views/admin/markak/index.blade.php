@@ -20,7 +20,7 @@
         <tbody>
             @forelse($brands as $brand)
             <tr>
-                <td>{{ $type->rareBrand->name ?? '-' }}</td>
+                <td>{{ $brand->name ?? '-' }}</td>
                 <td>
                     @if($brand->logo)
                         <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" width="50">
