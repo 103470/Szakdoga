@@ -223,7 +223,6 @@
                                 <th>Dátum</th>
                                 <th>Összeg</th>
                                 <th>Státusz</th>
-                                <th>Művelet</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -236,13 +235,6 @@
                                     <td>{{ $order->created_at->format('Y.m.d H:i') }}</td>
                                     <td>{{ number_format($order->total, 0, ',', ' ') }} Ft</td>
                                     <td>{{ $order->status ?? 'Feldolgozás alatt' }}</td>
-                                    <td>
-                                        <button class="btn btn-view btn-sm" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#order-{{ $order->id }}">   
-                                            Megtekintés
-                                        </button>
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

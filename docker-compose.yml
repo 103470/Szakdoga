@@ -56,6 +56,17 @@ services:
     networks:
       - webshop_network
 
+  cypress:
+    image: cypress/included:12.17.0
+    working_dir: /e2e
+    volumes:
+      - ./tests/cypress:/e2e
+    depends_on:
+      - nginx
+    networks:
+      - webshop_network
+
+
 networks:
   webshop_network:
 
