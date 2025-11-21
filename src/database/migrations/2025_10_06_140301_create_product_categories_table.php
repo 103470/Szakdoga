@@ -18,8 +18,8 @@ return new class extends Migration
                   ->references('subcategory_id')
                   ->on('subcategories')
                   ->onDelete('cascade');
-            $table->string('name')->unique();
-            $table->string('slug')->unique()->nullable();
+            $table->string('name');
+            $table->string('slug')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedBigInteger('updated_by')->nullable();

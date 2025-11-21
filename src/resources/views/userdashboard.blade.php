@@ -239,7 +239,7 @@
                                     <td>
                                         <button class="btn btn-view btn-sm" type="button"
                                                 data-bs-toggle="collapse"
-                                                data-bs-target="#order-{{ $order->id }}">
+                                                data-bs-target="#order-{{ $order->id }}">   
                                             Megtekintés
                                         </button>
                                     </td>
